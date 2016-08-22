@@ -1,5 +1,7 @@
 package wumf.com.sharedapps;
 
+import android.content.ComponentName;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -18,6 +20,8 @@ import android.text.style.ImageSpan;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
         appBarLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         tabLayout.setTabTextColors(Color.WHITE, Color.WHITE);
+
+        RealmRecyclerView realmRecyclerView = (RealmRecyclerView) findViewById(R.id.realm_recycler_view);
 
     }
 
