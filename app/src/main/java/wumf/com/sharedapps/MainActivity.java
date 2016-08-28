@@ -1,7 +1,5 @@
 package wumf.com.sharedapps;
 
-import android.content.ComponentName;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
