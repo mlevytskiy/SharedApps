@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarLayout appBarLayout;
     private TabLayout tabLayout;
+    private  ViewPagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,29 @@ public class MainActivity extends AppCompatActivity {
         final ViewPager viewPager = (ViewPager) findViewById(R.id.tabanim_viewpager);
         viewPager.setOffscreenPageLimit(3);
         setupViewPager(viewPager);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                for (int i = 0; i < adapter.mFragmentList.size(); i++) {
+                    IHideShow fr = (IHideShow) adapter.mFragmentList.get(i);
+                    if (i == position) {
+                        fr.show();
+                    } else {
+                        fr.hide();
+                    }
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         tabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -50,9 +74,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFrag(new SharedAppsFragment(), getTabTitle(R.drawable.my_shared_apps));
-        adapter.addFrag(new SearchFragment(), getTabTitle(R.drawable.search));
+        adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFrag(new SharedAppsFragment(), getTabTitle(R.drawable.ic_heart));
+        adapter.addFrag(new SearchFragment(), getTabTitle(R.drawable.ic_person));
+        adapter.addFrag(new SearchFragment(), getTabTitle(R.drawable.ic_search));
         viewPager.setAdapter(adapter);
     }
 
@@ -60,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder(" ");
         Drawable dr = getResources().getDrawable(drawableResId);
         dr.setBounds(0, 0, dr.getIntrinsicWidth(), dr.getIntrinsicHeight());
-        ImageSpan imageSpan = new ImageSpan(dr, DynamicDrawableSpan.ALIGN_BASELINE);
+        ImageSpan imageSpan = new ImageSpan(dr, DynamicDrawableSpan.ALIGN_BOTTOM);
         stringBuilder.setSpan(imageSpan, 0, 1, SpannableStringBuilder.SPAN_INCLUSIVE_EXCLUSIVE);
         return stringBuilder;
     }

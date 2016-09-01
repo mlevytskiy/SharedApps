@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 /**
  * Created by max on 22.08.16.
  */
-public class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment implements IHideShow {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -17,4 +17,13 @@ public class SearchFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void show() {
+
+    }
 }

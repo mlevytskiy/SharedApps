@@ -435,13 +435,13 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
         return mMenuOpen;
     }
 
-    private void hideFollowCircles() {
+    public void hideFollowCircles() {
         for (View view : mFollowCircles) {
             view.setVisibility(View.INVISIBLE);
         }
     }
 
-    private void showFollowCircles() {
+    public void showFollowCircles() {
         for (View view : mFollowCircles) {
             view.setVisibility(View.VISIBLE);
         }
@@ -511,7 +511,7 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
         colorAnimation.start();
     }
 
-    private void fadeOut() {
+    public void fadeOut() {
         int colorFrom = Color.parseColor("#40000000");
         int colorTo = Color.parseColor("#00000000");
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
