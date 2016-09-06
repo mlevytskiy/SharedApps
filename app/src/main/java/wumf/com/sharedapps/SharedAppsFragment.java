@@ -2,12 +2,16 @@ package wumf.com.sharedapps;
 
 import android.content.res.Resources;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
@@ -78,6 +82,7 @@ public class SharedAppsFragment extends Fragment implements View.OnClickListener
                         fab.setImageDrawable(frameAnim);
                         frameReverseAnim.stop();
                         frameAnim.start();
+                        setStatusBarColor(R.color.colorPrimary2);
                     }
 
                     @Override
@@ -85,6 +90,7 @@ public class SharedAppsFragment extends Fragment implements View.OnClickListener
                         fab.setImageDrawable(frameReverseAnim);
                         frameAnim.stop();
                         frameReverseAnim.start();
+                        setStatusBarColor(R.color.colorAccent);
                     }
                 })
                 .build();
@@ -126,6 +132,15 @@ public class SharedAppsFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         Toast.makeText(getContext(), "onClick", Toast.LENGTH_LONG).show();
+    }
+
+    private void setStatusBarColor(@ColorRes int color) {
+        Window window = getActivity().getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(getActivity().getResources().getColor(color));
+        }
     }
 
     @Override

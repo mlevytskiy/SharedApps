@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -84,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
     private CharSequence getTabTitle(@DrawableRes int drawableResId) {
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder(" ");
         Drawable dr = getResources().getDrawable(drawableResId);
+//        int color = getResources().getColor(R.color.photo);
+//        dr.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
         dr.setBounds(0, 0, dr.getIntrinsicWidth(), dr.getIntrinsicHeight());
         ImageSpan imageSpan = new ImageSpan(dr, DynamicDrawableSpan.ALIGN_BOTTOM);
         stringBuilder.setSpan(imageSpan, 0, 1, SpannableStringBuilder.SPAN_INCLUSIVE_EXCLUSIVE);

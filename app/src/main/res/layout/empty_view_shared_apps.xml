@@ -7,4 +7,4 @@
     android:text="Your shared apps folder is empty"
     android:textSize="20dp"
     app:tv_typeface="roboto_light"
-    android:textColor="#666" />
+    android:textColor="@color/video" />

@@ -331,7 +331,7 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
     private ArrayList<ImageButton> generateFollowCircles() {
 
         int diameter = mFAB.getType() == FloatingActionButton.TYPE_NORMAL ?
-                Utils.getDimension(mContext, R.dimen.fab_size_normal) :
+                Utils.getDimension(mContext, R.dimen.fab_size_normal) - 2 :
                 Utils.getDimension(mContext, R.dimen.fab_size_mini);
 
         ArrayList<ImageButton> circles = new ArrayList<>(mMenuItems.size());
