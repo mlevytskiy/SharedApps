@@ -2,7 +2,6 @@ package com.tiancaicc.springfloatingactionmenu;
 
 
 import android.support.annotation.ColorRes;
-import android.view.View;
 
 /**
  * Copyright (C) 2016 tiancaiCC
@@ -23,13 +22,15 @@ public class MenuItem {
     @ColorRes
     private int bgColor;
     private int icon;
+    private String iconFilePath;
     private String label;
     @ColorRes
     private int textColor = android.R.color.white;
     private int diameter = 80;
-    private View.OnClickListener onClickListener;
+    private OnAppClickListener onClickListener;
+    public String packageName;
 
-    public MenuItem(int bgColor, int icon, String label, int textColor,View.OnClickListener onClickListener) {
+    public MenuItem(int bgColor, int icon, String label, int textColor, OnAppClickListener onClickListener) {
         this.bgColor = bgColor;
         this.icon = icon;
         this.label = label;
@@ -37,7 +38,7 @@ public class MenuItem {
         this.onClickListener = onClickListener;
     }
 
-    public MenuItem(int bgColor, int icon, String label, int textColor, int diameter,View.OnClickListener onClickListener) {
+    public MenuItem(int bgColor, int icon, String label, int textColor, int diameter, OnAppClickListener onClickListener) {
         this.bgColor = bgColor;
         this.icon = icon;
         this.label = label;
@@ -96,11 +97,19 @@ public class MenuItem {
         this.diameter = diameter;
     }
 
-    public View.OnClickListener getOnClickListener() {
+    public OnAppClickListener getOnClickListener() {
         return onClickListener;
     }
 
-    public void setOnClickListener(View.OnClickListener onClickListener) {
+    public void setOnClickListener(OnAppClickListener onClickListener) {
         this.onClickListener = onClickListener;
+    }
+
+    public String getIconFilePath() {
+        return iconFilePath;
+    }
+
+    public void setIconFilePath(String iconFilePath) {
+        this.iconFilePath = iconFilePath;
     }
 }

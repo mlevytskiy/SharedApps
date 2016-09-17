@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 /**
  * Created by max on 22.08.16.
  */
-public class SearchFragment extends Fragment implements IHideShow {
+public class SearchFragment extends Fragment implements IHideShow, OnBackPressedListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -25,5 +25,10 @@ public class SearchFragment extends Fragment implements IHideShow {
     @Override
     public void show() {
 
+    }
+
+    @Override
+    public boolean doBack() {
+        return false;
     }
 }

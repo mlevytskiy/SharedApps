@@ -4,17 +4,20 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.net.Uri;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -24,6 +27,8 @@ import com.facebook.rebound.ui.Util;
 import com.tumblr.backboard.imitator.ToggleImitator;
 import com.tumblr.backboard.performer.MapPerformer;
 import com.tumblr.backboard.performer.Performer;
+
+import java.io.File;
 
 
 /**
@@ -45,25 +50,30 @@ public class MenuItemView extends LinearLayout implements OnMenuActionListener {
 
     private static final String TAG = "MIV";
     private ImageButton mBtn;
-    private TextView mLabel;
+    private com.github.omadahealth.typefaceview.TypefaceTextView mLabel;
     private MenuItem mMenuItem;
     private static int mGapSize = 4;
     private static int mTextSize = 14;
     private int mDiameter;
     private boolean mAlphaAnimation = true;
-    public MenuItemView(Context context, MenuItem menuItem) {
+
+    public MenuItemView(Context context, MenuItem menuItem, boolean hasMargin) {
         super(context);
         this.mMenuItem = menuItem;
-        init(context);
+        init(context, hasMargin);
     }
 
-
-    private void init(Context context) {
+    private void init(Context context, boolean hasMargin) {
 
         Resources resources = getResources();
         int diameterPX = Utils.dpToPx(mMenuItem.getDiameter(), resources);
         this.mDiameter = diameterPX;
         mBtn = new ImageButton(context);
+        mBtn.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        if (hasMargin) {
+            int p = Util.dpToPx(12, getResources());
+            mBtn.setPadding(p, p, p, p);
+        }
         LayoutParams btnLp = new LayoutParams(diameterPX, diameterPX);
         btnLp.gravity = Gravity.CENTER_HORIZONTAL;
         btnLp.bottomMargin = Util.dpToPx(mGapSize, resources);
@@ -72,17 +82,26 @@ public class MenuItemView extends LinearLayout implements OnMenuActionListener {
         ShapeDrawable shapeDrawable = new ShapeDrawable(ovalShape);
         shapeDrawable.getPaint().setColor(resources.getColor(mMenuItem.getBgColor()));
         mBtn.setBackgroundDrawable(shapeDrawable);
-        mBtn.setImageResource(mMenuItem.getIcon());
+        if (TextUtils.isEmpty(mMenuItem.getIconFilePath())) {
+            mBtn.setImageResource(mMenuItem.getIcon());
+        } else {
+            mBtn.setImageURI( Uri.fromFile(new File(mMenuItem.getIconFilePath())) );
+        }
         mBtn.setClickable(false);
         addView(mBtn);
 
-        mLabel = new TextView(context);
+        mLabel = (com.github.omadahealth.typefaceview.TypefaceTextView) View.inflate(getContext(), R.layout.c_text_view, null);
+        mLabel.setPaintFlags(mLabel.getPaintFlags() |   Paint.UNDERLINE_TEXT_FLAG);
+        mLabel.setTextIsSelectable(false);
         LayoutParams labelLp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         labelLp.gravity = Gravity.CENTER_HORIZONTAL;
         mLabel.setLayoutParams(labelLp);
+        if (!TextUtils.isEmpty(mMenuItem.getLabel())) {
+            mLabel.setPadding(0, Util.dpToPx(90, getResources()), 0, 0);
+        }
         mLabel.setText(mMenuItem.getLabel());
         mLabel.setTextColor(resources.getColor(mMenuItem.getTextColor()));
-        mLabel.setTextSize(TypedValue.COMPLEX_UNIT_SP, mTextSize);
+//        mLabel.setTextSize(TypedValue.COMPLEX_UNIT_SP, mTextSize);
         addView(mLabel);
 
         setOrientation(LinearLayout.VERTICAL);
@@ -104,6 +123,24 @@ public class MenuItemView extends LinearLayout implements OnMenuActionListener {
         });
 
 
+    }
+
+    public void setListener(final OpenAllAppsListener listener) {
+        mLabel.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onClick();
+            }
+        });
+    }
+
+    public void updateIcon() {
+        if (TextUtils.isEmpty(mMenuItem.getIconFilePath())) {
+            mBtn.setImageResource(mMenuItem.getIcon());
+        } else {
+            mBtn.setImageURI( Uri.fromFile(new File(mMenuItem.getIconFilePath())) );
+        }
+        mBtn.invalidate();
     }
 
     @Override
@@ -180,11 +217,21 @@ public class MenuItemView extends LinearLayout implements OnMenuActionListener {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     Log.d(TAG,"now enable clickListener");
-                    MenuItemView.this.setOnClickListener(mMenuItem.getOnClickListener());
+                    MenuItemView.this.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mMenuItem.getOnClickListener().onClick(mMenuItem.packageName);
+                        }
+                    });
                 }
             });
         }else {
-            MenuItemView.this.setOnClickListener(mMenuItem.getOnClickListener());
+            MenuItemView.this.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mMenuItem.getOnClickListener().onClick(mMenuItem.packageName);
+                }
+            });
         }
     }
 

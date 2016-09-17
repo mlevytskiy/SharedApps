@@ -1,9 +1,11 @@
 package wumf.com.sharedapps;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.ColorRes;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
@@ -18,13 +20,23 @@ import android.view.animation.ScaleAnimation;
 import android.widget.Toast;
 
 import com.melnykov.fab.FloatingActionButton;
+import com.tiancaicc.springfloatingactionmenu.OnAppClickListener;
 import com.tiancaicc.springfloatingactionmenu.OnMenuActionListener;
+import com.tiancaicc.springfloatingactionmenu.OpenAllAppsListener;
 import com.tiancaicc.springfloatingactionmenu.SpringFloatingActionMenu;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.util.List;
+
+import wumf.com.appsprovider.App;
+import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 
 /**
  * Created by max on 22.08.16.
  */
-public class SharedAppsFragment extends Fragment implements View.OnClickListener, IHideShow {
+public class SharedAppsFragment extends Fragment implements OnAppClickListener, IHideShow, OnBackPressedListener {
 
     private int FRAME_DURATION = 20;
 
@@ -54,8 +66,31 @@ public class SharedAppsFragment extends Fragment implements View.OnClickListener
     private FloatingActionButton fab;
     private AnimationDrawable frameAnim;
     private AnimationDrawable frameReverseAnim;
+    private String selectedPackageName;
+    private boolean isDisableOpenMenuListener = false;
 
     private SpringFloatingActionMenu springFloatingActionMenu;
+
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void onEvent(ChangeTop6AppsEvent event) {
+        fill(event.apps);
+    }
+
+    private void fill(List<App> apps) {
+        for (int i = 0; i < apps.size(); i++) {
+            springFloatingActionMenu.changeMenuItem(i+1, apps.get(i).appPackage, apps.get(i).icon);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,18 +102,21 @@ public class SharedAppsFragment extends Fragment implements View.OnClickListener
         springFloatingActionMenu = new SpringFloatingActionMenu.Builder(getContext())
                 .fab(fab)
                 .addMenuItem(R.color.photo, R.mipmap.ic_new_folder, "", R.color.text_color, this)
-                .addMenuItem(R.color.chat, R.mipmap.ic_messaging_posttype_chat, "", R.color.text_color,this)
-                .addMenuItem(R.color.quote, R.mipmap.ic_messaging_posttype_quote, "", R.color.text_color,this)
+                .addMenuItem(R.color.chat, R.mipmap.ic_messaging_posttype_link, "", R.color.text_color,this)
+                .addMenuItem(R.color.quote, R.mipmap.ic_messaging_posttype_link, "", R.color.text_color,this)
                 .addMenuItem(R.color.link, R.mipmap.ic_messaging_posttype_link, "", R.color.text_color,this)
-                .addMenuItem(R.color.audio, R.mipmap.ic_messaging_posttype_audio, "", R.color.text_color,this)
-                .addMenuItem(R.color.text, R.mipmap.ic_messaging_posttype_text, "", R.color.text_color,this)
-                .addMenuItem(R.color.video, R.mipmap.ic_messaging_posttype_video, "", R.color.text_color,this)
+                .addMenuItem(R.color.audio, R.mipmap.ic_messaging_posttype_link, "all apps", R.color.text_color,this)
+                .addMenuItem(R.color.text, R.mipmap.ic_messaging_posttype_link, "", R.color.text_color,this)
+                .addMenuItem(R.color.video, R.mipmap.ic_messaging_posttype_link, "", R.color.text_color,this)
                 .animationType(SpringFloatingActionMenu.ANIMATION_TYPE_TUMBLR)
                 .revealColor(R.color.colorPrimary2)
                 .gravity(Gravity.RIGHT | Gravity.BOTTOM)
                 .onMenuActionListner(new OnMenuActionListener() {
                     @Override
                     public void onMenuOpen() {
+                        if (isDisableOpenMenuListener) {
+                            return;
+                        }
                         fab.setImageDrawable(frameAnim);
                         frameReverseAnim.stop();
                         frameAnim.start();
@@ -94,6 +132,20 @@ public class SharedAppsFragment extends Fragment implements View.OnClickListener
                     }
                 })
                 .build();
+
+        List<App> apps;
+        if ( (apps = ((MainApplication) getActivity().getApplication()).top6apps) != null ) {
+            fill(apps);
+        }
+
+        springFloatingActionMenu.setOpenAllAppsListener(new OpenAllAppsListener() {
+            @Override
+            public void onClick() {
+                getActivity().startActivityForResult(new Intent(getContext(), AllAppsActivity.class),
+                        MainActivity.REQUEST_CODE_CHIOCE_APP);
+//                getActivity().startActivity();
+            }
+        });
 
         return view;
     }
@@ -129,11 +181,6 @@ public class SharedAppsFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    @Override
-    public void onClick(View view) {
-        Toast.makeText(getContext(), "onClick", Toast.LENGTH_LONG).show();
-    }
-
     private void setStatusBarColor(@ColorRes int color) {
         Window window = getActivity().getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -150,6 +197,9 @@ public class SharedAppsFragment extends Fragment implements View.OnClickListener
             return;
         }
 
+        springFloatingActionMenu.disableOpenMenuCapability();
+        isDisableOpenMenuListener = true;
+
         springFloatingActionMenu.hideFollowCircles();
         Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.collaps);
         anim.setFillAfter(true);
@@ -161,6 +211,7 @@ public class SharedAppsFragment extends Fragment implements View.OnClickListener
 
             @Override
             public void onAnimationEnd(Animation animation) {
+
                 fab.setVisibility(View.GONE);
             }
 
@@ -174,6 +225,8 @@ public class SharedAppsFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void show() {
+        springFloatingActionMenu.enableOpenMenuCapability();
+        isDisableOpenMenuListener = false;
         ScaleAnimation anim = new ScaleAnimation(0, 1, 0, 1, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         anim.setDuration(200);
         anim.setFillAfter(true);
@@ -198,4 +251,28 @@ public class SharedAppsFragment extends Fragment implements View.OnClickListener
         fab.startAnimation(anim);
     }
 
+    @Override
+    public boolean doBack() {
+        if (springFloatingActionMenu == null) {
+            return false;
+        }
+
+        if (springFloatingActionMenu.isMenuOpen()) {
+            springFloatingActionMenu.hideMenu();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void onClick(final String appPackage) {
+        springFloatingActionMenu.hideMenu();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getContext(), "appPackage=" + appPackage, Toast.LENGTH_LONG).show();
+            }
+        }, 450);
+    }
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="8dp"
+        android:paddingRight="8dp"
+        android:paddingLeft="8dp" />
+
+    <com.github.omadahealth.typefaceview.TypefaceTextView
+        android:id="@+id/close"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="Close"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:textSize="20dp"
+        app:tv_typeface="roboto_light"
+        android:background="@drawable/button_selector" />
+
+</LinearLayout>

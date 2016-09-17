@@ -10,19 +10,23 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.ColorRes;
 import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringSystem;
@@ -35,6 +39,7 @@ import com.tumblr.backboard.imitator.SpringImitator;
 import com.tumblr.backboard.performer.MapPerformer;
 import com.tumblr.backboard.performer.Performer;
 
+import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -73,6 +78,8 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
 
     private View mRevealCircle;
 
+    private View view;
+
     private ArrayList<MenuItem> mMenuItems;
 
     private ArrayList<ImageButton> mFollowCircles;
@@ -106,6 +113,7 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
     private boolean mAnimating = false;
 
     private boolean mEnableFollowAnimation = true;
+    private boolean disableOpenMenuCapability = false;
 
     public SpringFloatingActionMenu(Builder builder) {
         super(builder.context);
@@ -120,6 +128,19 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
         this.mOnFabClickListener = builder.onFabClickListener;
         this.mEnableFollowAnimation = builder.enableFollowAnimation;
         init(mContext);
+    }
+
+    public void changeMenuItem(int index, String pn, String filePath) {
+        MenuItem mi = mMenuItems.get(index);
+        mi.setIconFilePath(filePath);
+        mi.packageName = pn;
+        mFollowCircles.get(index).setImageURI(Uri.fromFile(new File(filePath)));
+        mFollowCircles.get(index).invalidate();
+        mMenuItemViews.get(index).updateIcon();
+    }
+
+    public void setOpenAllAppsListener(OpenAllAppsListener listener) {
+        mMenuItemViews.get(4).setListener(listener);
     }
 
     public SpringFloatingActionMenu(Context context) {
@@ -140,7 +161,12 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
         // this mContainerView will be added when animation happened,
         // see DestroySelfSpringListener.onSpringActivate()
         mContainerView = new FrameLayout(context);
-        //add reveal circle, it will at bottom position
+
+        LayoutInflater inflater = (LayoutInflater)context.getSystemService
+                (Context.LAYOUT_INFLATER_SERVICE);
+        view = inflater.inflate(R.layout.c_text_view, mContainerView, false);
+        mContainerView.addView(view);
+
         mContainerView.addView(mRevealCircle = generateRevealCircle());
 
         //generate and add follow circles
@@ -158,14 +184,13 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
             mContainerView.addView(menuItemView);
             addOnMenuActionListener(menuItemView);
         }
-        mMenuItemViews.get(0).bringToFront();
 
+        mMenuItemViews.get(0).bringToFront();
 //        addView(mContainerView);
         //add FAB
         LayoutParams fablp = Utils.createWrapParams();
         fablp.gravity = mGravity;
         addView(mFAB, fablp);
-
 
         setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -337,11 +362,18 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
         ArrayList<ImageButton> circles = new ArrayList<>(mMenuItems.size());
         for (MenuItem item : mMenuItems) {
             ImageButton circle = new ImageButton(mContext);
+            circle.setScaleType(ImageView.ScaleType.FIT_CENTER);
             OvalShape ovalShape = new OvalShape();
             ShapeDrawable shapeDrawable = new ShapeDrawable(ovalShape);
             shapeDrawable.getPaint().setColor(getResources().getColor(item.getBgColor()));
             circle.setBackgroundDrawable(shapeDrawable);
-            circle.setImageResource(item.getIcon());
+
+            if (TextUtils.isEmpty(item.getIconFilePath())) {
+                circle.setImageResource(item.getIcon());
+            } else {
+                circle.setImageURI( Uri.fromFile(new File(item.getIconFilePath())) );
+            }
+
             LayoutParams lp = new LayoutParams(diameter, diameter);
             circle.setLayoutParams(lp);
             circles.add(circle);
@@ -352,11 +384,13 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
 
     private ArrayList<MenuItemView> generateMenuItemViews() {
         ArrayList<MenuItemView> menuItemViews = new ArrayList<>(mMenuItems.size());
+        int i = 0;
         for (MenuItem item : mMenuItems) {
-            MenuItemView menuItemView = new MenuItemView(mContext, item);
+            MenuItemView menuItemView = new MenuItemView(mContext, item, (i != 0) );
             menuItemView.setLayoutParams(Utils.createWrapParams());
 //            menuItemView.setOnClickListener(item.getOnClickListener());
             menuItemViews.add(menuItemView);
+            i++;
         }
         return menuItemViews;
     }
@@ -377,7 +411,7 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
         view.setClickable(true);
 
         // note it is invisible, but will be visible while  animating
-        view.setVisibility(View.INVISIBLE);
+        view.setVisibility(View.GONE);
         return view;
     }
 
@@ -393,7 +427,18 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
         this.mActionListeners.add(listener);
     }
 
+    public void disableOpenMenuCapability() {
+        disableOpenMenuCapability = true;
+    }
+
+    public void enableOpenMenuCapability() {
+        disableOpenMenuCapability = false;
+    }
+
     public void showMenu() {
+        if (disableOpenMenuCapability) {
+            return;
+        }
         Log.d(TAG, "showMenu");
         switch (mAnimationType) {
             case ANIMATION_TYPE_BLOOM:
@@ -437,7 +482,7 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
 
     public void hideFollowCircles() {
         for (View view : mFollowCircles) {
-            view.setVisibility(View.INVISIBLE);
+            view.setVisibility(View.GONE);
         }
     }
 
@@ -481,7 +526,7 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
-                        mRevealCircle.setVisibility(View.INVISIBLE);
+                        mRevealCircle.setVisibility(View.GONE);
                         animation.removeAllListeners();
                         mAnimating = false;
                     }
@@ -753,13 +798,13 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
         }
 
         public Builder addMenuItem(@ColorRes int bgColor, int icon, String label,
-                                   @ColorRes int textColor, View.OnClickListener onClickListener) {
+                                   @ColorRes int textColor, OnAppClickListener onClickListener) {
             menuItems.add(new MenuItem(bgColor, icon, label, textColor, onClickListener));
             return this;
         }
 
         public Builder addMenuItem(@ColorRes int bgColor, int icon, String label,
-                                   @ColorRes int textColor, int diameter, View.OnClickListener onClickListener) {
+                                   @ColorRes int textColor, int diameter, OnAppClickListener onClickListener) {
             menuItems.add(new MenuItem(bgColor, icon, label, textColor, diameter, onClickListener));
             return this;
         }
