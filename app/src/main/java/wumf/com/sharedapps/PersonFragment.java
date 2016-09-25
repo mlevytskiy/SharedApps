@@ -12,6 +12,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
+import wumf.com.sharedapps.eventbus.SignInFromFirebaseEvent;
+import wumf.com.sharedapps.eventbus.SignOutFromFirebaseEvent;
+import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.view.MyAccountView;
 
 /**
@@ -37,12 +44,19 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
         });
 
         myAccountView = (MyAccountView) view.findViewById(R.id.my_account_view);
+        myAccountView.setOnViberClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().startActivity(new Intent(getContext(), ViberTransparentActivity.class));
+            }
+        });
 
         return view;
     }
 
     public void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
         FirebaseUser user = ((MainActivity) getActivity()).currentUser;
         if (user != null) {
             myAccountView.setUser(user);
@@ -52,6 +66,32 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
             myAccountView.setVisibility(View.GONE);
             signInButton.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void onEvent(SignInFromFirebaseEvent event) {
+        FirebaseUser user = ((MainActivity) getActivity()).currentUser;
+        myAccountView.setUser(user);
+        UsersFirebase.addMe(user);
+        myAccountView.setVisibility(View.VISIBLE);
+        signInButton.setVisibility(View.GONE);
+    }
+
+    @Subscribe
+    public void onEvent(SignOutFromFirebaseEvent event) {
+        myAccountView.setVisibility(View.GONE);
+        signInButton.setVisibility(View.VISIBLE);
+    }
+
+    @Subscribe
+    public void onEvent(NewPhoneNumberFromFirebaseEvent event) {
+        myAccountView.updatePhoneNumber(event.phone);
+        MainApplication.instance.phoneNumber = event.phone;
     }
 
     @Override

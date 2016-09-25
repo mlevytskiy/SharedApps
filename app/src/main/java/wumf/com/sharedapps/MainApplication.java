@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -24,9 +26,14 @@ public class MainApplication extends Application {
     public List<App> top6apps;
     public List<App> allApps;
     public GoogleSignInOptions gso;
+    public String phoneNumber;
+    public static MainApplication instance;
+    public String country;
 
     public void onCreate() {
         super.onCreate();
+
+        instance = this;
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -57,6 +64,13 @@ public class MainApplication extends Application {
                 appProvider.initBaseInfo();
             }
         });
+
+        if (!FirebaseApp.getApps(this).isEmpty()) {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        }
+
+        country = "UNKNOWN";
+
     }
 
 }

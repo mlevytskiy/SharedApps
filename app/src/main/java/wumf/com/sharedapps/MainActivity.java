@@ -1,14 +1,20 @@
 package wumf.com.sharedapps;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -26,6 +32,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -34,20 +41,31 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView;
+import wumf.com.sharedapps.eventbus.NewPhoneNumberFromViber;
+import wumf.com.sharedapps.eventbus.SignInFromFirebaseEvent;
+import wumf.com.sharedapps.eventbus.SignOutFromFirebaseEvent;
+import wumf.com.sharedapps.firebase.UsersFirebase;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks {
 
     public static final int REQUEST_CODE_CHIOCE_APP = 544;
     public static final int REQUEST_CODE_RC_SIGN_IN = 543;
     public static final String PACKAGE_NAME = "packageName";
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private AppBarLayout appBarLayout;
     private TabLayout tabLayout;
-    private  ViewPagerAdapter adapter;
+    private ViewPagerAdapter adapter;
     private int currentFragmentIndex = 0;
     public GoogleApiClient gac;
 
@@ -102,8 +120,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         RealmRecyclerView realmRecyclerView = (RealmRecyclerView) findViewById(R.id.realm_recycler_view);
 
         gac = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, ((MainApplication) getApplication()).gso)
+                .addApi(LocationServices.API)
                 .build();
 
         mAuth = FirebaseAuth.getInstance();
@@ -113,6 +133,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 currentUser = user;
+                if (user != null) {
+                    UsersFirebase.listenPhoneNumber(currentUser.getUid());
+                }
                 if (user != null) {
                     // User is signed in
                     Log.d("TAG", "onAuthStateChanged:signed_in:" + user.getUid());
@@ -128,19 +151,35 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     public void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
+        gac.connect();
         mAuth.addAuthStateListener(mAuthListener);
     }
 
     public void onStop() {
+        gac.disconnect();
         super.onStop();
+        EventBus.getDefault().unregister(this);
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
 
+    @Subscribe
+    public void onEvent(NewPhoneNumberFromViber event) {
+        UsersFirebase.updatePhoneNumber(currentUser.getUid(), event.phone);
+    }
+
+    @Subscribe
+    public void onEvent(SignOutFromFirebaseEvent event) {
+        currentUser = null;
+        MainApplication.instance.phoneNumber = null;
+        Auth.GoogleSignInApi.signOut(gac);
+    }
+
     @Override
     public void onBackPressed() {
-        boolean doBack = ( (OnBackPressedListener) adapter.mFragmentList.get(currentFragmentIndex) ).doBack();
+        boolean doBack = ((OnBackPressedListener) adapter.mFragmentList.get(currentFragmentIndex)).doBack();
         if (!doBack) {
             super.onBackPressed();
         }
@@ -154,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        ( (OnBackPressedListener) adapter.mFragmentList.get(currentFragmentIndex) ).doBack();
+                        ((OnBackPressedListener) adapter.mFragmentList.get(currentFragmentIndex)).doBack();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -188,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d("TAG", "signInWithCredential:onComplete:" + task.isSuccessful());
+                        EventBus.getDefault().post(new SignInFromFirebaseEvent());
 
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
@@ -224,6 +264,29 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(this, "onConnectionFailed=" + connectionResult.getErrorMessage(), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        }
+        Location location = LocationServices.FusedLocationApi.getLastLocation(gac);
+        Geocoder gcd = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            if ( !addresses.isEmpty() ) {
+                MainApplication.instance.country = addresses.get(0).getCountryCode();
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
     }
 
     static class ViewPagerAdapter extends FragmentPagerAdapter {

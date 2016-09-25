@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:gravity="top"
+    android:paddingRight="70dp"
+    android:paddingLeft="70dp">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="25dp" />
+
+    <com.github.omadahealth.typefaceview.TypefaceTextView android:layout_width="match_parent"
+                                                          android:layout_height="wrap_content"
+                                                          android:gravity="center"
+                                                          android:text="3 step for attach your phone number in profile: "
+                                                          android:textSize="20dp"
+                                                          app:tv_typeface="roboto_light"
+                                                          android:textColor="@android:color/black" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="25dp" />
+
+
+    <com.github.omadahealth.typefaceview.TypefaceTextView android:layout_width="match_parent"
+                                                          android:layout_height="wrap_content"
+                                                          android:gravity="center"
+                                                          android:text="1) install Viber"
+                                                          android:textSize="18dp"
+                                                          app:tv_typeface="roboto_light"
+                                                          android:textColor="@android:color/black" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="25dp" />
+
+    <com.github.omadahealth.typefaceview.TypefaceTextView android:layout_width="match_parent"
+                                                          android:layout_height="wrap_content"
+                                                          android:gravity="center"
+                                                          android:text="2) registration on Viber"
+                                                          android:textSize="18dp"
+                                                          app:tv_typeface="roboto_light"
+                                                          android:textColor="@android:color/black" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="25dp" />
+
+    <com.github.omadahealth.typefaceview.TypefaceTextView android:layout_width="match_parent"
+                                                          android:layout_height="wrap_content"
+                                                          android:gravity="center"
+                                                          android:text="3) open this app again"
+                                                          android:textSize="18dp"
+                                                          app:tv_typeface="roboto_light"
+                                                          android:textColor="@android:color/black" />
+
+</LinearLayout>

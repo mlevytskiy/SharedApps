@@ -6,43 +6,155 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/icon"
-        android:layout_width="50dp"
-        android:layout_height="50dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="8dp">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <com.balysv.materialripple.MaterialRippleLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_weight="1"
+            app:mrl_rippleColor="@android:color/black"
+            app:mrl_rippleOverlay="true">
+
+            <com.github.omadahealth.typefaceview.TypefaceTextView
+                android:id="@+id/sign_out"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/sign_out_normal"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingBottom="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="8dp"
+                android:text="Sign out"
+                android:textColor="@color/sign_out_text_color"
+                android:textSize="20dp"
+                app:tv_typeface="roboto_light"/>
+
+        </com.balysv.materialripple.MaterialRippleLayout>
+
+    </LinearLayout>
 
     <LinearLayout
-        android:paddingLeft="8dp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="Country: " />
 
         <TextView
-            android:id="@+id/email"
+            android:id="@+id/country"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <com.balysv.materialripple.MaterialRippleLayout
+        android:id="@+id/phone_number_from_viber_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mrl_rippleColor="@android:color/black"
+        app:mrl_rippleOverlay="true"
+        android:layout_marginTop="8dp"
+        app:mrl_rippleDuration="350"
+        app:mrl_rippleFadeDuration="75"
+        app:mrl_rippleDelayClick="true" >
+
+        <LinearLayout
+            android:id="@+id/attach_phone_number_via_viber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/viber"
+            android:orientation="horizontal"
+            android:paddingBottom="2dp"
+            android:paddingTop="2dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <com.github.omadahealth.typefaceview.TypefaceTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Attach phone number"
+                    android:textColor="@android:color/white"
+                    android:textSize="18dp"
+                    app:tv_typeface="roboto_light"/>
+
+                <com.github.omadahealth.typefaceview.TypefaceTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="via Viber"
+                    android:textColor="@android:color/white"
+                    android:textSize="18dp"
+                    app:tv_typeface="roboto_light"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_viber"/>
+
+        </LinearLayout>
+
+    </com.balysv.materialripple.MaterialRippleLayout>
+
+    <LinearLayout
+        android:id="@+id/phone_number_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phone number: " />
+
+        <TextView
+            android:id="@+id/phone_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
     </LinearLayout>
-
-    <com.github.omadahealth.typefaceview.TypefaceTextView
-        android:layout_marginLeft="8dp"
-        android:paddingLeft="8dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:paddingRight="8dp"
-        android:gravity="center"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="Sign out"
-        android:textSize="20dp"
-        app:tv_typeface="roboto_light"
-        android:background="@color/colorAccent"
-        android:textColor="@android:color/white" />
 
 </merge>
