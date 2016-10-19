@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import wumf.com.sharedapps.eventbus.GetNewCountryEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
@@ -75,7 +76,7 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
         EventBus.getDefault().unregister(this);
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(GetNewCountryEvent event) {
         myAccountView.updateCountry(event.country);
     }
