@@ -9,6 +9,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.greenrobot.eventbus.EventBus;
 
+import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
 
 /**
@@ -29,8 +30,28 @@ public class UsersFirebase {
         FirebaseDatabase.getInstance().getReference().child("users").child(uid).removeValue();
     }
 
+    public static void addAppToFavourite() {
+
+    }
+
+    public static void removeAppFromFavourite() {
+
+    }
+
+    public static void addFolderToFavourite(String folderName) {
+
+    }
+
+    public static void removeFolderFromFavourite(String folderName) {
+
+    }
+
     public static void updatePhoneNumber(String uid, String phoneNumber) {
         FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("phoneNumber").setValue(phoneNumber);
+    }
+
+    public static void updateCountryCode(String uid, String countryCode) {
+        FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("countryCode").setValue(countryCode);
     }
 
     public static void listenPhoneNumber(String uid) {
@@ -50,10 +71,28 @@ public class UsersFirebase {
         });
     }
 
+    public static void listenCountryCode(String uid) {
+        FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("countryCode").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Object value = dataSnapshot.getValue();
+                if (value != null) {
+                    EventBus.getDefault().post(new NewCountryCodeFromFirebaseEvent(value.toString()));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public static class User {
         public String name;
         public String email;
         public String phoneNumber;
+        public String countryCode;
     }
 
 }

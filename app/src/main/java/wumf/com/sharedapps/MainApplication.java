@@ -9,6 +9,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import wumf.com.appsprovider.App;
 import wumf.com.appsprovider.AppProvider;
 import wumf.com.appsprovider.OnChangeLastInstalledAppsListener;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
+import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 
 /**
  * Created by max on 01.09.16.
@@ -71,6 +73,13 @@ public class MainApplication extends Application {
 
         country = "UNKNOWN";
 
+        EventBus.getDefault().register(this);
+
+    }
+
+    @Subscribe
+    public void onEvent(NewCountryCodeFromFirebaseEvent event) {
+        country = event.countryCode;
     }
 
 }

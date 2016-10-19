@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.DrawableRes;
@@ -22,6 +23,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.util.Log;
@@ -50,9 +52,12 @@ import java.util.List;
 import java.util.Locale;
 
 import co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView;
+import wumf.com.sharedapps.eventbus.GetNewCountryEvent;
+import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromViber;
 import wumf.com.sharedapps.eventbus.SignInFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.SignOutFromFirebaseEvent;
+import wumf.com.sharedapps.eventbus.WeAlreadyGetCountryCodeFromSystemEvent;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
@@ -72,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     public FirebaseUser currentUser;
+    private boolean weAlreadyGetCountryCodeFromSystem = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 currentUser = user;
                 if (user != null) {
                     UsersFirebase.listenPhoneNumber(currentUser.getUid());
+                    UsersFirebase.listenCountryCode(currentUser.getUid());
                 }
                 if (user != null) {
                     // User is signed in
@@ -162,6 +169,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         EventBus.getDefault().unregister(this);
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    @Subscribe
+    public void onEvent(WeAlreadyGetCountryCodeFromSystemEvent event) {
+        weAlreadyGetCountryCodeFromSystem = true;
+    }
+
+    public void onEvent(NewCountryCodeFromFirebaseEvent event) {
+        if ( weAlreadyGetCountryCodeFromSystem && TextUtils.isEmpty(event.countryCode) ) {
+            UsersFirebase.updateCountryCode(currentUser.getUid(), MainApplication.instance.country);
+            EventBus.getDefault().post(new GetNewCountryEvent(MainApplication.instance.country));
+        } else {
+            //do nothing
         }
     }
 
@@ -268,20 +289,33 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            return;
-        }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(gac);
-        Geocoder gcd = new Geocoder(this, Locale.getDefault());
-        try {
-            List<Address> addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-            if ( !addresses.isEmpty() ) {
-                MainApplication.instance.country = addresses.get(0).getCountryCode();
+                    return;
+                }
+                Location location = LocationServices.FusedLocationApi.getLastLocation(gac);
+                Geocoder gcd = new Geocoder(MainActivity.this, Locale.getDefault());
+                try {
+                    List<Address> addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                    if ( !addresses.isEmpty() ) {
+                        MainApplication.instance.country = addresses.get(0).getCountryCode();
+                        FirebaseUser user = MainActivity.this.currentUser;
+                        if (user == null) {
+                            EventBus.getDefault().post(new WeAlreadyGetCountryCodeFromSystemEvent());
+                        } else {
+                            UsersFirebase.updateCountryCode(user.getUid(), MainApplication.instance.country);
+                            EventBus.getDefault().post(new GetNewCountryEvent(MainApplication.instance.country));
+                        }
+                    }
+                } catch (IOException e) {
+                    Log.e(TAG, e.getMessage());
+                }
             }
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
+        });
     }
 
     @Override

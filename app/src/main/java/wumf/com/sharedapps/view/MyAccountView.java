@@ -96,6 +96,10 @@ public class MyAccountView extends LinearLayout {
         super.setVisibility(visibility);
     }
 
+    public void updateCountry(String country) {
+        this.country.setText(country);
+    }
+
     public void updatePhoneNumber(String phoneNumber) {
         phoneNumberContainer.setVisibility(View.VISIBLE);
         phoneNumberFromViberContainer.setVisibility(View.GONE);
