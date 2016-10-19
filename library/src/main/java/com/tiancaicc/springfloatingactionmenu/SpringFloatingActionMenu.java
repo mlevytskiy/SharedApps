@@ -131,12 +131,16 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
     }
 
     public void changeMenuItem(int index, String pn, String filePath) {
-        MenuItem mi = mMenuItems.get(index);
-        mi.setIconFilePath(filePath);
-        mi.packageName = pn;
-        mFollowCircles.get(index).setImageURI(Uri.fromFile(new File(filePath)));
-        mFollowCircles.get(index).invalidate();
-        mMenuItemViews.get(index).updateIcon();
+        try {
+            MenuItem mi = mMenuItems.get(index);
+            mi.setIconFilePath(filePath);
+            mi.packageName = pn;
+            mFollowCircles.get(index).setImageURI(Uri.fromFile(new File(filePath)));
+            mFollowCircles.get(index).invalidate();
+            mMenuItemViews.get(index).updateIcon();
+        } catch (Exception e) {
+            //do nothing
+        }
     }
 
     public void setOpenAllAppsListener(OpenAllAppsListener listener) {

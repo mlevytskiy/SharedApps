@@ -48,16 +48,19 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView;
+import wumf.com.sharedapps.eventbus.ChangeAllFoldersFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.GetNewCountryEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromViber;
 import wumf.com.sharedapps.eventbus.SignInFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.SignOutFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.WeAlreadyGetCountryCodeFromSystemEvent;
+import wumf.com.sharedapps.firebase.FavouriteAppsFirebase;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
@@ -76,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private long firebaseAuthListenerCalledDate = 0;
     public FirebaseUser currentUser;
     private boolean weAlreadyGetCountryCodeFromSystem = false;
 
@@ -137,18 +141,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                long newDate = new Date().getTime();
+                if (newDate - firebaseAuthListenerCalledDate < 500) {
+                    return;
+                } else {
+                    firebaseAuthListenerCalledDate = newDate;
+                }
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 currentUser = user;
                 if (user != null) {
                     UsersFirebase.listenPhoneNumber(currentUser.getUid());
                     UsersFirebase.listenCountryCode(currentUser.getUid());
+                    FavouriteAppsFirebase.listenFolders(currentUser.getUid());
                 }
                 if (user != null) {
                     // User is signed in
-                    Log.d("TAG", "onAuthStateChanged:signed_in:" + user.getUid());
+                    Log.i("test", "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
                     // User is signed out
-                    Log.d("TAG", "onAuthStateChanged:signed_out");
+                    Log.i("test", "onAuthStateChanged:signed_out");
                 }
                 // ...
             }
@@ -165,11 +176,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     public void onStop() {
         gac.disconnect();
-        super.onStop();
-        EventBus.getDefault().unregister(this);
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     @Subscribe
@@ -177,13 +188,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         weAlreadyGetCountryCodeFromSystem = true;
     }
 
-    public void onEvent(NewCountryCodeFromFirebaseEvent event) {
+    public void onEvent(NewCountryCodeFromFirebaseEvent event) { //TODO: ?
         if ( weAlreadyGetCountryCodeFromSystem && TextUtils.isEmpty(event.countryCode) ) {
             UsersFirebase.updateCountryCode(currentUser.getUid(), MainApplication.instance.country);
             EventBus.getDefault().post(new GetNewCountryEvent(MainApplication.instance.country));
         } else {
             //do nothing
         }
+    }
+
+    @Subscribe
+    public void onEvent(ChangeAllFoldersFromFirebaseEvent event) {
+        Toast.makeText(this, "New Folder created", Toast.LENGTH_LONG).show();
     }
 
     @Subscribe

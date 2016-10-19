@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.ColorRes;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,7 @@ import java.util.List;
 
 import wumf.com.appsprovider.App;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
+import wumf.com.sharedapps.firebase.FavouriteAppsFirebase;
 
 /**
  * Created by max on 22.08.16.
@@ -271,7 +273,12 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getContext(), "appPackage=" + appPackage, Toast.LENGTH_LONG).show();
+                if ( TextUtils.isEmpty(appPackage) ) {
+                    String uid = ((MainActivity) getActivity()).currentUser.getUid();
+                    FavouriteAppsFirebase.addFolder(uid, "New Folder");
+                } else {
+                    Toast.makeText(getContext(), "appPackage=" + appPackage, Toast.LENGTH_LONG).show();
+                }
             }
         }, 450);
     }
