@@ -6,15 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView
-        android:id="@+id/realm_recycler_view"
+    <GridView
+        android:id="@+id/grid_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:rrvIsRefreshable="false"
-        app:rrvEmptyLayoutId="@layout/empty_view_shared_apps"
-        app:rrvLayoutType="Grid"
-        app:rrvGridLayoutSpanCount="3"
-        android:layout_margin="2dp"
-        android:background="@android:color/transparent" />
+        android:numColumns="4" />
+
+    <include
+        layout="@layout/empty_view_shared_apps"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
+import android.widget.GridView;
 import android.widget.Toast;
 
 import com.melnykov.fab.FloatingActionButton;
@@ -29,6 +30,7 @@ import com.tiancaicc.springfloatingactionmenu.SpringFloatingActionMenu;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import wumf.com.appsprovider.App;
@@ -97,6 +99,15 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_shared_apps, container, false);
+
+        GridView gridView = (GridView) view.findViewById(R.id.grid_view);
+        gridView.setEmptyView(view.findViewById(R.id.empty_view_type_face_text_view));
+        List<String> mock = new ArrayList<>();
+        mock.add("Новая папка");
+        mock.add("New folder");
+        mock.add("3");
+
+        gridView.setAdapter(new SharedAppsAdapter(mock));
 
         createFabReverseFrameAnim();
         fab = createFloatingActionButton();

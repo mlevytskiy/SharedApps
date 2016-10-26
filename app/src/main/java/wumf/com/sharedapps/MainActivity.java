@@ -52,7 +52,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView;
 import wumf.com.sharedapps.eventbus.ChangeAllFoldersFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.GetNewCountryEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
@@ -126,8 +125,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         appBarLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         tabLayout.setTabTextColors(Color.WHITE, Color.WHITE);
-
-        RealmRecyclerView realmRecyclerView = (RealmRecyclerView) findViewById(R.id.realm_recycler_view);
 
         gac = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
