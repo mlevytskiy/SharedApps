@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -48,6 +49,16 @@ public class SharedAppsAdapter extends BaseAdapter {
 
         vh.textView.setText(items.get(position));
         return view;
+    }
+
+    public void updateItems(List<String> folders) {
+        items.clear();
+        items.addAll(folders);
+        notifyDataSetChanged();
+    }
+
+    public void updateItems(String folder) {
+        updateItems(Collections.singletonList(folder));
     }
 
     static class ViewHolder {

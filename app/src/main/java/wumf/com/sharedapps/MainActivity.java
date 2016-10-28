@@ -52,7 +52,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import wumf.com.sharedapps.eventbus.ChangeAllFoldersFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.GetNewCountryEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromViber;
@@ -192,11 +191,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         } else {
             //do nothing
         }
-    }
-
-    @Subscribe
-    public void onEvent(ChangeAllFoldersFromFirebaseEvent event) {
-        Toast.makeText(this, "New Folder created", Toast.LENGTH_LONG).show();
     }
 
     @Subscribe

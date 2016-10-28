@@ -1,5 +1,6 @@
 package wumf.com.sharedapps.firebase;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -10,7 +11,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import wumf.com.sharedapps.eventbus.ChangeAllFoldersFromFirebaseEvent;
+import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 
 /**
  * Created by max on 22.09.16.
@@ -27,7 +32,7 @@ public class FavouriteAppsFirebase {
     }
 
     public static void addFolder(String uid, String path) {
-        if (path.contains(DELIMITER_FOR_FOLDER)) {
+        if (path.contains(DELIMITER_FOR_FOLDER)) { //TODO: folder inside another folder!
             String[] folders = path.split(DELIMITER_FOR_FOLDER);
             DatabaseReference ref = mainRef.child(uid).child("apps");
             for (String folderName : folders) {
@@ -36,7 +41,7 @@ public class FavouriteAppsFirebase {
             ref.setValue("folder");
         } else {
             String folderName = path;
-            mainRef.child(uid).child("apps").child(folderName).setValue("folder");
+            mainRef.child(uid).child("apps").child(folderName).setValue(new AppOrFolder(folderName));
         }
     }
 
@@ -45,9 +50,18 @@ public class FavouriteAppsFirebase {
         FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("apps").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Object value = dataSnapshot.getValue();
-                if (value != null) {
-                    EventBus.getDefault().post(new ChangeAllFoldersFromFirebaseEvent());
+                long count = dataSnapshot.getChildrenCount();
+                if (count != 0) {
+                    List<String> folders = new ArrayList<String>();
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        AppOrFolder appOrFolder = child.getValue(AppOrFolder.class);
+                        if ( !TextUtils.isEmpty(appOrFolder.getFolderName()) ) {
+                            folders.add(appOrFolder.getFolderName());
+                        } else {
+                            //do nothing
+                        }
+                    }
+                    EventBus.getDefault().post(new ChangeAllFoldersFromFirebaseEvent(folders));
                 }
             }
 

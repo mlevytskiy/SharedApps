@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wumf.com.appsprovider.App;
+import wumf.com.sharedapps.eventbus.ChangeAllFoldersFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.firebase.FavouriteAppsFirebase;
 
@@ -72,6 +73,7 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
     private AnimationDrawable frameReverseAnim;
     private String selectedPackageName;
     private boolean isDisableOpenMenuListener = false;
+    private SharedAppsAdapter adapter;
 
     private SpringFloatingActionMenu springFloatingActionMenu;
 
@@ -88,6 +90,11 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
     @Subscribe
     public void onEvent(ChangeTop6AppsEvent event) {
         fill(event.apps);
+    }
+
+    @Subscribe
+    public void onEvent(ChangeAllFoldersFromFirebaseEvent event) {
+        adapter.updateItems(event.folders);
     }
 
     private void fill(List<App> apps) {
@@ -107,7 +114,8 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
         mock.add("New folder");
         mock.add("3");
 
-        gridView.setAdapter(new SharedAppsAdapter(mock));
+        adapter = new SharedAppsAdapter(mock);
+        gridView.setAdapter(adapter);
 
         createFabReverseFrameAnim();
         fab = createFloatingActionButton();
