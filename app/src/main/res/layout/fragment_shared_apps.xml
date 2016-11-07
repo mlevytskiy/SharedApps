@@ -10,7 +10,8 @@
         android:id="@+id/grid_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="4" />
+        android:numColumns="4"
+        android:layout_margin="2dp" />
 
     <include
         layout="@layout/empty_view_shared_apps"

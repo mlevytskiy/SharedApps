@@ -1,12 +1,15 @@
-package wumf.com.sharedapps;
+package wumf.com.sharedapps.adapter;
 
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import wumf.com.sharedapps.R;
 
 /**
  * Created by max on 20.10.16.
@@ -15,6 +18,10 @@ import java.util.List;
 public class SharedAppsAdapter extends BaseAdapter {
 
     private List<String> items;
+
+    public SharedAppsAdapter() {
+        this.items = new ArrayList<>();
+    }
 
     public SharedAppsAdapter(List<String> items) {
         this.items = items;

@@ -30,13 +30,14 @@ import com.tiancaicc.springfloatingactionmenu.SpringFloatingActionMenu;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import wumf.com.appsprovider.App;
+import wumf.com.sharedapps.adapter.SharedAppsAdapter;
 import wumf.com.sharedapps.eventbus.ChangeAllFoldersFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.firebase.FavouriteAppsFirebase;
+import wumf.com.sharedapps.firebase.GetNewFolderNameCallback;
 
 /**
  * Created by max on 22.08.16.
@@ -109,12 +110,7 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
 
         GridView gridView = (GridView) view.findViewById(R.id.grid_view);
         gridView.setEmptyView(view.findViewById(R.id.empty_view_type_face_text_view));
-        List<String> mock = new ArrayList<>();
-        mock.add("Новая папка");
-        mock.add("New folder");
-        mock.add("3");
-
-        adapter = new SharedAppsAdapter(mock);
+        adapter = new SharedAppsAdapter();
         gridView.setAdapter(adapter);
 
         createFabReverseFrameAnim();
@@ -293,8 +289,13 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
             @Override
             public void run() {
                 if ( TextUtils.isEmpty(appPackage) ) {
-                    String uid = ((MainActivity) getActivity()).currentUser.getUid();
-                    FavouriteAppsFirebase.addFolder(uid, "New Folder");
+                    final String uid = ((MainActivity) getActivity()).currentUser.getUid();
+                    FavouriteAppsFirebase.getNewFolderName(uid, new GetNewFolderNameCallback() {
+                        @Override
+                        public void newFolderName(String name) {
+                            FavouriteAppsFirebase.addFolder(uid, name);
+                        }
+                    });
                 } else {
                     Toast.makeText(getContext(), "appPackage=" + appPackage, Toast.LENGTH_LONG).show();
                 }
