@@ -31,17 +31,51 @@ public class FavouriteAppsFirebase {
 
     }
 
+    public static void getNewFolderName(final String uid, final GetNewFolderNameCallback callback) {
+        mainRef.child(uid).child("nextfoldername").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot == null || dataSnapshot.getValue() == null) {
+                    callback.newFolderName("New Folder");
+                } else {
+                    String folderName = dataSnapshot.getValue().toString();
+                    callback.newFolderName(folderName);
+                }
+                mainRef.child(uid).child("nextfoldername").removeEventListener(this);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public static void addFolder(String uid, String path) {
+        String lastFolderName= "";
         if (path.contains(DELIMITER_FOR_FOLDER)) { //TODO: folder inside another folder!
             String[] folders = path.split(DELIMITER_FOR_FOLDER);
             DatabaseReference ref = mainRef.child(uid).child("apps");
             for (String folderName : folders) {
                 ref = ref.child(folderName);
+                lastFolderName = folderName;
             }
             ref.setValue("folder");
         } else {
-            String folderName = path;
-            mainRef.child(uid).child("apps").child(folderName).setValue(new AppOrFolder(folderName));
+            lastFolderName = path;
+            mainRef.child(uid).child("apps").child(lastFolderName).setValue(new AppOrFolder(lastFolderName));
+        }
+        if (lastFolderName.startsWith("New Folder")) {
+            String nextFolderName;
+            if ( TextUtils.equals("New Folder", lastFolderName) ) {
+                nextFolderName = "New Folder 1";
+            } else {
+                String[] tmp = lastFolderName.split(" ");
+                String numberStr = tmp[tmp.length-1];
+                int number = Integer.parseInt(numberStr);
+                nextFolderName = "New Folder " + (++number);
+            }
+            mainRef.child(uid).child("nextfoldername").setValue(nextFolderName);
         }
     }
 
