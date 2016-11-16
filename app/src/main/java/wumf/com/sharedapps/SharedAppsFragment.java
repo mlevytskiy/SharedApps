@@ -34,7 +34,7 @@ import java.util.List;
 
 import wumf.com.appsprovider.App;
 import wumf.com.sharedapps.adapter.SharedAppsAdapter;
-import wumf.com.sharedapps.eventbus.ChangeAllFoldersFromFirebaseEvent;
+import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.OnClickAppEvent;
 
@@ -93,8 +93,8 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
     }
 
     @Subscribe
-    public void onEvent(ChangeAllFoldersFromFirebaseEvent event) {
-        adapter.updateItems(event.folders);
+    public void onEvent(ChangeAllFoldersAndAppsFromFirebaseEvent event) {
+        adapter.updateItems(event.folders, event.apps);
     }
 
     private void fill(List<App> apps) {

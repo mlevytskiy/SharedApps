@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 if (user != null) {
                     UsersFirebase.listenPhoneNumber(currentUser.getUid());
                     UsersFirebase.listenCountryCode(currentUser.getUid());
-                    FavouriteAppsFirebase.listenFolders(currentUser.getUid());
+                    FavouriteAppsFirebase.listenFoldersAndApps(currentUser.getUid());
                 }
                 if (user != null) {
                     // User is signed in
@@ -223,13 +223,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         if (requestCode == REQUEST_CODE_CHIOCE_APP) {
             if (resultCode == RESULT_OK) {
                 final App app = AppFinderUtils.find(data.getExtras().getString(PACKAGE_NAME));
-                FirebaseIcons.getIconUrl(app.appPackage, new IconUrlCallback() {
-                    @Override
-                    public void receive(String icon) {
-                        FavouriteAppsFirebase.addApp(currentUser.getUid(), app.appPackage, app.name, icon);
-                    }
-                }, app.icon);
-
+                addAppInFirebase(app);
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -237,7 +231,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         ((OnBackPressedListener) adapter.mFragmentList.get(currentFragmentIndex)).doBack();
                     }
                 }, 300);
-
             } else {
                 //do nothing
             }
@@ -253,6 +246,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
+    private void addAppInFirebase(final App app) {
+        FirebaseIcons.getIconUrl(app.appPackage, new IconUrlCallback() {
+            @Override
+            public void receive(String icon) {
+                FavouriteAppsFirebase.addApp(currentUser.getUid(), app.appPackage, app.name, icon);
+            }
+        }, app.icon);
+    }
+
     @Subscribe
     public void onEvent(OnClickAppEvent event) {
         String packageName = event.appPackage;
@@ -265,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             Toast.makeText(MainActivity.this, "Something wrong", Toast.LENGTH_LONG).show();
             return;
         }
-        FavouriteAppsFirebase.addApp(currentUser.getUid(), packageName, app.name, "icon");
+        addAppInFirebase(app);
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {

@@ -14,7 +14,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-import wumf.com.sharedapps.eventbus.ChangeAllFoldersFromFirebaseEvent;
+import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.util.FirebaseUtil;
 
@@ -90,23 +90,25 @@ public class FavouriteAppsFirebase {
         }
     }
 
-    public static void listenFolders(String uid) {
-        Log.i("test", "listenFolders=" + uid);
+    public static void listenFoldersAndApps(String uid) {
+        Log.i("test", "listenFoldersAndApps=" + uid);
         FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("apps").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 long count = dataSnapshot.getChildrenCount();
                 if (count != 0) {
                     List<String> folders = new ArrayList<String>();
+                    List<AppOrFolder> apps = new ArrayList<AppOrFolder>();
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         AppOrFolder appOrFolder = child.getValue(AppOrFolder.class);
                         if ( !TextUtils.isEmpty(appOrFolder.getFolderName()) ) {
                             folders.add(appOrFolder.getFolderName());
                         } else {
-                            //do nothing
+                            apps.add(appOrFolder);
                         }
                     }
-                    EventBus.getDefault().post(new ChangeAllFoldersFromFirebaseEvent(folders));
+                    Log.i("test", "apps size=" + apps.size());
+                    EventBus.getDefault().post(new ChangeAllFoldersAndAppsFromFirebaseEvent(folders, apps));
                 }
             }
 
