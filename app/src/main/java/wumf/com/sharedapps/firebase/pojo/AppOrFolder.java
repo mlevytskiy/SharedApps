@@ -9,6 +9,7 @@ public class AppOrFolder {
     private String folderName;
     private String appName;
     private String appPackage;
+    private String icon;
 
     public AppOrFolder() {
         super();
@@ -40,5 +41,13 @@ public class AppOrFolder {
 
     public void setAppPackage(String appPackage) {
         this.appPackage = appPackage;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 }

@@ -52,14 +52,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import wumf.com.appsprovider.App;
 import wumf.com.sharedapps.eventbus.GetNewCountryEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromViber;
+import wumf.com.sharedapps.eventbus.OnClickAppEvent;
 import wumf.com.sharedapps.eventbus.SignInFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.SignOutFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.WeAlreadyGetCountryCodeFromSystemEvent;
 import wumf.com.sharedapps.firebase.FavouriteAppsFirebase;
+import wumf.com.sharedapps.firebase.FirebaseIcons;
+import wumf.com.sharedapps.firebase.IconUrlCallback;
 import wumf.com.sharedapps.firebase.UsersFirebase;
+import wumf.com.sharedapps.util.AppFinderUtils;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks {
@@ -217,20 +222,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if (requestCode == REQUEST_CODE_CHIOCE_APP) {
             if (resultCode == RESULT_OK) {
+                final App app = AppFinderUtils.find(data.getExtras().getString(PACKAGE_NAME));
+                FirebaseIcons.getIconUrl(app.appPackage, new IconUrlCallback() {
+                    @Override
+                    public void receive(String icon) {
+                        FavouriteAppsFirebase.addApp(currentUser.getUid(), app.appPackage, app.name, icon);
+                    }
+                }, app.icon);
+
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         ((OnBackPressedListener) adapter.mFragmentList.get(currentFragmentIndex)).doBack();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                String packageName = data.getExtras().getString(PACKAGE_NAME);
-                                Toast.makeText(MainActivity.this, packageName, Toast.LENGTH_LONG).show();
-                            }
-                        }, 300);
                     }
                 }, 300);
+
             } else {
                 //do nothing
             }
@@ -244,6 +251,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
             Toast.makeText(this, "onActivityResult", Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Subscribe
+    public void onEvent(OnClickAppEvent event) {
+        String packageName = event.appPackage;
+        if (currentUser == null) {
+            Toast.makeText(MainActivity.this, "You need registration", Toast.LENGTH_LONG).show();
+            return;
+        }
+        App app = AppFinderUtils.find(packageName);
+        if (app == null) {
+            Toast.makeText(MainActivity.this, "Something wrong", Toast.LENGTH_LONG).show();
+            return;
+        }
+        FavouriteAppsFirebase.addApp(currentUser.getUid(), packageName, app.name, "icon");
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {

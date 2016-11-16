@@ -36,8 +36,7 @@ import wumf.com.appsprovider.App;
 import wumf.com.sharedapps.adapter.SharedAppsAdapter;
 import wumf.com.sharedapps.eventbus.ChangeAllFoldersFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
-import wumf.com.sharedapps.firebase.FavouriteAppsFirebase;
-import wumf.com.sharedapps.firebase.GetNewFolderNameCallback;
+import wumf.com.sharedapps.eventbus.OnClickAppEvent;
 
 /**
  * Created by max on 22.08.16.
@@ -289,15 +288,17 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
             @Override
             public void run() {
                 if ( TextUtils.isEmpty(appPackage) ) {
-                    final String uid = ((MainActivity) getActivity()).currentUser.getUid();
-                    FavouriteAppsFirebase.getNewFolderName(uid, new GetNewFolderNameCallback() {
-                        @Override
-                        public void newFolderName(String name) {
-                            FavouriteAppsFirebase.addFolder(uid, name);
-                        }
-                    });
+                    Toast.makeText(getContext(), "This option don't work yet", Toast.LENGTH_LONG).show();
+                    //TODO : new folder functionality
+//                    final String uid = ((MainActivity) getActivity()).currentUser.getUid();
+//                    FavouriteAppsFirebase.getNewFolderName(uid, new GetNewFolderNameCallback() {
+//                        @Override
+//                        public void newFolderName(String name) {
+//                            FavouriteAppsFirebase.addFolder(uid, name);
+//                        }
+//                    });
                 } else {
-                    Toast.makeText(getContext(), "appPackage=" + appPackage, Toast.LENGTH_LONG).show();
+                    EventBus.getDefault().post(new OnClickAppEvent(appPackage));
                 }
             }
         }, 450);

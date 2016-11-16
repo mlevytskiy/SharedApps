@@ -32,7 +32,7 @@ public class AllAppsAdapter extends RecyclerView.Adapter<AppViewHolder> {
             @Override
             public void onClick(View view) {
                 App app = (App) view.getTag();
-                EventBus.getDefault().post(new OnClickAppEvent(app));
+                EventBus.getDefault().post(new OnClickAppEvent(app.appPackage));
             }
         });
         return new AppViewHolder(v);

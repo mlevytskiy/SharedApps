@@ -60,7 +60,7 @@ public class AllAppsActivity extends Activity {
     @Subscribe
     public void onEvent(OnClickAppEvent event) {
         Intent data = new Intent();
-        data.putExtra(MainActivity.PACKAGE_NAME, event.app.appPackage);
+        data.putExtra(MainActivity.PACKAGE_NAME, event.appPackage);
         setResult(RESULT_OK, data);
         finish();
     }
