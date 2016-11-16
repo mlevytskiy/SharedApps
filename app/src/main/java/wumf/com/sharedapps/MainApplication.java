@@ -2,7 +2,6 @@ package wumf.com.sharedapps;
 
 import android.app.Application;
 import android.os.Handler;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.FirebaseApp;
@@ -17,20 +16,24 @@ import java.util.List;
 import wumf.com.appsprovider.App;
 import wumf.com.appsprovider.AppProvider;
 import wumf.com.appsprovider.OnChangeLastInstalledAppsListener;
+import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
+import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 
 /**
  * Created by max on 01.09.16.
  */
 public class MainApplication extends Application {
 
-    public List<App> top6apps;
-    public List<App> allApps;
+    public List<App> top6apps = new ArrayList<>();
+    public List<App> allApps = new ArrayList<>();
     public GoogleSignInOptions gso;
     public String phoneNumber;
     public static MainApplication instance;
     public String country;
+
+    private AppProvider appProvider;
 
     public void onCreate() {
         super.onCreate();
@@ -42,19 +45,19 @@ public class MainApplication extends Application {
                 .requestEmail()
                 .build();
 
-        final AppProvider appProvider = AppProvider.instance.setContext(this)
+        appProvider = AppProvider.instance.setContext(this)
                 .setMyAppPackageName(getPackageName())
                 .setListener(new OnChangeLastInstalledAppsListener(6) {
                     @Override
                     public void change(List<App> apps) {
-                        top6apps = apps;
-                        Toast.makeText(getBaseContext(), "apps size=" + apps.size(), Toast.LENGTH_LONG).show();
+                        top6apps.clear();
+                        top6apps.addAll(apps);
                         EventBus.getDefault().post(new ChangeTop6AppsEvent(apps));
                     }
 
                     @Override
                     public void changeOtherApps(List<App> apps) {
-                        allApps = new ArrayList<App>();
+                        allApps.clear();
                         allApps.addAll(top6apps);
                         allApps.addAll(apps);
                     }
@@ -75,6 +78,15 @@ public class MainApplication extends Application {
 
         EventBus.getDefault().register(this);
 
+    }
+
+    @Subscribe
+    public void onEvent(ChangeAllFoldersAndAppsFromFirebaseEvent event) {
+        List<String> appPackages = new ArrayList<>();
+        for (AppOrFolder app : event.apps) {
+            appPackages.add(app.getAppPackage());
+        }
+        appProvider.updateAlreadySharedAppPackages(appPackages);
     }
 
     @Subscribe

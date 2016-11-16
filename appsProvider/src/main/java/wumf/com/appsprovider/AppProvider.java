@@ -35,6 +35,10 @@ public class AppProvider {
 
     private SaveIconUtils saveIconUtils;
     private FileGenerator fileGenerator;
+    private List<String> alreadyShareAppPackages = new ArrayList<>();
+
+    private List<App> limitedApps;
+    private List<App> otherApps;
 
     private AppProvider() { }
 
@@ -56,13 +60,58 @@ public class AppProvider {
         return this;
     }
 
+    public void updateAlreadySharedAppPackages(List<String> appPackages) {
+        alreadyShareAppPackages.clear();
+        alreadyShareAppPackages.addAll(appPackages);
+
+        List<App> newLimitedApps = new ArrayList<>();
+        List<App> newOtherApps = new ArrayList<>();
+        for (App app : limitedApps) {
+            if (appPackages.contains(app.appPackage)) {
+                //do nothing
+            } else {
+                newLimitedApps.add(app);
+            }
+        }
+
+        for (App app : otherApps) {
+            if (appPackages.contains(app.appPackage)) {
+                //do nothing
+            } else {
+                newOtherApps.add(app);
+            }
+        }
+
+        if (newLimitedApps.size() < limitedApps.size()) {
+            moveAppsToLimitedApps(limitedApps.size()-newLimitedApps.size(), newLimitedApps, newOtherApps);
+            listener.change(limitedApps);
+            listener.changeOtherApps(otherApps);
+        } else if (newOtherApps.size() != otherApps.size()) {
+            otherApps = newOtherApps;
+            listener.change(limitedApps);
+            listener.changeOtherApps(otherApps);
+        } else {
+            //do nothing
+        }
+
+    }
+
+    private void moveAppsToLimitedApps(int count, List<App> newLimitedApps, List<App> newOtherApps) {
+        for (int i = 0; i < count; i++) {
+            newLimitedApps.add(newOtherApps.get(0));
+            newOtherApps.remove(0);
+        }
+        limitedApps = newLimitedApps;
+        otherApps = newOtherApps;
+    }
+
     public AppProvider initBaseInfo() {
         //load all apps without label and icon
         List<ResolveInfo> resolveInfos = getResolveInfos();
         Map<String, ResolveInfo> map = new HashMap<>();
         List<App> apps = resolveInfoToApp(resolveInfos, map);
-        final List<App> limitedApps = new ArrayList<>();
-        final List<App> otherApps = new ArrayList<>();
+        limitedApps = new ArrayList<>();
+        otherApps = new ArrayList<>();
         for (int i = apps.size()-1; i >= apps.size()-listener.appsCount; i--) {
             limitedApps.add(apps.get(i));
         }
@@ -115,7 +164,8 @@ public class AppProvider {
                 for (App app : otherApps) {
                     ResolveInfo ri = listener.getMap().get(app.appPackage);
                     app.name = ri.loadLabel(pm).toString();
-                    app.iconWithBadQuality = app.icon = loadAndSaveIconInFile(pm, ri);
+                    app.iconWithBadQuality = loadAndSaveIconInFile(pm, ri);
+                    app.icon = loadAndSaveIconInFileGoodQuality(pm, ri);
 
                 }
                 return null;
