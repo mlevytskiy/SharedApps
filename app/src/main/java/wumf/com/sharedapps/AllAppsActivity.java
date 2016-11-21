@@ -42,9 +42,11 @@ public class AllAppsActivity extends Activity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                onBackPressed();
             }
         });
+
+        overridePendingTransition(R.anim.enter_show, R.anim.enter_hide);
     }
 
     public void onStart() {
@@ -63,6 +65,12 @@ public class AllAppsActivity extends Activity {
         data.putExtra(MainActivity.PACKAGE_NAME, event.appPackage);
         setResult(RESULT_OK, data);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.exit_show, R.anim.exit_hide);
     }
 
 }
