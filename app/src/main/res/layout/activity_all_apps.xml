@@ -17,6 +17,15 @@
         android:paddingRight="8dp"
         android:paddingLeft="8dp" />
 
+    <com.balysv.materialripple.MaterialRippleLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mrl_rippleColor="@android:color/black"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleFadeDuration="100"
+        app:mrl_rippleDuration="200">
+
     <com.github.omadahealth.typefaceview.TypefaceTextView
         android:id="@+id/close"
         android:clickable="true"
@@ -29,5 +38,7 @@
         android:textSize="20dp"
         app:tv_typeface="roboto_light"
         android:background="@drawable/button_selector" />
+
+    </com.balysv.materialripple.MaterialRippleLayout>
 
 </LinearLayout>

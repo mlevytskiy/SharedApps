@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.omadahealth.typefaceview.TypefaceTextView;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
@@ -53,7 +54,13 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
                 getActivity().startActivity(new Intent(getContext(), ViberTransparentActivity.class));
             }
         });
-
+        TypefaceTextView followUnfollowPeople = (TypefaceTextView) view.findViewById(R.id.follow_unfollow);
+        followUnfollowPeople.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().startActivity(new Intent(getActivity(), FollowUnfollowActivity.class));
+            }
+        });
         return view;
     }
 

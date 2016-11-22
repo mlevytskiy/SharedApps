@@ -157,4 +157,61 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="8dp" />
+
+    <com.balysv.materialripple.MaterialRippleLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mrl_rippleColor="@android:color/black"
+        app:mrl_rippleOverlay="true">
+
+        <com.github.omadahealth.typefaceview.TypefaceTextView
+            android:id="@+id/follow_unfollow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/sign_out_normal"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingBottom="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:text="Follow/unfollow people"
+            android:textColor="@color/sign_out_text_color"
+            android:textSize="20dp"
+            app:tv_typeface="roboto_light"/>
+
+    </com.balysv.materialripple.MaterialRippleLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="8dp" />
+
+    <com.balysv.materialripple.MaterialRippleLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mrl_rippleColor="@android:color/black"
+        app:mrl_rippleOverlay="true">
+
+        <com.github.omadahealth.typefaceview.TypefaceTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/sign_out_normal"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingBottom="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:text="Attache tag for my profile"
+            android:textColor="@color/sign_out_text_color"
+            android:textSize="20dp"
+            app:tv_typeface="roboto_light"/>
+
+    </com.balysv.materialripple.MaterialRippleLayout>
+
 </merge>

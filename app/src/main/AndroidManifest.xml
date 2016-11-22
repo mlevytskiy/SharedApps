@@ -33,6 +33,8 @@
 
         <activity android:name=".AllAppsActivity" />
 
+        <activity android:name=".FollowUnfollowActivity" />
+
         <activity android:name=".ViberTransparentActivity" android:theme="@style/Theme.Transparent" />
 
     </application>
