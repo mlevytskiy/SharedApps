@@ -329,6 +329,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     return;
                 }
                 Location location = LocationServices.FusedLocationApi.getLastLocation(gac);
+                if (location == null) {
+                    return;
+                }
                 Geocoder gcd = new Geocoder(MainActivity.this, Locale.getDefault());
                 try {
                     List<Address> addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
