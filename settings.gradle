@@ -1,1 +1,1 @@
-include ':app', ':library', ':appsProvider'
+include ':app', ':library', ':appsProvider', ':contactsProvider'

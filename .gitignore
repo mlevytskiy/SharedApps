@@ -10,3 +10,5 @@
 /library/build/
 libs/
 /appsProvider/build/
+src/main/java/
+src/main/res/drawable/
