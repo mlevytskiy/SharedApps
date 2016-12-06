@@ -210,6 +210,9 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
                 if (mAnimating) {
                     return;
                 }
+                if (disableOpenMenuCapability) {
+                    return;
+                }
                 if (mOnFabClickListener != null) {
                     mOnFabClickListener.onClcik();
                 }
@@ -435,14 +438,15 @@ public class SpringFloatingActionMenu extends FrameLayout implements ViewTreeObs
         disableOpenMenuCapability = true;
     }
 
+    public boolean isDisableOpenMenuCapability() {
+        return disableOpenMenuCapability;
+    }
+
     public void enableOpenMenuCapability() {
         disableOpenMenuCapability = false;
     }
 
     public void showMenu() {
-        if (disableOpenMenuCapability) {
-            return;
-        }
         Log.d(TAG, "showMenu");
         switch (mAnimationType) {
             case ANIMATION_TYPE_BLOOM:

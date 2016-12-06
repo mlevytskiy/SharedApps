@@ -41,8 +41,8 @@ public class SharedAppsAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int i) {
-        return null;
+    public AppOrFolder getItem(int i) {
+        return apps.get(i);
     }
 
     @Override

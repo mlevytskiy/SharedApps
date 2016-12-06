@@ -1,7 +1,9 @@
 package wumf.com.sharedapps;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Handler;
+import android.support.multidex.MultiDex;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.FirebaseApp;
@@ -78,6 +80,12 @@ public class MainApplication extends Application {
 
         EventBus.getDefault().register(this);
 
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     @Subscribe

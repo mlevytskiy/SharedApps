@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ import wumf.com.sharedapps.adapter.SharedAppsAdapter;
 import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.OnClickAppEvent;
+import wumf.com.sharedapps.firebase.FavouriteAppsFirebase;
 
 /**
  * Created by max on 22.08.16.
@@ -111,6 +113,23 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
         gridView.setEmptyView(view.findViewById(R.id.empty_view_type_face_text_view));
         adapter = new SharedAppsAdapter();
         gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(view.getContext(), "test", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String appPackage = adapter.getItem(i).getAppPackage();
+                String uid = ((MainActivity) getActivity()).currentUser.getUid();
+                FavouriteAppsFirebase.removeApp(uid, appPackage);
+                Toast.makeText(view.getContext(), "removed", Toast.LENGTH_LONG).show();
+                return true;
+            }
+        });
 
         createFabReverseFrameAnim();
         fab = createFloatingActionButton();
@@ -209,7 +228,7 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
     @Override
     public void hide() {
 
-        if (fab.getVisibility() == View.GONE) {
+        if (springFloatingActionMenu.isDisableOpenMenuCapability()) {
             return;
         }
 
@@ -222,12 +241,11 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
         anim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                //do nothing
+//
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-
                 fab.setVisibility(View.GONE);
             }
 
@@ -246,8 +264,6 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
         ScaleAnimation anim = new ScaleAnimation(0, 1, 0, 1, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         anim.setDuration(200);
         anim.setFillAfter(true);
-        fab.setImageDrawable(frameAnim);
-        fab.setVisibility(View.VISIBLE);
         anim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {

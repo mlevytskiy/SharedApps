@@ -42,6 +42,10 @@ public class FavouriteAppsFirebase {
 
     }
 
+    public static void removeApp(final String uid, String packageName) {
+        mainRef.child(uid).child("apps").child(FirebaseUtil.createIdFromPackageName(packageName)).setValue(null);
+    }
+
     public static void getNewFolderName(final String uid, final GetNewFolderNameCallback callback) {
         mainRef.child(uid).child("nextfoldername").addValueEventListener(new ValueEventListener() {
             @Override
@@ -100,11 +104,15 @@ public class FavouriteAppsFirebase {
                     List<String> folders = new ArrayList<String>();
                     List<AppOrFolder> apps = new ArrayList<AppOrFolder>();
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
-                        AppOrFolder appOrFolder = child.getValue(AppOrFolder.class);
-                        if ( !TextUtils.isEmpty(appOrFolder.getFolderName()) ) {
-                            folders.add(appOrFolder.getFolderName());
-                        } else {
-                            apps.add(appOrFolder);
+                        try {
+                            AppOrFolder appOrFolder = child.getValue(AppOrFolder.class);
+                            if ( !TextUtils.isEmpty(appOrFolder.getFolderName()) ) {
+                                folders.add(appOrFolder.getFolderName());
+                            } else {
+                                apps.add(appOrFolder);
+                            }
+                        } catch (Exception e) {
+                            continue;
                         }
                     }
                     Log.i("test", "apps size=" + apps.size());
