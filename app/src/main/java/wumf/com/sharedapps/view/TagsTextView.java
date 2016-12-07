@@ -9,7 +9,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +21,7 @@ import wumf.com.sharedapps.R;
 public class TagsTextView extends com.github.omadahealth.typefaceview.TypefaceTextView {
 
     private List<String> tags;
+    private OnClickTag onClickTag;
 
     public TagsTextView(Context context) {
         super(context);
@@ -36,6 +36,11 @@ public class TagsTextView extends com.github.omadahealth.typefaceview.TypefaceTe
     }
 
     public void autocomplete(String text) {
+
+        if (text.length() < 3) {
+            setText(null);
+            return;
+        }
 
         List<String> newTags = filterTags(text);
 
@@ -53,7 +58,7 @@ public class TagsTextView extends com.github.omadahealth.typefaceview.TypefaceTe
         int offset;
 
         stringBuilder.append(" ");
-        RoundedBackgroundSpan roundedBackgroundSpan = new RoundedBackgroundSpan(Color.parseColor("#f7e0e3"),
+        RoundedBackgroundSpan roundedBackgroundSpan = new RoundedBackgroundSpan(Color.parseColor("#ececf9"),         //"#f7e0e3"),
                 getResources().getDimension(R.dimen.round_corner));
         stringBuilder.setSpan(roundedBackgroundSpan, 0, 1, SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -68,7 +73,9 @@ public class TagsTextView extends com.github.omadahealth.typefaceview.TypefaceTe
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(view.getContext(), tag, Toast.LENGTH_LONG).show();
+                    if (onClickTag != null) {
+                        onClickTag.onClick(tag);
+                    }
                 }
 
                 @Override
@@ -87,6 +94,10 @@ public class TagsTextView extends com.github.omadahealth.typefaceview.TypefaceTe
         setText(stringBuilder);
     }
 
+    public void setOnTagListener(OnClickTag onTagListener) {
+        this.onClickTag = onTagListener;
+    }
+
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
@@ -94,6 +105,9 @@ public class TagsTextView extends com.github.omadahealth.typefaceview.TypefaceTe
     private List<String> filterTags(String text) {
         List<String> newTags = new ArrayList<>();
         for (String tag : tags) {
+            if (tag.equals(text)) {
+                continue;
+            }
             if (hasSubstring(text, tag)) {
                 newTags.add(0, tag);
             } else if (startWith(text, tag)) {

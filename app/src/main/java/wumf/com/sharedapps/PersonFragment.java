@@ -66,7 +66,9 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
         attacheTagForMyProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().startActivity(new Intent(getActivity(), AttacheTagForMyProfileActivity.class));
+                String uid = ((MainActivity) getActivity()).currentUser.getUid();
+                getActivity().startActivity(new Intent(getActivity(),
+                        AttacheTagForMyProfileActivity.class).putExtra(AttacheTagForMyProfileActivity.KEY_USER_UID, uid));
             }
         });
 
