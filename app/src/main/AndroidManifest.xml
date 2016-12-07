@@ -35,6 +35,9 @@
 
         <activity android:name=".FollowUnfollowActivity" />
 
+        <activity android:name=".AttacheTagForMyProfileActivity"
+                  android:windowSoftInputMode="stateVisible" />
+
         <activity android:name=".ViberTransparentActivity" android:theme="@style/Theme.Transparent" />
 
     </application>

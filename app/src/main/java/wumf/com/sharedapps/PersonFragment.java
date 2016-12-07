@@ -61,6 +61,15 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
                 getActivity().startActivity(new Intent(getActivity(), FollowUnfollowActivity.class));
             }
         });
+
+        TypefaceTextView attacheTagForMyProfile = (TypefaceTextView) view.findViewById(R.id.attache_tag);
+        attacheTagForMyProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().startActivity(new Intent(getActivity(), AttacheTagForMyProfileActivity.class));
+            }
+        });
+
         return view;
     }
 
