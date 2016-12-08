@@ -100,13 +100,13 @@ public class FavouriteAppsFirebase {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 long count = dataSnapshot.getChildrenCount();
+                List<String> folders = new ArrayList<String>();
+                List<AppOrFolder> apps = new ArrayList<AppOrFolder>();
                 if (count != 0) {
-                    List<String> folders = new ArrayList<String>();
-                    List<AppOrFolder> apps = new ArrayList<AppOrFolder>();
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         try {
                             AppOrFolder appOrFolder = child.getValue(AppOrFolder.class);
-                            if ( !TextUtils.isEmpty(appOrFolder.getFolderName()) ) {
+                            if (!TextUtils.isEmpty(appOrFolder.getFolderName())) {
                                 folders.add(appOrFolder.getFolderName());
                             } else {
                                 apps.add(appOrFolder);
@@ -115,9 +115,8 @@ public class FavouriteAppsFirebase {
                             continue;
                         }
                     }
-                    Log.i("test", "apps size=" + apps.size());
-                    EventBus.getDefault().post(new ChangeAllFoldersAndAppsFromFirebaseEvent(folders, apps));
                 }
+                EventBus.getDefault().post(new ChangeAllFoldersAndAppsFromFirebaseEvent(folders, apps));
             }
 
             @Override
