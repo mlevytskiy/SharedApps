@@ -2,10 +2,14 @@ package wumf.com.sharedapps;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ns.developer.tagview.entity.Tag;
 import com.ns.developer.tagview.widget.TagCloudLinkView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by max on 11.12.16.
@@ -18,31 +22,37 @@ public class TagCloudActivity extends Activity {
 
         setContentView(R.layout.activity_tag_cloud);
 
-        TagCloudLinkView tagCloudLinkView = (TagCloudLinkView) findViewById(R.id.tag_cloud_link_view);
+        EditText editText = (EditText) findViewById(R.id.edit_text);
 
-        tagCloudLinkView.add(getTag("test1"));
-        tagCloudLinkView.add(getTag("test2"));
-        tagCloudLinkView.add(getTag("test3"));
-        tagCloudLinkView.add(getTag("test4"));
-        tagCloudLinkView.add(getTag("test5"));
-        tagCloudLinkView.add(getTag("test6"));
-        tagCloudLinkView.add(getTag("test7"));
-        tagCloudLinkView.add(getTag("test8"));
-        tagCloudLinkView.add(getTag("test9"));
-        tagCloudLinkView.add(getTag("test10"));
-        tagCloudLinkView.add(getTag("test11"));
+        TagCloudLinkView tagCloudLinkView = (TagCloudLinkView) findViewById(R.id.tag_cloud_link_view);
+        tagCloudLinkView.enableAutocompleteMode(editText);
+
+        List<String> tags = new ArrayList<>();
+        tags.add("test1");
+        tags.add("test2");
+        tags.add("test3");
+        tags.add("test4");
+        tags.add("test5");
+        tags.add("test6");
+        tags.add("test7");
+        tags.add("test8");
+        tags.add("test9");
+        tags.add("test10");
+        tags.add("test11");
+
+        tagCloudLinkView.setAll(tags);
 
         tagCloudLinkView.setOnTagDeleteListener(new TagCloudLinkView.OnTagDeleteListener() {
             @Override
-            public void onTagDeleted(Tag tag, int position) {
-                Toast.makeText(TagCloudActivity.this, tag.getText() + " deleted", Toast.LENGTH_LONG).show();
+            public void onTagDeleted(String tag, int position) {
+                Toast.makeText(TagCloudActivity.this, tag + " deleted", Toast.LENGTH_LONG).show();
             }
         });
 
         tagCloudLinkView.setOnTagSelectListener(new TagCloudLinkView.OnTagSelectListener() {
             @Override
-            public void onTagSelected(Tag tag, int position) {
-                Toast.makeText(TagCloudActivity.this, tag.getText(), Toast.LENGTH_LONG).show();
+            public void onTagSelected(String tag, int position) {
+                Toast.makeText(TagCloudActivity.this, tag, Toast.LENGTH_LONG).show();
             }
         });
 

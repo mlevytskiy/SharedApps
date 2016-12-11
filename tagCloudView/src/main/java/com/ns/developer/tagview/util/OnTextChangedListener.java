@@ -1,4 +1,4 @@
-package wumf.com.sharedapps.util;
+package com.ns.developer.tagview.util;
 
 import android.text.Editable;
 import android.text.TextWatcher;

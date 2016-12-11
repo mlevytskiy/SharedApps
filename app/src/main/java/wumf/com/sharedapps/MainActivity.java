@@ -156,7 +156,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     UsersFirebase.listenPhoneNumber(uid);
                     UsersFirebase.listenCountryCode(uid);
                     FavouriteAppsFirebase.listenFoldersAndApps(uid);
-                    TagsFirebase.listenAllTags();
                     TagsFirebase.listenMyTags(uid);
                 }
                 if (user != null) {

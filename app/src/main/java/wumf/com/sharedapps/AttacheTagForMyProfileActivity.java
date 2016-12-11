@@ -8,20 +8,13 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.ns.developer.tagview.widget.TagCloudLinkView;
 import com.sdsmdg.tastytoast.TastyToast;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import wumf.com.sharedapps.eventbus.ChangeAllTagsEvent;
 import wumf.com.sharedapps.firebase.TagsFirebase;
-import wumf.com.sharedapps.util.OnTextChangedListener;
 import wumf.com.sharedapps.view.CustomTopBar;
-import wumf.com.sharedapps.view.OnClickTag;
-import wumf.com.sharedapps.view.TagsTextView;
 
 /**
  * Created by max on 07.12.16.
@@ -32,16 +25,9 @@ public class AttacheTagForMyProfileActivity extends Activity {
     public static final String KEY_USER_UID = "uid";
 
     private String uid;
-    private TagsTextView tagsTextView;
+    private TagCloudLinkView tagsTextView;
     private EditText editText;
     private View attacheTag;
-    private List<String> mockTags = new ArrayList<>();
-    {
-        mockTags.add("KievAndroidDevClub");
-        mockTags.add("animals");
-        mockTags.add("english");
-        mockTags.add("some_tag");
-    }
 
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -67,46 +53,34 @@ public class AttacheTagForMyProfileActivity extends Activity {
                     public void run() {
                         TastyToast.makeText(view.getContext(), "Successful!", TastyToast.LENGTH_LONG,
                                 TastyToast.SUCCESS);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                AttacheTagForMyProfileActivity.this.finish();
+                            }
+                        }, 1000);
                     }
                 }, 2000);
 
             }
         });
 
-        tagsTextView = (TagsTextView) findViewById(R.id.tags_text_view);
-        tagsTextView.setTags(mockTags);
-
+        tagsTextView = (TagCloudLinkView) findViewById(R.id.tags_text_view);
         editText = (EditText) findViewById(R.id.edit_text);
-        editText.addTextChangedListener(new OnTextChangedListener() {
+        tagsTextView.enableAutocompleteMode(editText);
+        TagsFirebase.listenAllTags(new OnChangeAllTagsListener() {
             @Override
-            public void onTextChanged(String oldText, String newText) {
-                tagsTextView.autocomplete(newText);
+            public void onChange(List<String> tags) {
+                tagsTextView.setAll(tags);
             }
         });
-//        ((ListView) findViewById(R.id.list_view)).setAdapter(new FollowUnfollowPeopleAdapter());
-    }
-
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-        tagsTextView.setOnTagListener(new OnClickTag() {
+        tagsTextView.setOnTagSelectListener(new TagCloudLinkView.OnTagSelectListener() {
             @Override
-            public void onClick(String tag) {
+            public void onTagSelected(String tag, int position) {
                 editText.getText().clear();
                 editText.append(tag);
             }
         });
-    }
-
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-        tagsTextView.setOnTagListener(null);
-    }
-
-    @Subscribe
-    public void onEvent(ChangeAllTagsEvent event) {
-        //todo: replace mock data with real data from firebase
     }
 
     private void hideKeyboard() {

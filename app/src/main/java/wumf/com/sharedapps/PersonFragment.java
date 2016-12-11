@@ -12,7 +12,6 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.firebase.auth.FirebaseUser;
-import com.ns.developer.tagview.entity.Tag;
 import com.ns.developer.tagview.widget.TagCloudLinkView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -80,15 +79,15 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
 
         tagCloudLinkView.setOnTagDeleteListener(new TagCloudLinkView.OnTagDeleteListener() {
             @Override
-            public void onTagDeleted(Tag tag, int position) {
+            public void onTagDeleted(String tag, int position) {
                 String uid = ((MainActivity) getActivity()).currentUser.getUid();
-                TagsFirebase.removeTag(uid, tag.getText());
+                TagsFirebase.removeTag(uid, tag);
             }
         });
 
         tagCloudLinkView.setOnTagSelectListener(new TagCloudLinkView.OnTagSelectListener() {
             @Override
-            public void onTagSelected(Tag tag, int position) {
+            public void onTagSelected(String tag, int position) {
                 //do nothing
             }
         });

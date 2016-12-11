@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -26,12 +27,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ns.developer.tagview.R;
-import com.ns.developer.tagview.entity.Tag;
+import com.ns.developer.tagview.util.AutocompleteHelper;
+import com.ns.developer.tagview.util.OnTextChangedListener;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,9 +58,10 @@ public class TagCloudLinkView extends RelativeLayout {
     private static final int DEFAULT_TAG_TEXT_COLOR = Color.parseColor("#1a1a1a");
     private static final int DEFAULT_DELETABLE_TEXT_COLOR = Color.parseColor("#1a1a1a");
     private static final String DEFAULT_DELETABLE_STRING = "×";
+    private static final int AUTOCOMPLETE_MIN_COUNT = 3;
 
     /** tag list */
-    private List<Tag> mTags = new ArrayList<Tag>();
+    private List<String> mTags = new ArrayList<String>();
 
     /**
      * System Service
@@ -87,6 +92,10 @@ public class TagCloudLinkView extends RelativeLayout {
     private int mTagLayoutColor;
     private int mTagTextColor;
     private boolean mIsDeletable;
+
+    private boolean isAutoCompleteMode = false;
+    private String lastAutocompleteText = null;
+    private List<String> autocompleteAllTags = new ArrayList<>();
 
     /**
      * constructor
@@ -168,29 +177,40 @@ public class TagCloudLinkView extends RelativeLayout {
         return mHeight;
     }
 
-    /**
-     * add Tag
-     * @param tag
-     */
-    public void add(Tag tag) {
-        mTags.add(tag);
-    }
-
-    public void add(String tag) {
-        add(createTagFromStr(tag));
-    }
-
     public void setAll(List<String> tags) {
         mTags.clear();
-        for (String item : tags) {
-            add(item);
+
+        if (isAutoCompleteMode) {
+            autocompleteAllTags.clear();
         }
+
+        (isAutoCompleteMode ? autocompleteAllTags : mTags).addAll(tags);
+
+        if (isAutoCompleteMode) {
+            if ( TextUtils.isEmpty(lastAutocompleteText) ) {
+                //do nothing
+            } else {
+                mTags = autocompleFilter(lastAutocompleteText, AUTOCOMPLETE_MIN_COUNT);
+            }
+        }
+
         drawTags();
     }
 
-    private Tag createTagFromStr(String str) {
-        Tag tag = new Tag(str.hashCode(), str);
-        return tag;
+    private List<String> autocompleFilter(String text, int minCount) {
+        return AutocompleteHelper.filter(autocompleteAllTags, text, minCount);
+    }
+
+    private void setAutocompleteText(String text) {
+        lastAutocompleteText = text;
+        mTags = autocompleFilter(text, AUTOCOMPLETE_MIN_COUNT);
+        drawTags();
+    }
+
+    public void enableAutocompleteMode(EditText editText) {
+        isAutoCompleteMode = true;
+        mIsDeletable = false;
+        editText.addTextChangedListener(new CustomOnChangeTextListener(this));
     }
 
     /**
@@ -214,9 +234,9 @@ public class TagCloudLinkView extends RelativeLayout {
 
         // List Index
         int listIndex = 0;
-        for (Tag item : mTags) {
+        for (String item : mTags) {
             final int position = listIndex;
-            final Tag tag = item;
+            final String tag = item;
 
             // inflate tag layout
             View tagLayout = (View) mInflater.inflate(R.layout.tag, null);
@@ -225,7 +245,7 @@ public class TagCloudLinkView extends RelativeLayout {
 
             // tag text
             TextView tagView = (TextView) tagLayout.findViewById(R.id.tag_txt);
-            tagView.setText(tag.getText());
+            tagView.setText(tag);
             tagView.setPadding(INNER_VIEW_PADDING, INNER_VIEW_PADDING, INNER_VIEW_PADDING, INNER_VIEW_PADDING);
             tagView.setTextColor(mTagTextColor);
             tagView.setOnClickListener(new OnClickListener() {
@@ -238,7 +258,7 @@ public class TagCloudLinkView extends RelativeLayout {
             });
 
             // calculate　of tag layout width
-            float tagWidth = tagView.getPaint().measureText(tag.getText())
+            float tagWidth = tagView.getPaint().measureText(tag)
                     + INNER_VIEW_PADDING * 2;  // tagView padding (left & right)
 
             // deletable text
@@ -250,7 +270,7 @@ public class TagCloudLinkView extends RelativeLayout {
                     @Override
                     public void onClick(View v) {
                         if (mDeleteListener != null) {
-                            Tag targetTag = tag;
+                            String targetTag = tag;
                             TagCloudLinkView.this.remove(position);
                             mDeleteListener.onTagDeleted(targetTag, position);
                         }
@@ -287,6 +307,10 @@ public class TagCloudLinkView extends RelativeLayout {
 
         LayoutParams tagParams = new LayoutParams(HEIGHT_WC, HEIGHT_WC);
         tagParams.setMargins(0, 0, 0, 0);
+
+        if (isAutoCompleteMode) {
+            return;
+        }
 
         int tagWidth = 50; //25dp
 
@@ -325,14 +349,6 @@ public class TagCloudLinkView extends RelativeLayout {
     }
 
     /**
-     * get tag list
-     * @return mTags TagObject List
-     */
-    public List<Tag> getTags() {
-        return mTags;
-    }
-
-    /**
      * remove tag
      *
      * @param position
@@ -366,18 +382,36 @@ public class TagCloudLinkView extends RelativeLayout {
      * listener for tag select
      */
     public interface OnTagSelectListener {
-        void onTagSelected(Tag tag, int position);
+        void onTagSelected(String tag, int position);
     }
 
     /**
      * listener for tag delete
      */
     public interface OnTagDeleteListener {
-        void onTagDeleted(Tag tag, int position);
+        void onTagDeleted(String tag, int position);
     }
 
     public interface OnAddTagListener {
         void onAddTag();
+    }
+
+    private static class CustomOnChangeTextListener extends OnTextChangedListener {
+
+        private WeakReference<TagCloudLinkView> reference;
+
+        public CustomOnChangeTextListener(TagCloudLinkView tagCloudLinkView) {
+            reference = new WeakReference<TagCloudLinkView>(tagCloudLinkView);
+        }
+
+        @Override
+        public void onTextChanged(String oldText, String newText) {
+            TagCloudLinkView tagCloudLinkView = reference.get();
+            if ( tagCloudLinkView != null ) {
+                tagCloudLinkView.setAutocompleteText(newText);
+            }
+        }
+
     }
 
 }

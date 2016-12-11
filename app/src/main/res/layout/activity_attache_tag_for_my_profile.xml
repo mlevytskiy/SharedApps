@@ -59,7 +59,7 @@
 
     </LinearLayout>
 
-    <wumf.com.sharedapps.view.TagsTextView
+    <com.ns.developer.tagview.widget.TagCloudLinkView
         android:id="@+id/tags_text_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"

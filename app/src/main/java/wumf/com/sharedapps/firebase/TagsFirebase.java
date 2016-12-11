@@ -11,7 +11,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-import wumf.com.sharedapps.eventbus.ChangeAllTagsEvent;
+import wumf.com.sharedapps.OnChangeAllTagsListener;
 import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 
 /**
@@ -49,7 +49,7 @@ public class TagsFirebase {
         });
     }
 
-    public static void listenAllTags() {
+    public static void listenAllTags(final OnChangeAllTagsListener listener) {
         tagsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -61,7 +61,7 @@ public class TagsFirebase {
                         tags.add(tag);
                     }
                 }
-                EventBus.getDefault().post(new ChangeAllTagsEvent(tags));
+                listener.onChange(tags);
             }
 
             @Override

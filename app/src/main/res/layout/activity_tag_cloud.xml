@@ -8,6 +8,11 @@
     android:background="@android:color/white"
     android:orientation="vertical">
 
+    <EditText
+        android:id="@+id/edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <com.ns.developer.tagview.widget.TagCloudLinkView
         android:id="@+id/tag_cloud_link_view"
         android:layout_width="match_parent"
