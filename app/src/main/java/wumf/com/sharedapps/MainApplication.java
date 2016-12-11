@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 import android.support.multidex.MultiDex;
-import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.FirebaseApp;
@@ -20,8 +19,6 @@ import wumf.com.appsprovider.App;
 import wumf.com.appsprovider.AppProvider;
 import wumf.com.appsprovider.OnChangeLastInstalledAppsListener;
 import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
-import wumf.com.sharedapps.eventbus.ChangeAllTagsEvent;
-import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
@@ -31,8 +28,6 @@ import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
  */
 public class MainApplication extends Application {
 
-    public List<String> allTags = new ArrayList<>();
-    public List<String> myTags = new ArrayList<>();
     public List<App> top6apps = new ArrayList<>();
     public List<App> allApps = new ArrayList<>();
     public GoogleSignInOptions gso;
@@ -105,17 +100,6 @@ public class MainApplication extends Application {
     @Subscribe
     public void onEvent(NewCountryCodeFromFirebaseEvent event) {
         country = event.countryCode;
-    }
-
-    @Subscribe
-    public void onEvent(ChangeAllTagsEvent event) {
-        allTags = event.tags;
-    }
-
-    @Subscribe
-    public void onEvent(ChangeMyTagsEvent event) {
-        Log.i("test", "onEvent ChangeMyTagsEvent");
-        myTags = event.tags;
     }
 
 }

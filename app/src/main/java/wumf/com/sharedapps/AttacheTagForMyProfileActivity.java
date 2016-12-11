@@ -10,9 +10,13 @@ import android.widget.EditText;
 
 import com.sdsmdg.tastytoast.TastyToast;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import wumf.com.sharedapps.eventbus.ChangeAllTagsEvent;
 import wumf.com.sharedapps.firebase.TagsFirebase;
 import wumf.com.sharedapps.util.OnTextChangedListener;
 import wumf.com.sharedapps.view.CustomTopBar;
@@ -84,6 +88,7 @@ public class AttacheTagForMyProfileActivity extends Activity {
 
     public void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
         tagsTextView.setOnTagListener(new OnClickTag() {
             @Override
             public void onClick(String tag) {
@@ -95,7 +100,13 @@ public class AttacheTagForMyProfileActivity extends Activity {
 
     public void onStop() {
         super.onStop();
+        EventBus.getDefault().unregister(this);
         tagsTextView.setOnTagListener(null);
+    }
+
+    @Subscribe
+    public void onEvent(ChangeAllTagsEvent event) {
+        //todo: replace mock data with real data from firebase
     }
 
     private void hideKeyboard() {
