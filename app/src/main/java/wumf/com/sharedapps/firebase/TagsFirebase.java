@@ -28,6 +28,11 @@ public class TagsFirebase {
         userssRef.child(uid).child("myTags").runTransaction(new AttachStringToListTransaction(tag));
     }
 
+    public static void removeTag(final String uid, final String tag) {
+        tagsRef.child(tag).child("userIds").runTransaction(new RemoveStringFromListTransaction(uid));
+        userssRef.child(uid).child("myTags").runTransaction(new RemoveStringFromListTransaction(tag));
+    }
+
     public static void listenMyTags(String uid) {
         userssRef.child(uid).child("myTags").addValueEventListener(new ValueEventListener() {
             @Override

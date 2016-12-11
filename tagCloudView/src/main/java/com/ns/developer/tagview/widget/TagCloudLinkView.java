@@ -180,7 +180,8 @@ public class TagCloudLinkView extends RelativeLayout {
         add(createTagFromStr(tag));
     }
 
-    public void addAll(List<String> tags) {
+    public void setAll(List<String> tags) {
+        mTags.clear();
         for (String item : tags) {
             add(item);
         }

@@ -12,6 +12,7 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.firebase.auth.FirebaseUser;
+import com.ns.developer.tagview.entity.Tag;
 import com.ns.developer.tagview.widget.TagCloudLinkView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -24,6 +25,7 @@ import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.SignInFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.SignOutFromFirebaseEvent;
+import wumf.com.sharedapps.firebase.TagsFirebase;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.view.MyAccountView;
 
@@ -66,8 +68,33 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
             }
         });
 
-        attacheTagForMyProfile = (TypefaceTextView) view.findViewById(R.id.attache_tag);
         tagCloudLinkView = (TagCloudLinkView) view.findViewById(R.id.tags_text_view);
+        tagCloudLinkView.setOnAddTagListener(new TagCloudLinkView.OnAddTagListener() {
+            @Override
+            public void onAddTag() {
+                String uid = ((MainActivity) getActivity()).currentUser.getUid();
+                getActivity().startActivity(new Intent(getActivity(),
+                        AttacheTagForMyProfileActivity.class).putExtra(AttacheTagForMyProfileActivity.KEY_USER_UID, uid));
+            }
+        });
+
+        tagCloudLinkView.setOnTagDeleteListener(new TagCloudLinkView.OnTagDeleteListener() {
+            @Override
+            public void onTagDeleted(Tag tag, int position) {
+                String uid = ((MainActivity) getActivity()).currentUser.getUid();
+                TagsFirebase.removeTag(uid, tag.getText());
+            }
+        });
+
+        tagCloudLinkView.setOnTagSelectListener(new TagCloudLinkView.OnTagSelectListener() {
+            @Override
+            public void onTagSelected(Tag tag, int position) {
+                //do nothing
+            }
+        });
+
+        attacheTagForMyProfile = (TypefaceTextView) view.findViewById(R.id.attache_tag);
+
         attacheTagForMyProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -140,7 +167,7 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
             tagCloudLinkView.setVisibility(View.GONE);
             attacheTagForMyProfile.setVisibility(View.VISIBLE);
         } else {
-            tagCloudLinkView.addAll(event.tags);
+            tagCloudLinkView.setAll(event.tags);
             tagCloudLinkView.setVisibility(View.VISIBLE);
             attacheTagForMyProfile.setVisibility(View.GONE);
         }
