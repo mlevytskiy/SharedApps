@@ -63,6 +63,7 @@ import wumf.com.sharedapps.eventbus.WeAlreadyGetCountryCodeFromSystemEvent;
 import wumf.com.sharedapps.firebase.FavouriteAppsFirebase;
 import wumf.com.sharedapps.firebase.FirebaseIcons;
 import wumf.com.sharedapps.firebase.IconUrlCallback;
+import wumf.com.sharedapps.firebase.TagsFirebase;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.util.AppFinderUtils;
 
@@ -151,9 +152,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 currentUser = user;
                 if (user != null) {
-                    UsersFirebase.listenPhoneNumber(currentUser.getUid());
-                    UsersFirebase.listenCountryCode(currentUser.getUid());
-                    FavouriteAppsFirebase.listenFoldersAndApps(currentUser.getUid());
+                    String uid = currentUser.getUid();
+                    UsersFirebase.listenPhoneNumber(uid);
+                    UsersFirebase.listenCountryCode(uid);
+                    FavouriteAppsFirebase.listenFoldersAndApps(uid);
+                    TagsFirebase.listenAllTags();
+                    TagsFirebase.listenMyTags(uid);
                 }
                 if (user != null) {
                     // User is signed in

@@ -1,16 +1,18 @@
 package wumf.com.sharedapps.firebase;
 
-import android.text.TextUtils;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import wumf.com.sharedapps.eventbus.ChangeAllTagsEvent;
+import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 
 /**
  * Created by max on 07.12.16.
@@ -22,67 +24,46 @@ public class TagsFirebase {
     private static DatabaseReference userssRef = FirebaseDatabase.getInstance().getReference().child("users");
 
     public static void attachTag(final String uid, final String tag) {
-        tagsRef.child(tag).child("userIds").runTransaction(new Transaction.Handler() {
+        tagsRef.child(tag).child("userIds").runTransaction(new AttachStringToListTransaction(uid));
+        userssRef.child(uid).child("myTags").runTransaction(new AttachStringToListTransaction(tag));
+    }
+
+    public static void listenMyTags(String uid) {
+        userssRef.child(uid).child("myTags").addValueEventListener(new ValueEventListener() {
             @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                Object value = mutableData.getValue();
-                if (value == null) {
-                    mutableData.setValue(uid);
-                } else if (value instanceof  String) {
-                    if (TextUtils.equals((String) value, uid)) {
-                        return Transaction.abort();
-                    }
-                    List<String> newValue = new ArrayList<String>();
-                    newValue.add( (String) value );
-                    newValue.add(uid);
-                    mutableData.setValue(newValue);
-                } else if (value instanceof List) {
-                    List<String> list = (List<String>) value;
-                    if (list.contains(uid)) {
-                        return Transaction.abort();
-                    }
-                    list.add(uid);
-                    mutableData.setValue(list);
-                }
-                return Transaction.success(mutableData);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Object value = dataSnapshot.getValue();
+                List<String> tags = (value != null) ? (List<String>) value : new ArrayList<String>();
+                EventBus.getDefault().post(new ChangeMyTagsEvent(tags));
             }
 
             @Override
-            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
-        userssRef.child(uid).child("myTags").runTransaction(new Transaction.Handler() {
+    }
+
+    public static void listenAllTags() {
+        tagsRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                Object value = mutableData.getValue();
-                if (value == null) {
-                    mutableData.setValue(tag);
-                } else if (value instanceof  String) {
-                    if (TextUtils.equals((String) value, tag)) {
-                        return Transaction.abort();
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                long count = dataSnapshot.getChildrenCount();
+                List<String> tags = new ArrayList<String>();
+                if (count != 0) {
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        String tag = child.getKey();
+                        tags.add(tag);
                     }
-                    List<String> newValue = new ArrayList<String>();
-                    newValue.add( (String) value );
-                    newValue.add(tag);
-                    mutableData.setValue(newValue);
-                } else if (value instanceof List) {
-                    List<String> list = (List<String>) value;
-                    if (list.contains(tag)) {
-                        return Transaction.abort();
-                    }
-                    list.add(tag);
-                    mutableData.setValue(list);
                 }
-                return Transaction.success(mutableData);
+                EventBus.getDefault().post(new ChangeAllTagsEvent(tags));
             }
 
             @Override
-            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
-                //.push().setValue(tag);
     }
 
 }

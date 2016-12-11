@@ -57,6 +57,7 @@ dependencies {
 
     compile project(':library')
     compile project(':appsProvider')
+    compile project(':tagCloudView')
 }
 
 apply plugin: 'com.google.gms.google-services'

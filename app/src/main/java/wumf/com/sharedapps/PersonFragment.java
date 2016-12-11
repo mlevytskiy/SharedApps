@@ -12,11 +12,13 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.firebase.auth.FirebaseUser;
+import com.ns.developer.tagview.widget.TagCloudLinkView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 import wumf.com.sharedapps.eventbus.GetNewCountryEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
@@ -32,6 +34,8 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
 
     private SignInButton signInButton;
     private MyAccountView myAccountView;
+    private TypefaceTextView attacheTagForMyProfile;
+    private TagCloudLinkView tagCloudLinkView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,7 +66,8 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
             }
         });
 
-        TypefaceTextView attacheTagForMyProfile = (TypefaceTextView) view.findViewById(R.id.attache_tag);
+        attacheTagForMyProfile = (TypefaceTextView) view.findViewById(R.id.attache_tag);
+        tagCloudLinkView = (TagCloudLinkView) view.findViewById(R.id.tags_text_view);
         attacheTagForMyProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,6 +128,23 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
     public void onEvent(NewPhoneNumberFromFirebaseEvent event) {
         myAccountView.updatePhoneNumber(event.phone);
         MainApplication.instance.phoneNumber = event.phone;
+    }
+
+    @Subscribe
+    public void onEvent(ChangeMyTagsEvent event) {
+        if (attacheTagForMyProfile == null) {
+            return;
+        }
+
+        if (event.tags.isEmpty()) {
+            tagCloudLinkView.setVisibility(View.GONE);
+            attacheTagForMyProfile.setVisibility(View.VISIBLE);
+        } else {
+            tagCloudLinkView.addAll(event.tags);
+            tagCloudLinkView.setVisibility(View.VISIBLE);
+            attacheTagForMyProfile.setVisibility(View.GONE);
+        }
+
     }
 
     @Override

@@ -1,1 +1,1 @@
-include ':app', ':library', ':appsProvider', ':contactsProvider'
+include ':app', ':library', ':appsProvider', ':contactsProvider', ':tagCloudView'

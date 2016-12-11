@@ -30,6 +30,7 @@ public class AttacheTagForMyProfileActivity extends Activity {
     private String uid;
     private TagsTextView tagsTextView;
     private EditText editText;
+    private View attacheTag;
     private List<String> mockTags = new ArrayList<>();
     {
         mockTags.add("KievAndroidDevClub");
@@ -43,7 +44,8 @@ public class AttacheTagForMyProfileActivity extends Activity {
         uid = getIntent().getExtras().getString(KEY_USER_UID);
         setContentView(R.layout.activity_attache_tag_for_my_profile);
         ((CustomTopBar) findViewById(R.id.top_bar)).setText("Attache tag for my profile").bind(this);
-        findViewById(R.id.attache_tag).setOnClickListener(new View.OnClickListener() {
+        attacheTag = findViewById(R.id.attache_tag);
+        attacheTag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 hideKeyboard();

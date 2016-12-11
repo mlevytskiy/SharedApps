@@ -228,6 +228,10 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
     @Override
     public void hide() {
 
+        if (springFloatingActionMenu == null) {
+            return;
+        }
+
         if (springFloatingActionMenu.isDisableOpenMenuCapability()) {
             return;
         }

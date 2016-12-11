@@ -31,6 +31,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".TagCloudActivity"
+                  android:exported="true" />
+
         <activity android:name=".AllAppsActivity" />
 
         <activity android:name=".FollowUnfollowActivity" />
