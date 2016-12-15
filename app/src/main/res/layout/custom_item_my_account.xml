@@ -67,7 +67,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
@@ -87,7 +88,8 @@
         android:layout_height="wrap_content"
         app:mrl_rippleColor="@android:color/black"
         app:mrl_rippleOverlay="true"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="7dp"
         app:mrl_rippleDuration="350"
         app:mrl_rippleFadeDuration="75"
         app:mrl_rippleDelayClick="true" >
@@ -143,6 +145,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginTop="3dp"
         android:visibility="gone">
 
         <TextView
@@ -159,7 +162,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="8dp" />
+        android:layout_height="5dp" />
 
     <com.balysv.materialripple.MaterialRippleLayout
         android:layout_width="match_parent"
@@ -220,8 +223,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="5dp"
         android:gravity="center"
-        app:isDeletable="true" />
+        app:isDeletable="true"
+        android:paddingTop="1dp" />
 
 </merge>

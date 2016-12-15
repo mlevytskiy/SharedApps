@@ -35,7 +35,7 @@ public class MyAccountView extends LinearLayout {
     private TextView country;
 
     private View phoneNumberContainer;
-    private View phoneNumberFromViberContainer;
+    private View fullPhoneNumberFromViberContainer;
     private TextView phoneNumberTextView;
 
     public MyAccountView(Context context) {
@@ -75,7 +75,7 @@ public class MyAccountView extends LinearLayout {
         });
 
         phoneNumberContainer = findViewById(R.id.phone_number_container);
-        phoneNumberFromViberContainer = findViewById(R.id.attach_phone_number_via_viber);
+        fullPhoneNumberFromViberContainer = findViewById(R.id.phone_number_from_viber_container);
         phoneNumberTextView = (TextView) findViewById(R.id.phone_number);
 
         if (MainApplication.instance.phoneNumber != null) {
@@ -90,7 +90,7 @@ public class MyAccountView extends LinearLayout {
                 updatePhoneNumber(MainApplication.instance.phoneNumber);
             } else {
                 phoneNumberContainer.setVisibility(View.GONE);
-                phoneNumberFromViberContainer.setVisibility(View.VISIBLE);
+                fullPhoneNumberFromViberContainer.setVisibility(View.VISIBLE);
             }
         }
         super.setVisibility(visibility);
@@ -102,7 +102,7 @@ public class MyAccountView extends LinearLayout {
 
     public void updatePhoneNumber(String phoneNumber) {
         phoneNumberContainer.setVisibility(View.VISIBLE);
-        phoneNumberFromViberContainer.setVisibility(View.GONE);
+        fullPhoneNumberFromViberContainer.setVisibility(View.GONE);
         phoneNumberTextView.setText(phoneNumber);
     }
 
