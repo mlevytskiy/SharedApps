@@ -5,10 +5,12 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -98,6 +100,8 @@ public class MenuItemView extends LinearLayout implements OnMenuActionListener {
         mLabel.setLayoutParams(labelLp);
         if (!TextUtils.isEmpty(mMenuItem.getLabel())) {
             mLabel.setPadding(0, Util.dpToPx(90, getResources()), 0, 0);
+            Drawable bottomArrow = ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow);
+            mLabel.setCompoundDrawablesWithIntrinsicBounds(null, null, null, bottomArrow);
         }
         mLabel.setText(mMenuItem.getLabel());
         mLabel.setTextColor(resources.getColor(mMenuItem.getTextColor()));
