@@ -9,7 +9,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -215,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Override
     public void onBackPressed() {
-        boolean doBack = ((OnBackPressedListener) adapter.mFragmentList.get(currentFragmentIndex)).doBack();
+        boolean doBack = ((OnBackPressedListener) adapter.mFragmentList.get(currentFragmentIndex)).doBack(0);
         if (!doBack) {
             super.onBackPressed();
         }
@@ -227,13 +226,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             if (resultCode == RESULT_OK) {
                 final App app = AppFinderUtils.find(data.getExtras().getString(PACKAGE_NAME));
                 addAppInFirebase(app);
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((OnBackPressedListener) adapter.mFragmentList.get(currentFragmentIndex)).doBack();
-                    }
-                }, 300);
+                ((OnBackPressedListener) adapter.mFragmentList.get(currentFragmentIndex)).doBack(300);
             } else {
                 //do nothing
             }

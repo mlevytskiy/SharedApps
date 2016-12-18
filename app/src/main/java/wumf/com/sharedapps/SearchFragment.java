@@ -28,7 +28,7 @@ public class SearchFragment extends Fragment implements IHideShow, OnBackPressed
     }
 
     @Override
-    public boolean doBack() {
+    public boolean doBack(int delay) {
         return false;
     }
 }

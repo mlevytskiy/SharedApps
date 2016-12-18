@@ -288,13 +288,22 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
     }
 
     @Override
-    public boolean doBack() {
+    public boolean doBack(int delay) {
         if (springFloatingActionMenu == null) {
             return false;
         }
 
         if (springFloatingActionMenu.isMenuOpen()) {
-            springFloatingActionMenu.hideMenu();
+            if (delay == 0) {
+                springFloatingActionMenu.hideMenu();
+            } else {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        springFloatingActionMenu.hideMenu();
+                    }
+                }, delay);
+            }
             return true;
         } else {
             return false;
