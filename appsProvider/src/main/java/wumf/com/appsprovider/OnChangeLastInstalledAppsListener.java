@@ -10,12 +10,8 @@ import java.util.Map;
  */
 public abstract class OnChangeLastInstalledAppsListener {
 
-    public final int appsCount;
+    public final int appsCount = 6;
     private Map<String, ResolveInfo> map;
-
-    public OnChangeLastInstalledAppsListener(int appsCount) {
-        this.appsCount = appsCount;
-    }
 
     void setMap(Map<String, ResolveInfo> map) {
         this.map = map;
@@ -25,8 +21,8 @@ public abstract class OnChangeLastInstalledAppsListener {
         return map;
     }
 
-    public abstract void change(List<App> apps);
+    public abstract void changedTop6(List<App> apps);
 
-    public abstract void changeOtherApps(List<App> apps);
+    public abstract void changedAll(List<App> apps);
 
 }

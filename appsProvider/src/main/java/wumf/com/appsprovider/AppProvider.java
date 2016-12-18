@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,23 +21,19 @@ import wumf.com.appsprovider.util.FileGenerator;
 import wumf.com.appsprovider.util.SaveIconUtils;
 
 /**
- * Created by max on 02.09.16.
+ * Created by max on 17.12.16.
  */
+
 public class AppProvider {
 
     public final static AppProvider instance = new AppProvider();
 
+    private HList appsHList = new HList();
     private OnChangeLastInstalledAppsListener listener;
-    private Context context;
-    private PackageManager pm;
-    private String myAppPN;
 
+    private PackageManager pm;
     private SaveIconUtils saveIconUtils;
     private FileGenerator fileGenerator;
-    private List<String> alreadyShareAppPackages = new ArrayList<>();
-
-    private List<App> limitedApps;
-    private List<App> otherApps;
 
     private AppProvider() { }
 
@@ -47,96 +42,59 @@ public class AppProvider {
         return this;
     }
 
-    public AppProvider setMyAppPackageName(String packageName) {
-        myAppPN = packageName;
+    public AppProvider setMyPackageName(String value) {
+        appsHList.setMyAppPackageName(value);
         return this;
     }
 
     public AppProvider setContext(Context context) {
-        this.context = context;
         this.pm = context.getPackageManager();
         saveIconUtils = new SaveIconUtils(context);
         fileGenerator = new FileGenerator(context);
         return this;
     }
 
-    public void updateAlreadySharedAppPackages(List<String> appPackages) {
-        alreadyShareAppPackages.clear();
-        alreadyShareAppPackages.addAll(appPackages);
-
-        List<App> newLimitedApps = new ArrayList<>();
-        List<App> newOtherApps = new ArrayList<>();
-        for (App app : limitedApps) {
-            if (appPackages.contains(app.appPackage)) {
-                //do nothing
-            } else {
-                newLimitedApps.add(app);
-            }
-        }
-
-        for (App app : otherApps) {
-            if (appPackages.contains(app.appPackage)) {
-                //do nothing
-            } else {
-                newOtherApps.add(app);
-            }
-        }
-
-        if (newLimitedApps.size() < limitedApps.size()) {
-            moveAppsToLimitedApps(limitedApps.size()-newLimitedApps.size(), newLimitedApps, newOtherApps);
-            listener.change(limitedApps);
-            listener.changeOtherApps(otherApps);
-        } else if (newOtherApps.size() != otherApps.size()) {
-            otherApps = newOtherApps;
-            listener.change(limitedApps);
-            listener.changeOtherApps(otherApps);
-        } else {
-            //do nothing
-        }
-
-    }
-
-    private void moveAppsToLimitedApps(int count, List<App> newLimitedApps, List<App> newOtherApps) {
-        for (int i = 0; i < count; i++) {
-            newLimitedApps.add(newOtherApps.get(0));
-            newOtherApps.remove(0);
-        }
-        limitedApps = newLimitedApps;
-        otherApps = newOtherApps;
-    }
-
     public AppProvider initBaseInfo() {
-        //load all apps without label and icon
         List<ResolveInfo> resolveInfos = getResolveInfos();
         Map<String, ResolveInfo> map = new HashMap<>();
         List<App> apps = resolveInfoToApp(resolveInfos, map);
-        limitedApps = new ArrayList<>();
-        otherApps = new ArrayList<>();
-        for (int i = apps.size()-1; i >= apps.size()-listener.appsCount; i--) {
-            limitedApps.add(apps.get(i));
-        }
-        for (int i = apps.size()-1-listener.appsCount; i >= 0; i--) {
-            otherApps.add(apps.get(i));
-        }
         listener.setMap(map);
-        listener.change(limitedApps);
-        initFullAppInfo(limitedApps, new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.change(limitedApps);
-                    }
-                },
-                otherApps, new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.changeOtherApps(otherApps);
-                    }
-                });
+
+        Collections.sort(apps, new Comparator<App>() {
+            @Override
+            public int compare(App app1, App app2) {
+                if (app1.installDate == app2.installDate) {
+                    return 0;
+                }
+
+                if (app1.installDate > app2.installDate) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        });
+
+        initFullAppInfo(apps, new Runnable() {
+            @Override
+            public void run() {
+                listener.changedTop6(appsHList.getTop6Apps());
+                listener.changedAll(appsHList.getAllApps());
+            }
+        });
+
+        appsHList.setAllApps(apps);
+
         return this;
     }
 
-    private AppProvider initFullAppInfo(final List<App> apps, final Runnable finishInit, final List<App> otherApps,
-                                        final Runnable otherAppsRunnable) {
+    public void updateAlreadySharedApps(List<String> appPackages) {
+        appsHList.setNewHiddenApps(appPackages);
+        listener.changedTop6(appsHList.getTop6Apps());
+        listener.changedAll(appsHList.getAllApps());
+    }
+
+    private void initFullAppInfo(final List<App> apps, final Runnable finishInit) {
 
         new AsyncTask<Void, Void, Void>() {
 
@@ -158,34 +116,13 @@ public class AppProvider {
             }
         }.execute();
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                for (App app : otherApps) {
-                    ResolveInfo ri = listener.getMap().get(app.appPackage);
-                    app.name = ri.loadLabel(pm).toString();
-                    app.iconWithBadQuality = loadAndSaveIconInFile(pm, ri);
-                    app.icon = loadAndSaveIconInFileGoodQuality(pm, ri);
-
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                otherAppsRunnable.run();
-            }
-
-        }.execute();
-
-        return this;
     }
 
     private List<ResolveInfo> getResolveInfos() {
         final Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         final List<android.content.pm.ResolveInfo> appList = pm.queryIntentActivities(mainIntent, PackageManager.GET_META_DATA);
+
         return appList;
     }
 
@@ -194,19 +131,15 @@ public class AppProvider {
         long systemInstallDate = -1;
         int i = 0;
         for (ResolveInfo resolveInfo : list) {
-            if (TextUtils.equals(myAppPN, resolveInfo.activityInfo.packageName)) {
-                continue; //skip my app
-            } else {
-                map.put(resolveInfo.activityInfo.packageName, resolveInfo);
-                result.add(resolveInfoToApp(resolveInfo));
-            }
+            map.put(resolveInfo.activityInfo.packageName, resolveInfo);
+            result.add(resolveInfoToApp(resolveInfo));
         }
 
         systemInstallDate = systemInstallDate + TimeUnit.MINUTES.toMillis(30);
 
         for (App app : new ArrayList<>(result)) {
             if (app.installDate < systemInstallDate) {
-                result.remove(app); //remove also some system apps
+                result.remove(app); //remove also some system appsHList
             }
         }
 

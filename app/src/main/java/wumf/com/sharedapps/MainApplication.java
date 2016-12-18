@@ -48,19 +48,18 @@ public class MainApplication extends Application {
                 .build();
 
         appProvider = AppProvider.instance.setContext(this)
-                .setMyAppPackageName(getPackageName())
-                .setListener(new OnChangeLastInstalledAppsListener(6) {
+                .setMyPackageName(getPackageName())
+                .setListener(new OnChangeLastInstalledAppsListener() {
                     @Override
-                    public void change(List<App> apps) {
+                    public void changedTop6(List<App> apps) {
                         top6apps.clear();
                         top6apps.addAll(apps);
                         EventBus.getDefault().post(new ChangeTop6AppsEvent(apps));
                     }
 
                     @Override
-                    public void changeOtherApps(List<App> apps) {
+                    public void changedAll(List<App> apps) {
                         allApps.clear();
-                        allApps.addAll(top6apps);
                         allApps.addAll(apps);
                     }
                 });
@@ -94,7 +93,7 @@ public class MainApplication extends Application {
         for (AppOrFolder app : event.apps) {
             appPackages.add(app.getAppPackage());
         }
-        appProvider.updateAlreadySharedAppPackages(appPackages);
+        appProvider.updateAlreadySharedApps(appPackages);
     }
 
     @Subscribe
