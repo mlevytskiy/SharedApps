@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface FinishInitListener {
 
-    void setAllContacts(List<Contact> contacts);
+    void setAll(List<String> phoneNumbers);
 
 }

@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 import android.support.multidex.MultiDex;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.FirebaseApp;
@@ -15,6 +17,8 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import interesting.com.contactsprovider.ContactProvider;
+import interesting.com.contactsprovider.FinishInitListener;
 import wumf.com.appsprovider.App;
 import wumf.com.appsprovider.AppProvider;
 import wumf.com.appsprovider.OnChangeLastInstalledAppsListener;
@@ -79,6 +83,18 @@ public class MainApplication extends Application {
 
         EventBus.getDefault().register(this);
 
+        ContactProvider.instance.init(this, new FinishInitListener() {
+            @Override
+            public void setAll(List<String> phoneNumbers) {
+                StringBuilder strBuilder = new StringBuilder();
+                for (String str : phoneNumbers) {
+                    Log.i("contacts", str);
+                    strBuilder.append(str);
+                    strBuilder.append("\n");
+                }
+                Toast.makeText(MainApplication.this, strBuilder.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override

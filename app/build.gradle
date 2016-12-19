@@ -58,6 +58,7 @@ dependencies {
     compile project(':library')
     compile project(':appsProvider')
     compile project(':tagCloudView')
+    compile project(':contactsProvider')
 }
 
 apply plugin: 'com.google.gms.google-services'
