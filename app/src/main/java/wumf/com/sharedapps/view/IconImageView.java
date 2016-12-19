@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
 import java.io.File;
 
@@ -13,7 +12,7 @@ import wumf.com.appsprovider.App;
 /**
  * Created by max on 30.03.16.
  */
-public class IconImageView extends ImageView {
+public class IconImageView extends android.support.v7.widget.AppCompatImageView {
 
     public IconImageView(Context context) {
         super(context);
