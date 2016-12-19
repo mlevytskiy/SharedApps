@@ -17,11 +17,12 @@ import wumf.com.sharedapps.MainApplication;
 
 public class ViberUtils {
 
+    private static final String VIBER_PACKAGE = "com.viber.voip";
     private static String phoneNumber;
 
     public static boolean hasViber() {
         for (App app : MainApplication.instance.allApps) {
-            if (TextUtils.equals("com.viber.voip", app.appPackage)) {
+            if (TextUtils.equals(VIBER_PACKAGE, app.appPackage)) {
                 return true;
             }
         }
@@ -41,7 +42,7 @@ public class ViberUtils {
             String acname = ac.name;
             String actype = ac.type;
 
-            if ( TextUtils.equals("com.viber.voip", actype) ) {
+            if ( TextUtils.equals(VIBER_PACKAGE, actype) ) {
                 phoneNumber = acname;
                 return true;
             }
