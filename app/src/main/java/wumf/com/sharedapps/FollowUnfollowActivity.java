@@ -2,6 +2,7 @@ package wumf.com.sharedapps;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListView;
 
 import wumf.com.sharedapps.adapter.FollowUnfollowPeopleAdapter;
@@ -17,7 +18,9 @@ public class FollowUnfollowActivity extends Activity {
         super.onCreate(bundle);
         setContentView(R.layout.activity_follow_unfollow);
         ((CustomTopBar) findViewById(R.id.top_bar)).setText("Follow/unfollow people").bind(this);
-        ((ListView) findViewById(R.id.list_view)).setAdapter(new FollowUnfollowPeopleAdapter());
+        ListView listView = (ListView) findViewById(R.id.list_view);
+        listView.setAdapter(new FollowUnfollowPeopleAdapter());
+        listView.addHeaderView( View.inflate(this, R.layout.header_follow_all_my_phone_contacts, null) );
     }
 
 }
