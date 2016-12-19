@@ -10,7 +10,6 @@ import java.util.Map;
  */
 public abstract class OnChangeLastInstalledAppsListener {
 
-    public final int appsCount = 6;
     private Map<String, ResolveInfo> map;
 
     void setMap(Map<String, ResolveInfo> map) {
