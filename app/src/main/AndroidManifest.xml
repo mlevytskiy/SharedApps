@@ -43,6 +43,8 @@
 
         <activity android:name=".FollowUnfollowActivity" />
 
+        <activity android:name=".FindAndFollowPersonActivity" />
+
         <activity android:name=".AttacheTagForMyProfileActivity"
                   android:windowSoftInputMode="stateVisible" />
 

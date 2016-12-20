@@ -1,8 +1,10 @@
 package wumf.com.sharedapps;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import wumf.com.sharedapps.adapter.FollowUnfollowPeopleAdapter;
@@ -20,7 +22,15 @@ public class FollowUnfollowActivity extends Activity {
         ((CustomTopBar) findViewById(R.id.top_bar)).setText("Follow/unfollow people").bind(this);
         ListView listView = (ListView) findViewById(R.id.list_view);
         listView.setAdapter(new FollowUnfollowPeopleAdapter());
-        listView.addHeaderView( View.inflate(this, R.layout.header_follow_all_my_phone_contacts, null) );
+        View header = View.inflate(this, R.layout.header_follow_all_my_phone_contacts, null);
+        listView.addHeaderView(header);
+        ImageButton findImageButton = (ImageButton) header.findViewById(R.id.find_image_button);
+        findImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(FollowUnfollowActivity.this, FindAndFollowPersonActivity.class));
+            }
+        });
     }
 
 }
