@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import wumf.com.sharedapps.adapter.FollowUnfollowPeopleAdapter;
 import wumf.com.sharedapps.util.AutofollowTextBuilder;
@@ -25,7 +28,8 @@ public class FollowUnfollowActivity extends Activity {
         ListView listView = (ListView) findViewById(R.id.list_view);
         listView.setAdapter(new FollowUnfollowPeopleAdapter());
         View header = View.inflate(this, R.layout.header_follow_all_my_phone_contacts, null);
-        TextView autofollow = (TextView) header.findViewById(R.id.autofollow);
+        TextView autofollow = (TextView) header.findViewById(R.id.autofollow_typeface_text_view);
+        autofollowCheckBoxClick(autofollow, (CheckBox) header.findViewById(R.id.autofollow_check_box));
         String autofollowText = new AutofollowTextBuilder().
                 setTags(( (MainApplication) getApplication() ).myTags).build();
         autofollow.setText(autofollowText);
@@ -37,6 +41,28 @@ public class FollowUnfollowActivity extends Activity {
                 startActivity(new Intent(FollowUnfollowActivity.this, FindAndFollowPersonActivity.class));
             }
         });
+    }
+
+    private void autofollowCheckBoxClick(TextView textView, CheckBox checkBox) {
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                if ( !checked ) {
+                    compoundButton.setChecked(true);
+                    showMessageThisOptionDontWorkYet();
+                }
+            }
+        });
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showMessageThisOptionDontWorkYet();
+            }
+        });
+    }
+
+    private void showMessageThisOptionDontWorkYet() {
+        Toast.makeText(this, "You can't disable checkbox. This option don't work yet", Toast.LENGTH_LONG).show();
     }
 
 }
