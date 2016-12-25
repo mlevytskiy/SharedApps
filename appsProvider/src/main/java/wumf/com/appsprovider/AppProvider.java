@@ -2,6 +2,7 @@ package wumf.com.appsprovider;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -126,20 +127,28 @@ public class AppProvider {
         return appList;
     }
 
+    private boolean isSystemPackage(ResolveInfo ri){
+        return ( (ri.activityInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM)!=0 );
+    }
+
     private List<App> resolveInfoToApp(List<ResolveInfo> list, Map<String, ResolveInfo> map) {
         List<App> result = new ArrayList<>();
         long systemInstallDate = -1;
         int i = 0;
         for (ResolveInfo resolveInfo : list) {
             map.put(resolveInfo.activityInfo.packageName, resolveInfo);
-            result.add(resolveInfoToApp(resolveInfo));
+            if ( isSystemPackage(resolveInfo) ) {
+                systemInstallDate = getInstallDate(resolveInfo.activityInfo.packageName);
+            } else {
+                result.add(resolveInfoToApp(resolveInfo));
+            }
         }
 
         systemInstallDate = systemInstallDate + TimeUnit.MINUTES.toMillis(30);
 
         for (App app : new ArrayList<>(result)) {
             if (app.installDate < systemInstallDate) {
-                result.remove(app); //remove also some system appsHList
+                result.remove(app); //remove also some system apps
             }
         }
 
