@@ -16,11 +16,8 @@ import com.ns.developer.tagview.widget.TagCloudLinkView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
-import wumf.com.sharedapps.eventbus.GetNewCountryEvent;
-import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.SignInFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.SignOutFromFirebaseEvent;
@@ -123,16 +120,6 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(GetNewCountryEvent event) {
-        myAccountView.updateCountry(event.country);
-    }
-
-    @Subscribe
-    public void onEvent(NewCountryCodeFromFirebaseEvent event) {
-        myAccountView.updateCountry(event.countryCode);
     }
 
     @Subscribe

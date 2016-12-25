@@ -62,7 +62,7 @@ public class FollowUnfollowActivity extends Activity {
     }
 
     private void showMessageThisOptionDontWorkYet() {
-        Toast.makeText(this, "You can't disable checkbox. This option don't work yet", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "This option don't work yet", Toast.LENGTH_LONG).show();
     }
 
 }

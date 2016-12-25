@@ -4,8 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 import android.support.multidex.MultiDex;
+import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.FirebaseApp;
@@ -27,11 +27,14 @@ import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
+import wumf.com.sharedapps.util.TagsBuilder;
 
 /**
  * Created by max on 01.09.16.
  */
 public class MainApplication extends Application {
+
+    private static final String TAG = new TagsBuilder().add("MainApplication").build();
 
     public List<App> top6apps = new ArrayList<>();
     public List<App> allApps = new ArrayList<>();
@@ -40,6 +43,7 @@ public class MainApplication extends Application {
     public static MainApplication instance;
     public String country;
     public List<String> myTags;
+    public List<String> phones;
 
     private AppProvider appProvider;
 
@@ -84,19 +88,6 @@ public class MainApplication extends Application {
         country = "UNKNOWN";
 
         EventBus.getDefault().register(this);
-
-        ContactProvider.instance.init(this, new FinishInitListener() {
-            @Override
-            public void setAll(List<String> phoneNumbers) {
-                StringBuilder strBuilder = new StringBuilder();
-                for (String str : phoneNumbers) {
-                    Log.i("contacts", str);
-                    strBuilder.append(str);
-                    strBuilder.append("\n");
-                }
-                Toast.makeText(MainApplication.this, strBuilder.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     @Override
@@ -121,7 +112,16 @@ public class MainApplication extends Application {
 
     @Subscribe
     public void onEvent(NewCountryCodeFromFirebaseEvent event) {
+        Log.i(TAG, "receive new country code event");
         country = event.countryCode;
+        if ( !TextUtils.isEmpty(country) ) {
+            ContactProvider.instance.init(this, event.countryCode, new FinishInitListener() {
+                @Override
+                public void setAll(List<String> phoneNumbers) {
+                    phones = phoneNumbers;
+                }
+            });
+        }
     }
 
 }

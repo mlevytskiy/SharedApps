@@ -22,7 +22,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
-import android.text.TextUtils;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.util.Log;
@@ -53,7 +52,6 @@ import java.util.Locale;
 
 import wumf.com.appsprovider.App;
 import wumf.com.sharedapps.eventbus.GetNewCountryEvent;
-import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromViber;
 import wumf.com.sharedapps.eventbus.OnClickAppEvent;
 import wumf.com.sharedapps.eventbus.SignInFromFirebaseEvent;
@@ -65,14 +63,16 @@ import wumf.com.sharedapps.firebase.IconUrlCallback;
 import wumf.com.sharedapps.firebase.TagsFirebase;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.util.AppFinderUtils;
+import wumf.com.sharedapps.util.TagsBuilder;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks {
 
+    private static final String TAG = new TagsBuilder().add("MainActivity").add("firebase").build();
+
     public static final int REQUEST_CODE_CHIOCE_APP = 544;
     public static final int REQUEST_CODE_RC_SIGN_IN = 543;
     public static final String PACKAGE_NAME = "packageName";
-    private static final String TAG = MainActivity.class.getSimpleName();
 
     private AppBarLayout appBarLayout;
     private TabLayout tabLayout;
@@ -188,15 +188,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Subscribe
     public void onEvent(WeAlreadyGetCountryCodeFromSystemEvent event) {
         weAlreadyGetCountryCodeFromSystem = true;
-    }
-
-    public void onEvent(NewCountryCodeFromFirebaseEvent event) { //TODO: ?
-        if ( weAlreadyGetCountryCodeFromSystem && TextUtils.isEmpty(event.countryCode) ) {
-            UsersFirebase.updateCountryCode(currentUser.getUid(), MainApplication.instance.country);
-            EventBus.getDefault().post(new GetNewCountryEvent(MainApplication.instance.country));
-        } else {
-            //do nothing
-        }
     }
 
     @Subscribe

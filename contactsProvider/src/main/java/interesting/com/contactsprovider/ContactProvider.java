@@ -21,18 +21,18 @@ public class ContactProvider {
 
     public final static ContactProvider instance = new ContactProvider();
 
-    public void init(Context context, FinishInitListener listener) {
+    public void init(Context context, String countryCode, FinishInitListener listener) {
         Contacts.initialize(context);
         Query q = Contacts.getQuery();
         List<Contact> contacts = q.find();
         List<String> phoneNumbers = new ArrayList<>();
         for (Contact contact : contacts) {
-            phoneNumbers.addAll( getPhones(contact.getPhoneNumbers()) );
+            phoneNumbers.addAll( getPhones(contact.getPhoneNumbers(), countryCode) );
         }
         listener.setAll(phoneNumbers);
     }
 
-    private List<String> getPhones(List<PhoneNumber> phoneNumbers) {
+    private List<String> getPhones(List<PhoneNumber> phoneNumbers, String countryCode) {
         List<String> result = new ArrayList<>();
 
         for (PhoneNumber pn : phoneNumbers) {
@@ -43,7 +43,7 @@ public class ContactProvider {
                 result.add(phoneUtil.format(numberProto, PhoneNumberUtil.PhoneNumberFormat.E164));
             } catch (NumberParseException e) {
                 try {
-                    numberProto = phoneUtil.parse(pn.getNormalizedNumber(), "UA");
+                    numberProto = phoneUtil.parse(pn.getNormalizedNumber(), countryCode);
                     result.add(phoneUtil.format(numberProto, PhoneNumberUtil.PhoneNumberFormat.E164));
                 } catch (NumberParseException e1) {
                     //do nothing
