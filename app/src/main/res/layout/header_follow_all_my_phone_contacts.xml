@@ -39,10 +39,10 @@
                 android:checked="true" />
 
             <com.github.omadahealth.typefaceview.TypefaceTextView
+                android:id="@+id/autofollow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="Autofollow my phone contacts, AndrCommunityClub"
                 android:textColor="@color/video2"
                 android:textSize="18dp"
                 app:tv_typeface="roboto_light" />

@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import wumf.com.sharedapps.adapter.FollowUnfollowPeopleAdapter;
+import wumf.com.sharedapps.util.AutofollowTextBuilder;
 import wumf.com.sharedapps.view.CustomTopBar;
 
 /**
@@ -23,6 +25,10 @@ public class FollowUnfollowActivity extends Activity {
         ListView listView = (ListView) findViewById(R.id.list_view);
         listView.setAdapter(new FollowUnfollowPeopleAdapter());
         View header = View.inflate(this, R.layout.header_follow_all_my_phone_contacts, null);
+        TextView autofollow = (TextView) header.findViewById(R.id.autofollow);
+        String autofollowText = new AutofollowTextBuilder().
+                setTags(( (MainApplication) getApplication() ).myTags).build();
+        autofollow.setText(autofollowText);
         listView.addHeaderView(header);
         ImageButton findImageButton = (ImageButton) header.findViewById(R.id.find_image_button);
         findImageButton.setOnClickListener(new View.OnClickListener() {

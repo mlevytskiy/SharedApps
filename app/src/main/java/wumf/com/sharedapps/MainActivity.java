@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private ViewPagerAdapter adapter;
     private int currentFragmentIndex = 0;
     public GoogleApiClient gac;
-
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private long firebaseAuthListenerCalledDate = 0;

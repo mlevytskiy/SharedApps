@@ -23,6 +23,7 @@ import wumf.com.appsprovider.App;
 import wumf.com.appsprovider.AppProvider;
 import wumf.com.appsprovider.OnChangeLastInstalledAppsListener;
 import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
+import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
@@ -38,6 +39,7 @@ public class MainApplication extends Application {
     public String phoneNumber;
     public static MainApplication instance;
     public String country;
+    public List<String> myTags;
 
     private AppProvider appProvider;
 
@@ -110,6 +112,11 @@ public class MainApplication extends Application {
             appPackages.add(app.getAppPackage());
         }
         appProvider.updateAlreadySharedApps(appPackages);
+    }
+
+    @Subscribe
+    public void onEvent(ChangeMyTagsEvent event) {
+        myTags = event.tags;
     }
 
     @Subscribe
