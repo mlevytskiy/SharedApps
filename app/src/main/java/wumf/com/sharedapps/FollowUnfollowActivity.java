@@ -14,9 +14,11 @@ import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.Collections;
 import java.util.List;
 
-import wumf.com.sharedapps.adapter.FollowUnfollowPeopleAdapter;
+import wumf.com.sharedapps.adapter.FollowUnfollowFullPeopleAdapter;
+import wumf.com.sharedapps.adapter.FollowUnfollowPeopleEmptyAdapter;
 import wumf.com.sharedapps.eventbus.UsersByPhoneNumbersFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.pojo.Profile;
 import wumf.com.sharedapps.util.AutofollowTextBuilder;
@@ -28,27 +30,17 @@ import wumf.com.sharedapps.view.CustomTopBar;
 
 public class FollowUnfollowActivity extends Activity {
 
+    private boolean isUsersListEmpty = false;
+    private List<Profile> users;
+    private ListView listView;
+
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.activity_follow_unfollow);
+        listView = (ListView) findViewById(R.id.list_view);
         ((CustomTopBar) findViewById(R.id.top_bar)).setText("Follow/unfollow people").bind(this);
-        ListView listView = (ListView) findViewById(R.id.list_view);
-        listView.setAdapter(new FollowUnfollowPeopleAdapter());
-        View header = View.inflate(this, R.layout.header_follow_all_my_phone_contacts, null);
-        TextView autofollow = (TextView) header.findViewById(R.id.autofollow_typeface_text_view);
-        autofollowCheckBoxClick(autofollow, (CheckBox) header.findViewById(R.id.autofollow_check_box));
-        String autofollowText = new AutofollowTextBuilder().
-                setTags(( (MainApplication) getApplication() ).myTags).build();
-        autofollow.setText(autofollowText);
-        listView.addHeaderView(header);
-        ImageButton findImageButton = (ImageButton) header.findViewById(R.id.find_image_button);
-        findImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(FollowUnfollowActivity.this, FindAndFollowPersonActivity.class));
-            }
-        });
-        showUsersOnUI( ((MainApplication) getApplication()).users );
+
+        showUsers(((MainApplication) getApplication()).users);
     }
 
     public void onStart() {
@@ -61,13 +53,39 @@ public class FollowUnfollowActivity extends Activity {
         EventBus.getDefault().unregister(this);
     }
 
-    @Subscribe
-    public void onEvent(UsersByPhoneNumbersFromFirebaseEvent event) {
-        showUsersOnUI(event.profiles);
+    private void showUsers(List<Profile> _users) {
+        users = _users;
+        isUsersListEmpty = (users == Collections.EMPTY_LIST) || users.isEmpty();
+
+        if (isUsersListEmpty) {
+            listView.setAdapter(new FollowUnfollowPeopleEmptyAdapter());
+        } else {
+            listView.setAdapter(new FollowUnfollowFullPeopleAdapter(users));
+        }
+
+        createListViewHeader(listView, isUsersListEmpty);
     }
 
-    private void showUsersOnUI(List<Profile> users) {
-        Toast.makeText(this, String.valueOf(users!= null), Toast.LENGTH_LONG).show();
+    private void createListViewHeader(ListView listView, boolean isUsersListEmpty) {
+        View header = View.inflate(this, R.layout.header_follow_all_my_phone_contacts, null);
+        header.findViewById(R.id.line).setVisibility(isUsersListEmpty ? View.VISIBLE : View.GONE);
+        TextView autofollow = (TextView) header.findViewById(R.id.autofollow_typeface_text_view);
+        autofollowCheckBoxClick(autofollow, (CheckBox) header.findViewById(R.id.autofollow_check_box));
+        String autofollowText = new AutofollowTextBuilder().setTags(( (MainApplication) getApplication() ).myTags).build();
+        autofollow.setText(autofollowText);
+        listView.addHeaderView(header);
+        ImageButton findImageButton = (ImageButton) header.findViewById(R.id.find_image_button);
+        findImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(FollowUnfollowActivity.this, FindAndFollowPersonActivity.class));
+            }
+        });
+    }
+
+    @Subscribe
+    public void onEvent(UsersByPhoneNumbersFromFirebaseEvent event) {
+        showUsers(event.profiles);
     }
 
     private void autofollowCheckBoxClick(TextView textView, CheckBox checkBox) {

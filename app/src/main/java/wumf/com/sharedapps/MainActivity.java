@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private FirebaseAuth.AuthStateListener mAuthListener;
     private long firebaseAuthListenerCalledDate = 0;
     public FirebaseUser currentUser;
-    private boolean weAlreadyGetCountryCodeFromSystem = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,11 +182,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
         EventBus.getDefault().unregister(this);
         super.onStop();
-    }
-
-    @Subscribe
-    public void onEvent(WeAlreadyGetCountryCodeFromSystemEvent event) {
-        weAlreadyGetCountryCodeFromSystem = true;
     }
 
     @Subscribe

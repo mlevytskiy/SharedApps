@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="70dp"
+              android:layout_height="70dp"
+              android:paddingTop="10dp"
+              android:gravity="center"
+              android:orientation="horizontal" >
+
+    <wumf.com.sharedapps.view.CircularImageView
+        android:id="@+id/icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:civ_border_width="1px"
+        app:civ_border_color="#FF000000"
+        android:layout_marginLeft="8dp" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/bg_border"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp" >
+
+        <com.github.omadahealth.typefaceview.TypefaceTextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/video2"
+            android:textSize="14dp"
+            app:tv_typeface="roboto_light"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="2dp" />
+
+        <ImageView
+            android:id="@+id/app_icon1"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_below="@id/name"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true" />
+
+        <ImageView
+            android:id="@+id/app_icon2"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_below="@id/name"
+            android:layout_toRightOf="@id/app_icon1"/>
+
+        <ImageView
+            android:id="@+id/app_icon3"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_below="@id/name"
+            android:layout_toRightOf="@id/app_icon2" />
+
+        <ImageView
+            android:id="@+id/garbage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_garbage"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_image_edit"
+            android:layout_toLeftOf="@id/garbage"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="10dp" />
+
+    </RelativeLayout>
+
+</LinearLayout>

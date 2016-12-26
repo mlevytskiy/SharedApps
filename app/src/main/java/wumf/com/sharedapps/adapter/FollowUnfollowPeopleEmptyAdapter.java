@@ -10,7 +10,7 @@ import wumf.com.sharedapps.R;
  * Created by max on 29.11.16.
  */
 
-public class FollowUnfollowPeopleAdapter extends BaseAdapter {
+public class FollowUnfollowPeopleEmptyAdapter extends BaseAdapter {
 
     private static final int VIEW_TYPE_NOBODY = 0;
     private static final int VIEW_TYPE_NO_PEOPLE_NO_BAGS = 1;
@@ -27,7 +27,7 @@ public class FollowUnfollowPeopleAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int i) {
-        return 0;
+        return i;
     }
 
     @Override
