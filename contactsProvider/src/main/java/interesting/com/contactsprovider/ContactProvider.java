@@ -1,6 +1,7 @@
 package interesting.com.contactsprovider;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.github.tamir7.contacts.Contact;
 import com.github.tamir7.contacts.Contacts;
@@ -36,21 +37,31 @@ public class ContactProvider {
         List<String> result = new ArrayList<>();
 
         for (PhoneNumber pn : phoneNumbers) {
-            PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-            Phonenumber.PhoneNumber numberProto;
-            try {
-                numberProto = phoneUtil.parse(pn.getNormalizedNumber(), "");
-                result.add(phoneUtil.format(numberProto, PhoneNumberUtil.PhoneNumberFormat.E164));
-            } catch (NumberParseException e) {
-                try {
-                    numberProto = phoneUtil.parse(pn.getNormalizedNumber(), countryCode);
-                    result.add(phoneUtil.format(numberProto, PhoneNumberUtil.PhoneNumberFormat.E164));
-                } catch (NumberParseException e1) {
-                    //do nothing
-                }
+            String phoneNumber = getPhoneNumber(pn.getNormalizedNumber(), countryCode);
+            if ( !TextUtils.isEmpty(phoneNumber) ) {
+                result.add(phoneNumber);
+            } else {
+                //do nothing
             }
         }
+
         return result;
+    }
+
+    public String getPhoneNumber(String phoneNumber, String countryCode) {
+        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+        Phonenumber.PhoneNumber numberProto;
+        try {
+            numberProto = phoneUtil.parse(phoneNumber, "");
+            return phoneUtil.format(numberProto, PhoneNumberUtil.PhoneNumberFormat.E164);
+        } catch (NumberParseException e) {
+            try {
+                numberProto = phoneUtil.parse(phoneNumber, countryCode);
+                return phoneUtil.format(numberProto, PhoneNumberUtil.PhoneNumberFormat.E164);
+            } catch (NumberParseException e1) {
+                return null;
+            }
+        }
     }
 
 }
