@@ -1,6 +1,7 @@
 package wumf.com.sharedapps.firebase.pojo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by max on 19.12.16.
@@ -12,7 +13,8 @@ public class Profile {
     private String email;
     private String name;
     private String phoneNumber;
-    private List<AppOrFolder> apps;
+    private Map<String, AppOrFolder> apps;
+    private List<String> myTags;
 
     public String getCountryCode() {
         return countryCode;
@@ -46,11 +48,19 @@ public class Profile {
         this.phoneNumber = phoneNumber;
     }
 
-    public List<AppOrFolder> getApps() {
+    public Map<String, AppOrFolder> getApps() {
         return apps;
     }
 
-    public void setApps(List<AppOrFolder> apps) {
+    public void setApps(Map<String, AppOrFolder> apps) {
         this.apps = apps;
+    }
+
+    public List<String> getMyTags() {
+        return myTags;
+    }
+
+    public void setMyTags(List<String> myTags) {
+        this.myTags = myTags;
     }
 }

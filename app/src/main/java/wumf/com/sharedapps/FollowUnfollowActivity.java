@@ -11,7 +11,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.util.List;
+
 import wumf.com.sharedapps.adapter.FollowUnfollowPeopleAdapter;
+import wumf.com.sharedapps.eventbus.UsersByPhoneNumbersFromFirebaseEvent;
+import wumf.com.sharedapps.firebase.pojo.Profile;
 import wumf.com.sharedapps.util.AutofollowTextBuilder;
 import wumf.com.sharedapps.view.CustomTopBar;
 
@@ -41,6 +48,26 @@ public class FollowUnfollowActivity extends Activity {
                 startActivity(new Intent(FollowUnfollowActivity.this, FindAndFollowPersonActivity.class));
             }
         });
+        showUsersOnUI( ((MainApplication) getApplication()).users );
+    }
+
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void onEvent(UsersByPhoneNumbersFromFirebaseEvent event) {
+        showUsersOnUI(event.profiles);
+    }
+
+    private void showUsersOnUI(List<Profile> users) {
+        Toast.makeText(this, String.valueOf(users!= null), Toast.LENGTH_LONG).show();
     }
 
     private void autofollowCheckBoxClick(TextView textView, CheckBox checkBox) {

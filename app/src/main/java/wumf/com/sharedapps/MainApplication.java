@@ -15,6 +15,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import interesting.com.contactsprovider.ContactProvider;
@@ -26,7 +27,11 @@ import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
+import wumf.com.sharedapps.eventbus.UsersByPhoneNumbersFromFirebaseEvent;
+import wumf.com.sharedapps.firebase.GetUsersFirebase;
+import wumf.com.sharedapps.firebase.GetUsersListener;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
+import wumf.com.sharedapps.firebase.pojo.Profile;
 import wumf.com.sharedapps.util.TagsBuilder;
 
 /**
@@ -43,7 +48,7 @@ public class MainApplication extends Application {
     public static MainApplication instance;
     public String country;
     public List<String> myTags;
-    public List<String> phones;
+    public List<Profile> users = Collections.EMPTY_LIST;
 
     private AppProvider appProvider;
 
@@ -118,7 +123,13 @@ public class MainApplication extends Application {
             ContactProvider.instance.init(this, event.countryCode, new FinishInitListener() {
                 @Override
                 public void setAll(List<String> phoneNumbers) {
-                    phones = phoneNumbers;
+                    GetUsersFirebase.getUsers(phoneNumbers, new GetUsersListener() {
+                        @Override
+                        public void users(List<Profile> profiles) {
+                            users = profiles;
+                            EventBus.getDefault().post( new UsersByPhoneNumbersFromFirebaseEvent(users) );
+                        }
+                    });
                 }
             });
         }

@@ -6,12 +6,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import wumf.com.sharedapps.eventbus.UsersByPhoneNumbersFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.pojo.Profile;
 
 /**
@@ -25,10 +22,15 @@ public class GetUsersFirebase {
     public static void getUsers() {
         List<String> mock = new ArrayList<>();
         mock.add("+380 93 320 9152");
-        getUsers(mock);
+        getUsers(mock, new GetUsersListener() {
+            @Override
+            public void users(List<Profile> profiles) {
+                //do nothing
+            }
+        });
     }
 
-    public static void getUsers(final List<String> phoneNumbers) {
+    public static void getUsers(final List<String> phoneNumbers, final GetUsersListener listener) {
 
         userssRef.orderByChild("phoneNumber").startAt("+").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -41,7 +43,7 @@ public class GetUsersFirebase {
                         //do nothing
                     }
                 }
-                EventBus.getDefault().post( new UsersByPhoneNumbersFromFirebaseEvent(result) );
+                listener.users(result);
             }
 
             @Override
