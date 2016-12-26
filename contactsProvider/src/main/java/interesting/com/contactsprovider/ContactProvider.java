@@ -20,6 +20,7 @@ import java.util.List;
 
 public class ContactProvider {
 
+    public static final PhoneNumberUtil.PhoneNumberFormat PHONE_FORMAT = PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL;
     public final static ContactProvider instance = new ContactProvider();
 
     public void init(Context context, String countryCode, FinishInitListener listener) {
@@ -53,11 +54,11 @@ public class ContactProvider {
         Phonenumber.PhoneNumber numberProto;
         try {
             numberProto = phoneUtil.parse(phoneNumber, "");
-            return phoneUtil.format(numberProto, PhoneNumberUtil.PhoneNumberFormat.E164);
+            return phoneUtil.format(numberProto, PHONE_FORMAT);
         } catch (NumberParseException e) {
             try {
                 numberProto = phoneUtil.parse(phoneNumber, countryCode);
-                return phoneUtil.format(numberProto, PhoneNumberUtil.PhoneNumberFormat.E164);
+                return phoneUtil.format(numberProto, PHONE_FORMAT);
             } catch (NumberParseException e1) {
                 return null;
             }

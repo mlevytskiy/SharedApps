@@ -2,11 +2,10 @@ package wumf.com.sharedapps;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
+import interesting.com.contactsprovider.ContactProvider;
 import wumf.com.sharedapps.dialog.PhoneFromViberDialog;
 import wumf.com.sharedapps.util.ViberUtils;
 
@@ -22,14 +21,8 @@ public class ViberTransparentActivity extends Activity {
         super.onCreate(bundle);
         if ( ViberUtils.hasViber() ) {
             if ( ViberUtils.hasPhoneFromViber(this) ) {
-                PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
-                String displayPhoneNumber = "?";
-                try {
-                     displayPhoneNumber = phoneNumberUtil.format(phoneNumberUtil.parse(ViberUtils.getPhoneNumber(), "CH"),
-                            PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
-                } catch (NumberParseException e) {
-                    Log.e(TAG, e.getMessage());
-                }
+                String countryCode = ((MainApplication) getApplication()).country;
+                String displayPhoneNumber = ContactProvider.instance.getPhoneNumber(ViberUtils.getPhoneNumber(), countryCode);
                 new PhoneFromViberDialog( this, displayPhoneNumber );
             } else {
                 setTheme(R.style.AppTheme);
