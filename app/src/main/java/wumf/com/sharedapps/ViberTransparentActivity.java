@@ -3,8 +3,6 @@ package wumf.com.sharedapps;
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-
 import interesting.com.contactsprovider.ContactProvider;
 import wumf.com.sharedapps.dialog.PhoneFromViberDialog;
 import wumf.com.sharedapps.util.ViberUtils;
@@ -14,8 +12,6 @@ import wumf.com.sharedapps.util.ViberUtils;
  */
 
 public class ViberTransparentActivity extends Activity {
-
-    private static final String TAG = ViberTransparentActivity.class.getSimpleName();
 
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
