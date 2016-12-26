@@ -15,6 +15,7 @@ public class Profile {
     private String phoneNumber;
     private Map<String, AppOrFolder> apps;
     private List<String> myTags;
+    private String icon;
 
     public String getCountryCode() {
         return countryCode;
@@ -62,5 +63,13 @@ public class Profile {
 
     public void setMyTags(List<String> myTags) {
         this.myTags = myTags;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 }

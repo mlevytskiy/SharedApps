@@ -13,6 +13,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
+import wumf.com.sharedapps.firebase.pojo.Profile;
 import wumf.com.sharedapps.util.TagsBuilder;
 
 /**
@@ -24,31 +25,16 @@ public class UsersFirebase {
     private static final String TAG = new TagsBuilder().add("firebase").build();
 
     public static void addMe(FirebaseUser fUser) {
-        User user = new User();
-        user.email = fUser.getEmail();
-        user.name = fUser.getDisplayName();
+        Profile user = new Profile();
+        user.setEmail(fUser.getEmail());
+        user.setName(fUser.getDisplayName());
+        user.setIcon(fUser.getPhotoUrl().toString());
         DatabaseReference r = FirebaseDatabase.getInstance().getReference().child("users").child(fUser.getUid());
         r.setValue(user);
     }
 
     public static void removeMe(String uid) {
         FirebaseDatabase.getInstance().getReference().child("users").child(uid).removeValue();
-    }
-
-    public static void addAppToFavourite() {
-
-    }
-
-    public static void removeAppFromFavourite() {
-
-    }
-
-    public static void addFolderToFavourite(String folderName) {
-
-    }
-
-    public static void removeFolderFromFavourite(String folderName) {
-
     }
 
     public static void updatePhoneNumber(String uid, String phoneNumber) {
@@ -93,13 +79,6 @@ public class UsersFirebase {
 
             }
         });
-    }
-
-    public static class User {
-        public String name;
-        public String email;
-        public String phoneNumber;
-        public String countryCode;
     }
 
 }
