@@ -23,23 +23,23 @@ public class ContactProvider {
     public static final PhoneNumberUtil.PhoneNumberFormat PHONE_FORMAT = PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL;
     public final static ContactProvider instance = new ContactProvider();
 
-    public void init(Context context, String countryCode, FinishInitListener listener) {
+    public void init(Context context, String countryCode, String myPhoneNumber, FinishInitListener listener) {
         Contacts.initialize(context);
         Query q = Contacts.getQuery();
         List<Contact> contacts = q.find();
         List<String> phoneNumbers = new ArrayList<>();
         for (Contact contact : contacts) {
-            phoneNumbers.addAll( getPhones(contact.getPhoneNumbers(), countryCode) );
+            phoneNumbers.addAll( getPhones(contact.getPhoneNumbers(), myPhoneNumber, countryCode) );
         }
         listener.setAll(phoneNumbers);
     }
 
-    private List<String> getPhones(List<PhoneNumber> phoneNumbers, String countryCode) {
+    private List<String> getPhones(List<PhoneNumber> phoneNumbers, String myPhoneNumber, String countryCode) {
         List<String> result = new ArrayList<>();
 
         for (PhoneNumber pn : phoneNumbers) {
             String phoneNumber = getPhoneNumber(pn.getNormalizedNumber(), countryCode);
-            if ( !TextUtils.isEmpty(phoneNumber) ) {
+            if ( !TextUtils.isEmpty(phoneNumber) && !TextUtils.equals(myPhoneNumber, phoneNumber) ) {
                 result.add(phoneNumber);
             } else {
                 //do nothing

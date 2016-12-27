@@ -120,7 +120,7 @@ public class MainApplication extends Application {
         Log.i(TAG, "receive new country code event");
         country = event.countryCode;
         if ( !TextUtils.isEmpty(country) ) {
-            ContactProvider.instance.init(this, event.countryCode, new FinishInitListener() {
+            ContactProvider.instance.init(this, event.countryCode, phoneNumber, new FinishInitListener() {
                 @Override
                 public void setAll(List<String> phoneNumbers) {
                     GetUsersFirebase.getUsers(phoneNumbers, new GetUsersListener() {
