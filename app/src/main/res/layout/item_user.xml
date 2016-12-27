@@ -5,7 +5,8 @@
               android:layout_height="70dp"
               android:paddingTop="10dp"
               android:gravity="center"
-              android:orientation="horizontal" >
+              android:orientation="horizontal"
+              android:descendantFocusability="blocksDescendants" >
 
     <wumf.com.sharedapps.view.CircularImageView
         android:id="@+id/icon"
@@ -58,13 +59,15 @@
             android:layout_below="@id/name"
             android:layout_toRightOf="@id/app_icon2" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/garbage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_garbage"
             android:layout_alignParentRight="true"
-            android:layout_centerInParent="true" />
+            android:layout_centerInParent="true"
+            android:background="@android:color/transparent"
+            android:onClick="onClickGarbage" />
 
         <ImageView
             android:layout_width="wrap_content"

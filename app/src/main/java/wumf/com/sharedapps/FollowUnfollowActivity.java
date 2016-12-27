@@ -53,6 +53,10 @@ public class FollowUnfollowActivity extends Activity {
         EventBus.getDefault().unregister(this);
     }
 
+    public void onClickGarbage(View view) {
+        Toast.makeText(this, "onClickGarbage", Toast.LENGTH_LONG).show();
+    }
+
     private void showUsers(List<Profile> _users) {
         users = _users;
         isUsersListEmpty = (users == Collections.EMPTY_LIST) || users.isEmpty();
