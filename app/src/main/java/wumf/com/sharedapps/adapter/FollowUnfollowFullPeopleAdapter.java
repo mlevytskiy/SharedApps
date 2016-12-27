@@ -2,14 +2,15 @@ package wumf.com.sharedapps.adapter;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.github.omadahealth.typefaceview.TypefaceTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,8 +77,10 @@ public class FollowUnfollowFullPeopleAdapter extends BaseAdapter {
         RelativeLayout.LayoutParams layoutParams =
                 (RelativeLayout.LayoutParams) vh.name.getLayoutParams();
         if (appIcons[0] == null && appIcons[1] == null && appIcons[2] == null) {
+            vh.name.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         } else {
+            vh.name.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, 0);
         }
         setIcon(vh.appIcon1, appIcons[0], context);
