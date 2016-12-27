@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import wumf.com.sharedapps.R;
@@ -103,6 +105,18 @@ public class FollowUnfollowFullPeopleAdapter extends BaseAdapter {
             apps = new ArrayList<>();
         } else {
             apps = new ArrayList<>(user.getApps().values());
+            Collections.sort(apps, new Comparator<AppOrFolder>() {
+                @Override
+                public int compare(AppOrFolder app0, AppOrFolder app1) {
+                    if (app0.getTime() < app1.getTime()) {
+                        return 1;
+                    } else if (app0.getTime() > app1.getTime()) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
         }
 
         String[] result = new String[3];

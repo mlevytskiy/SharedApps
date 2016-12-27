@@ -96,7 +96,7 @@ public class FavouriteAppsFirebase {
 
     public static void listenFoldersAndApps(String uid) {
         Log.i("test", "listenFoldersAndApps=" + uid);
-        FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("apps").addValueEventListener(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("apps").orderByChild("time").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 long count = dataSnapshot.getChildrenCount();

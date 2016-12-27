@@ -1,5 +1,7 @@
 package wumf.com.sharedapps.firebase.pojo;
 
+import java.util.Date;
+
 /**
  * Created by max on 28.10.16.
  */
@@ -10,9 +12,11 @@ public class AppOrFolder {
     private String appName;
     private String appPackage;
     private String icon;
+    private long time;
 
     public AppOrFolder() {
         super();
+        time = new Date().getTime();
     }
 
     public AppOrFolder(String folderName) {
@@ -49,5 +53,13 @@ public class AppOrFolder {
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 }
