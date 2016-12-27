@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -72,6 +73,13 @@ public class FollowUnfollowFullPeopleAdapter extends BaseAdapter {
     }
 
     private void fillAppIcons(String[] appIcons, ViewHolder vh, Context context) {
+        RelativeLayout.LayoutParams layoutParams =
+                (RelativeLayout.LayoutParams) vh.name.getLayoutParams();
+        if (appIcons[0] == null && appIcons[1] == null && appIcons[2] == null) {
+            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        } else {
+            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, 0);
+        }
         setIcon(vh.appIcon1, appIcons[0], context);
         setIcon(vh.appIcon2, appIcons[1], context);
         setIcon(vh.appIcon3, appIcons[2], context);
@@ -86,7 +94,14 @@ public class FollowUnfollowFullPeopleAdapter extends BaseAdapter {
     }
 
     private String[] get3TopAppIcons(Profile user) {
-        List<AppOrFolder> apps = new ArrayList<>(user.getApps().values());
+        List<AppOrFolder> apps;
+
+        if (user.getApps()==null) {
+            apps = new ArrayList<>();
+        } else {
+            apps = new ArrayList<>(user.getApps().values());
+        }
+
         String[] result = new String[3];
 
         for (int i = 0; i < 3; i++) {

@@ -191,6 +191,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Subscribe
     public void onEvent(SignOutFromFirebaseEvent event) {
+        UsersFirebase.removeMe(currentUser.getUid());
+        FirebaseAuth.getInstance().signOut();
         currentUser = null;
         MainApplication.instance.phoneNumber = null;
         Auth.GoogleSignInApi.signOut(gac);

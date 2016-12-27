@@ -10,16 +10,13 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.github.omadahealth.typefaceview.TypefaceTextView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.greenrobot.eventbus.EventBus;
 
-import wumf.com.sharedapps.MainActivity;
 import wumf.com.sharedapps.MainApplication;
 import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.eventbus.SignOutFromFirebaseEvent;
-import wumf.com.sharedapps.firebase.UsersFirebase;
 
 /**
  * Created by max on 15.09.16.
@@ -67,9 +64,6 @@ public class MyAccountView extends LinearLayout {
         signOut.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                String uid = ((MainActivity) context).currentUser.getUid();
-                UsersFirebase.removeMe(uid);
-                FirebaseAuth.getInstance().signOut();
                 EventBus.getDefault().post(new SignOutFromFirebaseEvent());
             }
         });
@@ -96,10 +90,6 @@ public class MyAccountView extends LinearLayout {
         super.setVisibility(visibility);
     }
 
-    public void updateCountry(String country) {
-        this.country.setText(country);
-    }
-
     public void updatePhoneNumber(String phoneNumber) {
         phoneNumberContainer.setVisibility(View.VISIBLE);
         fullPhoneNumberFromViberContainer.setVisibility(View.GONE);
@@ -115,10 +105,6 @@ public class MyAccountView extends LinearLayout {
 
     public void setOnViberClickListener(OnClickListener onClickListener) {
         attachPhoneNumberViaViber.setOnClickListener(onClickListener);
-    }
-
-    public void setOnSignOutClickListener(OnClickListener onClickListener) {
-        signOut.setOnClickListener(onClickListener);
     }
 
 }
