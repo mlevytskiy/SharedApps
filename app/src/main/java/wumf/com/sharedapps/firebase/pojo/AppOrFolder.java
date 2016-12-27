@@ -1,6 +1,7 @@
 package wumf.com.sharedapps.firebase.pojo;
 
-import java.util.Date;
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.ServerValue;
 
 /**
  * Created by max on 28.10.16.
@@ -14,10 +15,7 @@ public class AppOrFolder {
     private String icon;
     private long time;
 
-    public AppOrFolder() {
-        super();
-        time = new Date().getTime();
-    }
+    public AppOrFolder() { }
 
     public AppOrFolder(String folderName) {
         this.folderName = folderName;
@@ -55,8 +53,13 @@ public class AppOrFolder {
         this.icon = icon;
     }
 
-    public long getTime() {
+    @Exclude
+    public long getTimeLong() {
         return time;
+    }
+
+    public Object getTime() {
+        return ServerValue.TIMESTAMP;
     }
 
     public void setTime(long time) {

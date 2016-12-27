@@ -108,9 +108,9 @@ public class FollowUnfollowFullPeopleAdapter extends BaseAdapter {
             Collections.sort(apps, new Comparator<AppOrFolder>() {
                 @Override
                 public int compare(AppOrFolder app0, AppOrFolder app1) {
-                    if (app0.getTime() < app1.getTime()) {
+                    if (app0.getTimeLong() < app1.getTimeLong()) {
                         return 1;
-                    } else if (app0.getTime() > app1.getTime()) {
+                    } else if (app0.getTimeLong() > app1.getTimeLong()) {
                         return -1;
                     } else {
                         return 0;
