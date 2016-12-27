@@ -28,8 +28,8 @@ import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.UsersByPhoneNumbersFromFirebaseEvent;
-import wumf.com.sharedapps.firebase.GetUsersFirebase;
 import wumf.com.sharedapps.firebase.GetUsersListener;
+import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.firebase.pojo.Profile;
 import wumf.com.sharedapps.util.TagsBuilder;
@@ -123,7 +123,7 @@ public class MainApplication extends Application {
             ContactProvider.instance.init(this, event.countryCode, phoneNumber, new FinishInitListener() {
                 @Override
                 public void setAll(List<String> phoneNumbers) {
-                    GetUsersFirebase.getUsers(phoneNumbers, new GetUsersListener() {
+                    UsersFirebase.getUsers(phoneNumbers, new GetUsersListener() {
                         @Override
                         public void users(List<Profile> profiles) {
                             users = profiles;

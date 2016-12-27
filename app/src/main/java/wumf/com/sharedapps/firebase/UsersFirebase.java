@@ -11,6 +11,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.pojo.Profile;
@@ -23,6 +26,8 @@ import wumf.com.sharedapps.util.TagsBuilder;
 public class UsersFirebase {
 
     private static final String TAG = new TagsBuilder().add("firebase").build();
+    private static DatabaseReference userssRef = FirebaseDatabase.getInstance().getReference().child("users");
+
 
     public static void addMe(FirebaseUser fUser) {
         Profile user = new Profile();
@@ -77,6 +82,41 @@ public class UsersFirebase {
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
+    }
+
+    public static void getUsers(final List<String> phoneNumbers, final GetUsersListener listener) {
+
+        userssRef.orderByChild("phoneNumber").startAt("+").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Profile> result = new ArrayList<>();
+                for( DataSnapshot child : dataSnapshot.getChildren() ) {
+                    if ( phoneNumbers.contains(child.child("phoneNumber").getValue()) ) {
+                        result.add(child.getValue(Profile.class));
+                    } else {
+                        //do nothing
+                    }
+                }
+                listener.users(result);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //do nothing
+            }
+        });
+
+    }
+
+    public static void getUsers() {
+        List<String> mock = new ArrayList<>();
+        mock.add("+380 93 320 9152");
+        getUsers(mock, new GetUsersListener() {
+            @Override
+            public void users(List<Profile> profiles) {
+                //do nothing
             }
         });
     }
