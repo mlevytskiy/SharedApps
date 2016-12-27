@@ -40,12 +40,14 @@ dependencies {
     compile "com.google.firebase:firebase-core:$rootProject.ext.google_play_services_version"
     compile "com.google.firebase:firebase-database:$rootProject.ext.google_play_services_version"
     compile "com.google.firebase:firebase-storage:$rootProject.ext.google_play_services_version"
-    compile "com.google.firebase:firebase-storage:$rootProject.ext.google_play_services_version"
+    compile "com.google.firebase:firebase-messaging:$rootProject.ext.google_play_services_version"
     compile "com.google.firebase:firebase-auth:$rootProject.ext.google_play_services_version"
     compile "com.google.android.gms:play-services-auth:$rootProject.ext.google_play_services_version"
 
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.balysv:material-ripple:1.0.2'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
 
     compile 'com.afollestad.material-dialogs:core:0.9.0.2'
     compile "com.google.android.gms:play-services:$rootProject.ext.google_play_services_version"
