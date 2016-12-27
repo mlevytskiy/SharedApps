@@ -1,4 +1,4 @@
-package wumf.com.sharedapps;
+package wumf.com.sharedapps.mockactivities;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import com.ns.developer.tagview.widget.TagCloudLinkView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import wumf.com.sharedapps.R;
 
 /**
  * Created by max on 11.12.16.
