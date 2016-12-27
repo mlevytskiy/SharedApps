@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.github.omadahealth.typefaceview.TypefaceTextView;
 
 import java.util.ArrayList;
 import java.util.List;
