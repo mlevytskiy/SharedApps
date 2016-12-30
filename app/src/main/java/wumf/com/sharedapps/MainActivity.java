@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private long firebaseAuthListenerCalledDate = 0;
-    public FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,9 +146,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     firebaseAuthListenerCalledDate = newDate;
                 }
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                currentUser = user;
+                CurrentUser.set(user);
                 if (user != null) {
-                    String uid = currentUser.getUid();
+                    String uid = user.getUid();
                     UsersFirebase.listenPhoneNumber(uid);
                     UsersFirebase.listenCountryCode(uid);
                     FavouriteAppsFirebase.listenFoldersAndApps(uid);
@@ -186,14 +185,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Subscribe
     public void onEvent(NewPhoneNumberFromViber event) {
-        UsersFirebase.updatePhoneNumber(currentUser.getUid(), event.phone);
+        UsersFirebase.updatePhoneNumber(CurrentUser.getUID(), event.phone);
     }
 
     @Subscribe
     public void onEvent(SignOutFromFirebaseEvent event) {
-        UsersFirebase.removeMe(currentUser.getUid());
+        UsersFirebase.removeMe(CurrentUser.getUID());
         FirebaseAuth.getInstance().signOut();
-        currentUser = null;
+        CurrentUser.set(null);
         MainApplication.instance.phoneNumber = null;
         Auth.GoogleSignInApi.signOut(gac);
     }
@@ -232,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         FirebaseIcons.getIconUrl(app.appPackage, new IconUrlCallback() {
             @Override
             public void receive(String icon) {
-                FavouriteAppsFirebase.addApp(currentUser.getUid(), app.appPackage, app.name, icon);
+                FavouriteAppsFirebase.addApp(CurrentUser.getUID(), app.appPackage, app.name, icon);
             }
         }, app.icon);
     }
@@ -240,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Subscribe
     public void onEvent(OnClickAppEvent event) {
         String packageName = event.appPackage;
-        if (currentUser == null) {
+        if (CurrentUser.get() == null) {
             Toast.makeText(MainActivity.this, "You need registration", Toast.LENGTH_LONG).show();
             return;
         }
@@ -319,11 +318,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     List<Address> addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                     if ( !addresses.isEmpty() ) {
                         MainApplication.instance.country = addresses.get(0).getCountryCode();
-                        FirebaseUser user = MainActivity.this.currentUser;
-                        if (user == null) {
+                        if (CurrentUser.get() == null) {
                             EventBus.getDefault().post(new WeAlreadyGetCountryCodeFromSystemEvent());
                         } else {
-                            UsersFirebase.updateCountryCode(user.getUid(), MainApplication.instance.country);
+                            UsersFirebase.updateCountryCode(CurrentUser.getUID(), MainApplication.instance.country);
                             EventBus.getDefault().post(new GetNewCountryEvent(MainApplication.instance.country));
                         }
                     }

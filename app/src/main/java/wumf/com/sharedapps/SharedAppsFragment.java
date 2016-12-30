@@ -124,8 +124,7 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String appPackage = adapter.getItem(i).getAppPackage();
-                String uid = ((MainActivity) getActivity()).currentUser.getUid();
-                FavouriteAppsFirebase.removeApp(uid, appPackage);
+                FavouriteAppsFirebase.removeApp(CurrentUser.getUID(), appPackage);
                 Toast.makeText(view.getContext(), "removed", Toast.LENGTH_LONG).show();
                 return true;
             }

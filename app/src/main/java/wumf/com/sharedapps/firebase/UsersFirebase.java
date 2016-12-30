@@ -8,6 +8,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -34,24 +35,31 @@ public class UsersFirebase {
         user.setEmail(fUser.getEmail());
         user.setName(fUser.getDisplayName());
         user.setIcon(fUser.getPhotoUrl().toString());
+        String token = FirebaseInstanceId.getInstance().getToken();
+        user.setPushId(token);
         DatabaseReference r = FirebaseDatabase.getInstance().getReference().child("users").child(fUser.getUid());
         r.setValue(user);
     }
 
+    public static void refreshPushId(String uid) {
+        String token = FirebaseInstanceId.getInstance().getToken();
+        getUserRef(uid).child("pushId").setValue(token);
+    }
+
     public static void removeMe(String uid) {
-        FirebaseDatabase.getInstance().getReference().child("users").child(uid).removeValue();
+        getUserRef(uid).removeValue();
     }
 
     public static void updatePhoneNumber(String uid, String phoneNumber) {
-        FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("phoneNumber").setValue(phoneNumber);
+        getUserRef(uid).child("phoneNumber").setValue(phoneNumber);
     }
 
     public static void updateCountryCode(String uid, String countryCode) {
-        FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("countryCode").setValue(countryCode);
+        getUserRef(uid).child("countryCode").setValue(countryCode);
     }
 
     public static void listenPhoneNumber(String uid) {
-        FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("phoneNumber").addValueEventListener(new ValueEventListener() {
+        getUserRef(uid).child("phoneNumber").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Object value = dataSnapshot.getValue();
@@ -69,7 +77,7 @@ public class UsersFirebase {
 
     public static void listenCountryCode(String uid) {
         Log.i(TAG, "listenCountryCode=" + uid);
-        FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("countryCode").addListenerForSingleValueEvent(new ValueEventListener() {
+        getUserRef(uid).child("countryCode").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Object value = dataSnapshot.getValue();
@@ -108,6 +116,10 @@ public class UsersFirebase {
             }
         });
 
+    }
+
+    private static DatabaseReference getUserRef(String uid) {
+        return FirebaseDatabase.getInstance().getReference().child("users").child(uid);
     }
 
     public static void getUsers() {

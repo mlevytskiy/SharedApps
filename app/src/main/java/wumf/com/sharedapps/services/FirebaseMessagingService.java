@@ -1,4 +1,4 @@
-package wumf.com.sharedapps;
+package wumf.com.sharedapps.services;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,10 +7,13 @@ import android.support.v4.app.NotificationCompat;
 
 import com.google.firebase.messaging.RemoteMessage;
 
+import wumf.com.sharedapps.MainActivity;
+import wumf.com.sharedapps.R;
+
 /**
  * Created by filipp on 5/23/2016.
  */
-public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService{
+public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -23,7 +26,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         Intent i = new Intent(this,MainActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,i,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setAutoCancel(true)

@@ -16,6 +16,7 @@ public class Profile {
     private Map<String, AppOrFolder> apps;
     private List<String> myTags;
     private String icon;
+    private String pushId;
 
     public String getCountryCode() {
         return countryCode;
@@ -72,4 +73,13 @@ public class Profile {
     public void setIcon(String icon) {
         this.icon = icon;
     }
+
+    public String getPushId() {
+        return pushId;
+    }
+
+    public void setPushId(String pushId) {
+        this.pushId = pushId;
+    }
+
 }

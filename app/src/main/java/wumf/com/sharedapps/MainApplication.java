@@ -10,7 +10,6 @@ import android.util.Log;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -33,7 +32,6 @@ import wumf.com.sharedapps.firebase.GetUsersListener;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.firebase.pojo.Profile;
-import wumf.com.sharedapps.retrofit.GCMSender;
 import wumf.com.sharedapps.util.TagsBuilder;
 
 /**
@@ -42,7 +40,6 @@ import wumf.com.sharedapps.util.TagsBuilder;
 public class MainApplication extends Application {
 
     private static final String TAG = new TagsBuilder().add("MainApplication").build();
-    private static final String PUSH_TAG = new TagsBuilder().add("MainApplication").add("push").build();
 
     public List<App> top6apps = new ArrayList<>();
     public List<App> allApps = new ArrayList<>();
@@ -96,9 +93,6 @@ public class MainApplication extends Application {
         country = "UNKNOWN";
 
         EventBus.getDefault().register(this);
-        String token = FirebaseInstanceId.getInstance().getToken();
-        Log.i(PUSH_TAG, token);
-        new GCMSender().send("test");
     }
 
     @Override

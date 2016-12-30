@@ -68,17 +68,15 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
         tagCloudLinkView.setOnAddTagListener(new TagCloudLinkView.OnAddTagListener() {
             @Override
             public void onAddTag() {
-                String uid = ((MainActivity) getActivity()).currentUser.getUid();
                 getActivity().startActivity(new Intent(getActivity(),
-                        AttacheTagForMyProfileActivity.class).putExtra(AttacheTagForMyProfileActivity.KEY_USER_UID, uid));
+                        AttacheTagForMyProfileActivity.class).putExtra(AttacheTagForMyProfileActivity.KEY_USER_UID, CurrentUser.getUID()));
             }
         });
 
         tagCloudLinkView.setOnTagDeleteListener(new TagCloudLinkView.OnTagDeleteListener() {
             @Override
             public void onTagDeleted(String tag, int position) {
-                String uid = ((MainActivity) getActivity()).currentUser.getUid();
-                TagsFirebase.removeTag(uid, tag);
+                TagsFirebase.removeTag(CurrentUser.getUID(), tag);
             }
         });
 
@@ -94,9 +92,8 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
         attacheTagForMyProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String uid = ((MainActivity) getActivity()).currentUser.getUid();
                 getActivity().startActivity(new Intent(getActivity(),
-                        AttacheTagForMyProfileActivity.class).putExtra(AttacheTagForMyProfileActivity.KEY_USER_UID, uid));
+                        AttacheTagForMyProfileActivity.class).putExtra(AttacheTagForMyProfileActivity.KEY_USER_UID, CurrentUser.getUID()));
             }
         });
 
@@ -106,7 +103,7 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        FirebaseUser user = ((MainActivity) getActivity()).currentUser;
+        FirebaseUser user = CurrentUser.get();
         if (user != null) {
             myAccountView.setUser(user);
             myAccountView.setVisibility(View.VISIBLE);
@@ -124,7 +121,7 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
 
     @Subscribe
     public void onEvent(SignInFromFirebaseEvent event) {
-        FirebaseUser user = ((MainActivity) getActivity()).currentUser;
+        FirebaseUser user = CurrentUser.get();
         myAccountView.setUser(user);
         UsersFirebase.addMe(user);
         myAccountView.setVisibility(View.VISIBLE);
