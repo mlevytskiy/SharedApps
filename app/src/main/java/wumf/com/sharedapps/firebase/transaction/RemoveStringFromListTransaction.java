@@ -1,22 +1,19 @@
 package wumf.com.sharedapps.firebase.transaction;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 
 import java.util.List;
 
-import wumf.com.sharedapps.firebase.TransactionResult;
+import wumf.com.sharedapps.firebase.transaction.common.AnyTransaction;
 
 /**
  * Created by max on 08.12.16.
  */
 
-public class RemoveStringFromListTransaction implements Transaction.Handler {
+public class RemoveStringFromListTransaction extends AnyTransaction {
 
     private String str;
-    private TransactionResult tr;
 
     public RemoveStringFromListTransaction(String str) {
         this.str = str;
@@ -39,20 +36,4 @@ public class RemoveStringFromListTransaction implements Transaction.Handler {
         return Transaction.success(mutableData);
     }
 
-    public void setTransactionResult(TransactionResult tr) {
-        this.tr = tr;
-    }
-
-    @Override
-    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-        if (tr == null) {
-            return;
-        }
-
-        if (databaseError == null) {
-            tr.onSuccess();
-        } else {
-            tr.onError();
-        }
-    }
 }

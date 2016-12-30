@@ -1,15 +1,15 @@
 package wumf.com.sharedapps.firebase.transaction;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+
+import wumf.com.sharedapps.firebase.transaction.common.AnyTransaction;
 
 /**
  * Created by max on 30.12.16.
  */
 
-public class CompositeTransaction implements Transaction.Handler {
+public class CompositeTransaction extends AnyTransaction {
 
     private Transaction.Handler[] transactions;
 
@@ -26,13 +26,6 @@ public class CompositeTransaction implements Transaction.Handler {
             }
         }
         return result;
-    }
-
-    @Override
-    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-        for (Transaction.Handler tr : transactions) {
-            tr.onComplete(databaseError, b, dataSnapshot);
-        }
     }
 
 }

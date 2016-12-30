@@ -28,10 +28,13 @@ import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.UsersByPhoneNumbersFromFirebaseEvent;
+import wumf.com.sharedapps.firebase.FollowUnfollowPeopleFirebase;
 import wumf.com.sharedapps.firebase.GetUsersListener;
+import wumf.com.sharedapps.firebase.TransactionResultListener;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.firebase.pojo.Profile;
+import wumf.com.sharedapps.memory.MemoryCommunicator;
 import wumf.com.sharedapps.util.TagsBuilder;
 
 /**
@@ -122,7 +125,7 @@ public class MainApplication extends Application {
         if ( !TextUtils.isEmpty(country) ) {
             ContactProvider.instance.init(this, event.countryCode, phoneNumber, new FinishInitListener() {
                 @Override
-                public void setAll(List<String> phoneNumbers) {
+                public void setAll(final List<String> phoneNumbers) {
                     UsersFirebase.getUsers(phoneNumbers, new GetUsersListener() {
                         @Override
                         public void users(List<Profile> profiles) {
@@ -130,8 +133,50 @@ public class MainApplication extends Application {
                             EventBus.getDefault().post( new UsersByPhoneNumbersFromFirebaseEvent(users) );
                         }
                     });
+                    List<String> oldContacts = new MemoryCommunicator().loadList();
+                    List<String> removed = removedContacts(phoneNumbers, oldContacts);
+                    List<String> newContacts = newContacts(phoneNumbers, oldContacts);
+                    FollowUnfollowPeopleFirebase.markMeAsFollowerOfContacts(CurrentUser.getUID(), newContacts, removed, new TransactionResultListener() {
+                        @Override
+                        public void onSuccess() {
+                            new MemoryCommunicator().saveList(phoneNumbers);
+                        }
+
+                        @Override
+                        public void onError() {
+                            //do nothing
+                        }
+                    });
                 }
             });
+        }
+    }
+
+    private List<String> newContacts(List<String> contacts, List<String> oldContacts) {
+        if (oldContacts.isEmpty()) {
+            return contacts;
+        } else {
+            List<String> result = new ArrayList<>();
+            for (String str : contacts) {
+                if ( !oldContacts.contains(str) ) {
+                    result.add(str);
+                }
+            }
+            return result;
+        }
+    }
+
+    private List<String> removedContacts(List<String> contacts, List<String> oldContacts) {
+        if (oldContacts.isEmpty()) {
+            return oldContacts; //empty list
+        } else {
+            List<String> result = new ArrayList<>();
+            for (String str : oldContacts) {
+                if ( !contacts.contains(str) ) {
+                    result.add(str);
+                }
+            }
+            return result;
         }
     }
 
