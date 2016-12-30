@@ -13,6 +13,8 @@ import java.util.List;
 
 import wumf.com.sharedapps.OnChangeAllTagsListener;
 import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
+import wumf.com.sharedapps.firebase.transaction.AttachStringToListTransaction;
+import wumf.com.sharedapps.firebase.transaction.RemoveStringFromListTransaction;
 
 /**
  * Created by max on 07.12.16.

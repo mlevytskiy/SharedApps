@@ -1,4 +1,4 @@
-package wumf.com.sharedapps.services;
+package wumf.com.sharedapps.service;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;

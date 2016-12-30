@@ -1,4 +1,4 @@
-package wumf.com.sharedapps.services;
+package wumf.com.sharedapps.service;
 
 /**
  * Created by max on 27.12.16.

@@ -1,4 +1,4 @@
-package wumf.com.sharedapps.firebase;
+package wumf.com.sharedapps.firebase.transaction;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -7,6 +7,8 @@ import com.google.firebase.database.Transaction;
 
 import java.util.Collections;
 import java.util.List;
+
+import wumf.com.sharedapps.firebase.TransactionResult;
 
 /**
  * Created by max on 08.12.16.

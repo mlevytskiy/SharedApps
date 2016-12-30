@@ -1,4 +1,4 @@
-package wumf.com.sharedapps.mockactivities;
+package wumf.com.sharedapps.mockactivity;
 
 import android.app.Activity;
 import android.os.Bundle;
