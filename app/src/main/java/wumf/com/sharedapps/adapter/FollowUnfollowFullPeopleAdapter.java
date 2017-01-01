@@ -6,6 +6,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -61,9 +62,11 @@ public class FollowUnfollowFullPeopleAdapter extends BaseAdapter {
             vh.appIcon1 = (ImageView) view.findViewById(R.id.app_icon1);
             vh.appIcon2 = (ImageView) view.findViewById(R.id.app_icon2);
             vh.appIcon3 = (ImageView) view.findViewById(R.id.app_icon3);
+            vh.garbage = (ImageButton) view.findViewById(R.id.garbage);
         } else {
             vh = (ViewHolder) view.getTag();
         }
+        vh.garbage.setTag(currentUser.getUid());
         if ( TextUtils.isEmpty(currentUser.getIcon()) ) {
             vh.icon.setImageDrawable(null);
         } else {
@@ -133,6 +136,7 @@ public class FollowUnfollowFullPeopleAdapter extends BaseAdapter {
         ImageView appIcon1;
         ImageView appIcon2;
         ImageView appIcon3;
+        ImageButton garbage;
     }
 
 }

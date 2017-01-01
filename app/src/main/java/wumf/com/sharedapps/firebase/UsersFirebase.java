@@ -102,7 +102,9 @@ public class UsersFirebase {
                 List<Profile> result = new ArrayList<>();
                 for( DataSnapshot child : dataSnapshot.getChildren() ) {
                     if ( phoneNumbers.contains(child.child("phoneNumber").getValue()) ) {
-                        result.add(child.getValue(Profile.class));
+                        Profile profile = child.getValue(Profile.class);
+                        profile.setUid(child.getKey());
+                        result.add(profile);
                     } else {
                         //do nothing
                     }

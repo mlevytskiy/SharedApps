@@ -20,6 +20,7 @@ import java.util.List;
 import wumf.com.sharedapps.adapter.FollowUnfollowFullPeopleAdapter;
 import wumf.com.sharedapps.adapter.FollowUnfollowPeopleEmptyAdapter;
 import wumf.com.sharedapps.eventbus.UsersByPhoneNumbersFromFirebaseEvent;
+import wumf.com.sharedapps.firebase.GarbageFirebase;
 import wumf.com.sharedapps.firebase.pojo.Profile;
 import wumf.com.sharedapps.util.AutofollowTextBuilder;
 import wumf.com.sharedapps.view.CustomTopBar;
@@ -55,7 +56,9 @@ public class FollowUnfollowActivity extends Activity {
     }
 
     public void onClickGarbage(View view) {
-        Toast.makeText(this, "onClickGarbage", Toast.LENGTH_LONG).show();
+        String uid = (String) view.getTag();
+        GarbageFirebase.moveUserToGarbage(CurrentUser.getUID(), uid);
+        Toast.makeText(this, "onClickGarbage=" + uid, Toast.LENGTH_LONG).show();
     }
 
     private void showUsers(List<Profile> _users) {

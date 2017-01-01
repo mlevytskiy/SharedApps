@@ -1,5 +1,7 @@
 package wumf.com.sharedapps.firebase.pojo;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +10,8 @@ import java.util.Map;
  */
 
 public class Profile {
+    @Exclude
+    private String uid;
 
     private String countryCode;
     private String email;
@@ -82,4 +86,13 @@ public class Profile {
         this.pushId = pushId;
     }
 
+    @Exclude
+    public String getUid() {
+        return uid;
+    }
+
+    @Exclude
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 }
