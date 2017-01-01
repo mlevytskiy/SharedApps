@@ -38,7 +38,8 @@ public class FollowUnfollowActivity extends Activity {
         super.onCreate(bundle);
         setContentView(R.layout.activity_follow_unfollow);
         listView = (ListView) findViewById(R.id.list_view);
-        ((CustomTopBar) findViewById(R.id.top_bar)).setText("Follow/unfollow people").bind(this);
+        final CustomTopBar customTopBar = ((CustomTopBar) findViewById(R.id.top_bar)).setText("Follow/unfollow people").bind(this)
+                .addNewImage(R.drawable.ic_garbage, false, null);
 
         showUsers(((MainApplication) getApplication()).users);
     }
