@@ -8,13 +8,14 @@
               android:orientation="horizontal"
               android:descendantFocusability="blocksDescendants" >
 
-    <wumf.com.sharedapps.view.CircularImageView
+    <ImageView
         android:id="@+id/icon"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        app:civ_border_width="1px"
-        app:civ_border_color="#FF000000"
         android:layout_marginLeft="8dp" />
+
+    <!--app:civ_border_width="1px"-->
+    <!--app:civ_border_color="#FF000000"-->
 
     <RelativeLayout
         android:layout_width="0dp"
@@ -63,19 +64,11 @@
             android:id="@+id/garbage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_garbage"
+            android:src="@drawable/ic_cancel"
             android:layout_alignParentRight="true"
             android:layout_centerInParent="true"
             android:background="@android:color/transparent"
             android:onClick="onClickGarbage" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/garbage"
-            android:src="@drawable/ic_edit"
-            android:layout_centerInParent="true"
-            android:layout_marginRight="10dp" />
 
     </RelativeLayout>
 

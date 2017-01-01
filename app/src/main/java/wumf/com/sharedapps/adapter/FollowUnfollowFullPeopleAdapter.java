@@ -20,7 +20,6 @@ import java.util.List;
 import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.firebase.pojo.Profile;
-import wumf.com.sharedapps.view.CircularImageView;
 
 /**
  * Created by max on 29.11.16.
@@ -57,7 +56,7 @@ public class FollowUnfollowFullPeopleAdapter extends BaseAdapter {
             vh = new ViewHolder();
             view = View.inflate(viewGroup.getContext(), R.layout.item_user, null);
             view.setTag(vh);
-            vh.icon = (CircularImageView) view.findViewById(R.id.icon);
+            vh.icon = (ImageView) view.findViewById(R.id.icon);
             vh.name = (TextView) view.findViewById(R.id.name);
             vh.appIcon1 = (ImageView) view.findViewById(R.id.app_icon1);
             vh.appIcon2 = (ImageView) view.findViewById(R.id.app_icon2);
@@ -129,7 +128,7 @@ public class FollowUnfollowFullPeopleAdapter extends BaseAdapter {
     }
 
     private static class ViewHolder {
-        CircularImageView icon;
+        ImageView icon;
         TextView name;
         ImageView appIcon1;
         ImageView appIcon2;
