@@ -19,6 +19,7 @@ import java.util.List;
 
 import wumf.com.sharedapps.adapter.FollowUnfollowFullPeopleAdapter;
 import wumf.com.sharedapps.adapter.FollowUnfollowPeopleEmptyAdapter;
+import wumf.com.sharedapps.eventbus.RemovedFollowedUsersChangeEvent;
 import wumf.com.sharedapps.eventbus.UsersByPhoneNumbersFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.GarbageFirebase;
 import wumf.com.sharedapps.firebase.pojo.Profile;
@@ -31,17 +32,24 @@ import wumf.com.sharedapps.view.CustomTopBar;
 
 public class FollowUnfollowActivity extends Activity {
 
+    private static final int REQUEST_CODE = 888;
     private boolean isUsersListEmpty = false;
     private List<Profile> users;
     private ListView listView;
+    private View header;
+
 
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.activity_follow_unfollow);
         listView = (ListView) findViewById(R.id.list_view);
         final CustomTopBar customTopBar = ((CustomTopBar) findViewById(R.id.top_bar)).setText("Follow/unfollow people").bind(this)
-                .addNewImage(R.drawable.ic_garbage, false, null);
-
+                .addNewImage(R.drawable.ic_garbage, false, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startActivityForResult(new Intent(FollowUnfollowActivity.this, GarbageActivity.class), REQUEST_CODE);
+                    }
+                });
         showUsers(((MainApplication) getApplication()).users);
     }
 
@@ -58,10 +66,15 @@ public class FollowUnfollowActivity extends Activity {
     public void onClickGarbage(View view) {
         String uid = (String) view.getTag();
         GarbageFirebase.moveUserToGarbage(CurrentUser.getUID(), uid);
-        Toast.makeText(this, "onClickGarbage=" + uid, Toast.LENGTH_LONG).show();
+    }
+
+    @Subscribe
+    public void onEvent(RemovedFollowedUsersChangeEvent event) {
+        showUsers(((MainApplication) getApplication()).users);
     }
 
     private void showUsers(List<Profile> _users) {
+        listView.removeHeaderView(header);
         users = _users;
         isUsersListEmpty = (users == Collections.EMPTY_LIST) || users.isEmpty();
 
@@ -75,7 +88,7 @@ public class FollowUnfollowActivity extends Activity {
     }
 
     private void createListViewHeader(ListView listView, boolean isUsersListEmpty) {
-        View header = View.inflate(this, R.layout.header_follow_all_my_phone_contacts, null);
+        header = View.inflate(this, R.layout.header_follow_all_my_phone_contacts, null);
         header.findViewById(R.id.line).setVisibility(isUsersListEmpty ? View.VISIBLE : View.GONE);
         TextView autofollow = (TextView) header.findViewById(R.id.autofollow_typeface_text_view);
         autofollowCheckBoxClick(autofollow, (CheckBox) header.findViewById(R.id.autofollow_check_box));
@@ -94,6 +107,17 @@ public class FollowUnfollowActivity extends Activity {
     @Subscribe
     public void onEvent(UsersByPhoneNumbersFromFirebaseEvent event) {
         showUsers(event.profiles);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                showUsers(((MainApplication) getApplication()).users);
+            } else {
+                //do nothing
+            }
+        }
     }
 
     private void autofollowCheckBoxClick(TextView textView, CheckBox checkBox) {

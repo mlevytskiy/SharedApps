@@ -77,6 +77,7 @@ public class CustomTopBar extends LinearLayout {
     public CustomTopBar addNewImage(@DrawableRes int imageId, boolean withAnimation, OnClickListener listener) {
         ImageButton imageButton = (ImageButton) View.inflate(getContext(), R.layout.view_image_button, null);
         imageButton.setImageResource(imageId);
+        imageButton.setOnClickListener(listener);
         addView(imageButton);;
         imageButtonsMap.put(imageId, imageButton);
         backOpposite.setVisibility(View.GONE);

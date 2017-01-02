@@ -59,6 +59,7 @@ import wumf.com.sharedapps.eventbus.SignOutFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.WeAlreadyGetCountryCodeFromSystemEvent;
 import wumf.com.sharedapps.firebase.FavouriteAppsFirebase;
 import wumf.com.sharedapps.firebase.FirebaseIcons;
+import wumf.com.sharedapps.firebase.GarbageFirebase;
 import wumf.com.sharedapps.firebase.IconUrlCallback;
 import wumf.com.sharedapps.firebase.TagsFirebase;
 import wumf.com.sharedapps.firebase.UsersFirebase;
@@ -153,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     UsersFirebase.listenCountryCode(uid);
                     FavouriteAppsFirebase.listenFoldersAndApps(uid);
                     TagsFirebase.listenMyTags(uid);
+                    GarbageFirebase.listenAndNotify(uid);
                 }
                 if (user != null) {
                     // User is signed in

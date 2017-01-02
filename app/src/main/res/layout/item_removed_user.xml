@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="70dp"
+              android:layout_height="70dp"
+              android:paddingTop="10dp"
+              android:gravity="center"
+              android:orientation="horizontal"
+              android:descendantFocusability="blocksDescendants" >
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="8dp" />
+
+    <!--app:civ_border_width="1px"-->
+    <!--app:civ_border_color="#FF000000"-->
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/bg_border"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp" >
+
+        <com.github.omadahealth.typefaceview.TypefaceTextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/video2"
+            android:textSize="14dp"
+            app:tv_typeface="roboto_light"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="2dp"
+            android:layout_centerInParent="true" />
+
+        <ImageButton
+            android:id="@+id/replay"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_replay_small"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:background="@android:color/transparent"
+            android:onClick="onClickReplay" />
+
+    </RelativeLayout>
+
+</LinearLayout>

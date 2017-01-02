@@ -33,12 +33,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".mockactivity.TagCloudActivity"
-                  android:exported="true" />
-
-        <activity android:name=".mockactivity.TestFirebaseQueryActivity"
-                  android:exported="true" />
-
         <activity android:name=".AllAppsActivity" />
 
         <activity android:name=".FollowUnfollowActivity" />
@@ -49,6 +43,8 @@
                   android:windowSoftInputMode="stateVisible" />
 
         <activity android:name=".ViberTransparentActivity" android:theme="@style/Theme.Transparent" />
+
+        <activity android:name=".GarbageActivity" />
 
         <service
             android:name=".service.FirebaseMessagingService">
@@ -63,6 +59,12 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
+
+        <activity android:name=".mockactivity.TagCloudActivity"
+                  android:exported="true" />
+
+        <activity android:name=".mockactivity.TestFirebaseQueryActivity"
+                  android:exported="true" />
 
     </application>
 

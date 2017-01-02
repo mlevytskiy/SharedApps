@@ -15,7 +15,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import interesting.com.contactsprovider.ContactProvider;
@@ -27,6 +26,7 @@ import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
+import wumf.com.sharedapps.eventbus.RemovedFollowedUsersChangeEvent;
 import wumf.com.sharedapps.eventbus.UsersByPhoneNumbersFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.FollowUnfollowPeopleFirebase;
 import wumf.com.sharedapps.firebase.GetUsersListener;
@@ -51,7 +51,10 @@ public class MainApplication extends Application {
     public static MainApplication instance;
     public String country;
     public List<String> myTags;
-    public List<Profile> users = Collections.EMPTY_LIST;
+    public List<Profile> users = new ArrayList<>(); //allUsers-removedUsers =)
+    public List<Profile> removedUsers = new ArrayList<>();
+    private List<String> removedUserUids = new ArrayList<>();
+    private List<Profile> allUsers = new ArrayList<>();
 
     private AppProvider appProvider;
 
@@ -130,6 +133,9 @@ public class MainApplication extends Application {
                         @Override
                         public void users(List<Profile> profiles) {
                             users = profiles;
+                            allUsers.clear();
+                            allUsers.addAll(profiles);
+                            remove(users, removedUserUids);
                             EventBus.getDefault().post( new UsersByPhoneNumbersFromFirebaseEvent(users) );
                         }
                     });
@@ -149,6 +155,32 @@ public class MainApplication extends Application {
                     });
                 }
             });
+        }
+    }
+
+    @Subscribe
+    public void onEvent(RemovedFollowedUsersChangeEvent event) {
+        removedUserUids = event.uids;
+        users.clear();
+        users.addAll(allUsers);
+        remove(users, removedUserUids);
+    }
+
+    private void remove(List<Profile> users, List<String> uids) {
+        if (uids.isEmpty()) {
+            return;
+        }
+
+        removedUsers.clear();
+
+        for (int i = 0; i < allUsers.size(); i++) {
+            Profile user = allUsers.get(i);
+            if ( uids.contains(user.getUid()) ) {
+                users.remove(user);
+                removedUsers.add(user);
+            } else {
+                //do nothing
+            }
         }
     }
 
