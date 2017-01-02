@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -80,8 +81,15 @@ public class FollowUnfollowActivity extends Activity {
 
         if (isUsersListEmpty) {
             listView.setAdapter(new FollowUnfollowPeopleEmptyAdapter());
+            listView.setOnItemClickListener(null);
         } else {
             listView.setAdapter(new FollowUnfollowFullPeopleAdapter(users));
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    startActivity(new Intent(FollowUnfollowActivity.this, PersonActivity.class));
+                }
+            });
         }
 
         createListViewHeader(listView, isUsersListEmpty);

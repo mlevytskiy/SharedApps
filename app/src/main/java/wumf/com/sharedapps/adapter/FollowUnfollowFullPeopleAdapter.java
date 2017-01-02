@@ -40,8 +40,8 @@ public class FollowUnfollowFullPeopleAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int i) {
-        return null;
+    public Profile getItem(int i) {
+        return users.get(i);
     }
 
     @Override
