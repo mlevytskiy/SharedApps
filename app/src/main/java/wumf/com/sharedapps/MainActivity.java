@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
-                // Google Sign In failed, update UI appropriately
+                // Google Sign In failed, updateMyApps UI appropriately
             }
             Toast.makeText(this, "onActivityResult", Toast.LENGTH_LONG).show();
         }
@@ -240,6 +240,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Subscribe
     public void onEvent(OnClickAppEvent event) {
+        if ( !event.isForMainActivity ) {
+            return;
+        }
+
         String packageName = event.appPackage;
         if (CurrentUser.get() == null) {
             Toast.makeText(MainActivity.this, "You need registration", Toast.LENGTH_LONG).show();

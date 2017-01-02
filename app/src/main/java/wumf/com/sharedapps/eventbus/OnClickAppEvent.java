@@ -5,10 +5,16 @@ package wumf.com.sharedapps.eventbus;
  */
 public class OnClickAppEvent {
 
+    public final boolean isForMainActivity;
     public final String appPackage;
 
     public OnClickAppEvent(String appPackage) {
+        this(appPackage, false);
+    }
+
+    public OnClickAppEvent(String appPackage, boolean isForMainActivity) {
         this.appPackage = appPackage;
+        this.isForMainActivity = isForMainActivity;
     }
 
 }

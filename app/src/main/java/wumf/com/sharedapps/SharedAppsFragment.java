@@ -18,8 +18,6 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import com.melnykov.fab.FloatingActionButton;
@@ -34,11 +32,12 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.List;
 
 import wumf.com.appsprovider.App;
-import wumf.com.sharedapps.adapter.SharedAppsAdapter;
 import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.OnClickAppEvent;
+import wumf.com.sharedapps.eventbus.OnLongClickAppEvent;
 import wumf.com.sharedapps.firebase.FavouriteAppsFirebase;
+import wumf.com.sharedapps.view.AppsRecycleView;
 
 /**
  * Created by max on 22.08.16.
@@ -73,9 +72,8 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
     private FloatingActionButton fab;
     private AnimationDrawable frameAnim;
     private AnimationDrawable frameReverseAnim;
-    private String selectedPackageName;
     private boolean isDisableOpenMenuListener = false;
-    private SharedAppsAdapter adapter;
+    private AppsRecycleView appsRecycleView;
 
     private SpringFloatingActionMenu springFloatingActionMenu;
 
@@ -96,7 +94,21 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
 
     @Subscribe
     public void onEvent(ChangeAllFoldersAndAppsFromFirebaseEvent event) {
-        adapter.updateItems(event.folders, event.apps);
+        appsRecycleView.updateSharedApps(event.apps);
+    }
+
+    @Subscribe
+    public void onEvent(OnLongClickAppEvent event) {
+        FavouriteAppsFirebase.removeApp(CurrentUser.getUID(), event.appPackage);
+        Toast.makeText(getContext(), "removed", Toast.LENGTH_LONG).show();
+    }
+
+    @Subscribe
+    public void onEvent(OnClickAppEvent event) {
+        if ( event.isForMainActivity ) {
+            return;
+        }
+        Toast.makeText(getContext(), "test", Toast.LENGTH_LONG).show();
     }
 
     private void fill(List<App> apps) {
@@ -109,26 +121,8 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_shared_apps, container, false);
 
-        GridView gridView = (GridView) view.findViewById(R.id.grid_view);
-        gridView.setEmptyView(view.findViewById(R.id.empty_view_type_face_text_view));
-        adapter = new SharedAppsAdapter();
-        gridView.setAdapter(adapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(view.getContext(), "test", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String appPackage = adapter.getItem(i).getAppPackage();
-                FavouriteAppsFirebase.removeApp(CurrentUser.getUID(), appPackage);
-                Toast.makeText(view.getContext(), "removed", Toast.LENGTH_LONG).show();
-                return true;
-            }
-        });
+        appsRecycleView = (AppsRecycleView) view.findViewById(R.id.apps_recycle_view);
+        appsRecycleView.setEmptyView(view.findViewById(R.id.empty_view_type_face_text_view));
 
         createFabReverseFrameAnim();
         fab = createFloatingActionButton();
@@ -326,7 +320,7 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
 //                        }
 //                    });
                 } else {
-                    EventBus.getDefault().post(new OnClickAppEvent(appPackage));
+                    EventBus.getDefault().post(new OnClickAppEvent(appPackage, true));
                 }
             }
         }, 450);

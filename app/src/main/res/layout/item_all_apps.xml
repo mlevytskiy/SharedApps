@@ -24,7 +24,7 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <wumf.com.sharedapps.view.IconImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/icon"
             android:layout_width="50dp"
             android:layout_height="50dp"/>
@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="8dp" />
 
-        <wumf.com.sharedapps.view.LabelTextView
+        <com.github.omadahealth.typefaceview.TypefaceTextView
             android:id="@+id/label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
