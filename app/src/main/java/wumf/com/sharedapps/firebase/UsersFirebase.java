@@ -96,12 +96,15 @@ public class UsersFirebase {
 
     public static void getUsers(final List<String> phoneNumbers, final GetUsersListener listener) {
 
-        userssRef.orderByChild("phoneNumber").startAt("+").addListenerForSingleValueEvent(new ValueEventListener() {
+        userssRef.orderByChild("phoneNumber").addListenerForSingleValueEvent(new ValueEventListener() { //problems with startAt("+"); sometimes wrong result
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Profile> result = new ArrayList<>();
+                Log.i(TAG, "users with phones count=" + dataSnapshot.getChildrenCount());
                 for( DataSnapshot child : dataSnapshot.getChildren() ) {
-                    if ( phoneNumbers.contains(child.child("phoneNumber").getValue()) ) {
+                    String phoneNumber = (String) child.child("phoneNumber").getValue();
+                    Log.i(TAG, "phoneNumber=" + phoneNumber);
+                    if ( phoneNumbers.contains(phoneNumber) ) {
                         Profile profile = child.getValue(Profile.class);
                         profile.setUid(child.getKey());
                         result.add(profile);
