@@ -2,8 +2,13 @@ package wumf.com.sharedapps.util;
 
 import android.text.TextUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import wumf.com.appsprovider.App;
 import wumf.com.sharedapps.MainApplication;
+import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
+import wumf.com.sharedapps.firebase.pojo.Profile;
 
 /**
  * Created by max on 16.11.16.
@@ -33,6 +38,14 @@ public class AppFinderUtils {
         }
 
         return null;
+    }
+
+    public static List<AppOrFolder> find(Profile user) {
+        if (user == null) {
+            return new ArrayList<>();
+        } else {
+            return new ArrayList<>(user.getApps().values());
+        }
     }
 
 }

@@ -18,11 +18,9 @@
         android:layout_height="1px"
         android:background="#7f000000" />
 
-    <ListView
-        android:id="@+id/list_view"
+    <wumf.com.sharedapps.view.AppsRecycleView
+        android:id="@+id/apps_recycle_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
