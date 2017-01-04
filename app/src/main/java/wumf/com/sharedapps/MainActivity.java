@@ -59,9 +59,7 @@ import wumf.com.sharedapps.eventbus.SignOutFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.WeAlreadyGetCountryCodeFromSystemEvent;
 import wumf.com.sharedapps.firebase.FavouriteAppsFirebase;
 import wumf.com.sharedapps.firebase.FirebaseIcons;
-import wumf.com.sharedapps.firebase.GarbageFirebase;
 import wumf.com.sharedapps.firebase.IconUrlCallback;
-import wumf.com.sharedapps.firebase.TagsFirebase;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.util.AppFinderUtils;
 import wumf.com.sharedapps.util.TagsBuilder;
@@ -148,13 +146,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 }
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 CurrentUser.set(user);
-                if (user != null) {
-                    String uid = user.getUid();
-                    TagsFirebase.listenMyTags(uid);
-                    UsersFirebase.listenPhoneNumber(uid);
-                    FavouriteAppsFirebase.listenFoldersAndApps(uid);
-                    GarbageFirebase.listenAndNotify(uid);
-                }
                 if (user != null) {
                     // User is signed in
                     Log.i("test", "onAuthStateChanged:signed_in:" + user.getUid());
