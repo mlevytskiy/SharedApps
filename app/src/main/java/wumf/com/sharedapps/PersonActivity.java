@@ -2,7 +2,15 @@ package wumf.com.sharedapps;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.ns.developer.tagview.widget.TagCloudLinkView;
+
+import java.util.List;
+
+import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.firebase.pojo.Profile;
 import wumf.com.sharedapps.util.AppFinderUtils;
 import wumf.com.sharedapps.util.UserFinderUtils;
@@ -25,10 +33,21 @@ public class PersonActivity extends Activity {
         AppsRecycleView appsRecycleView = (AppsRecycleView) findViewById(R.id.apps_recycle_view);
 
         Profile user = UserFinderUtils.find(uid);
+        showProfileBaseInfo(user);
 
-        appsRecycleView.updateSharedApps(AppFinderUtils.find(user));
+        List<AppOrFolder> apps = AppFinderUtils.find(user);
+        appsRecycleView.updateSharedApps(apps);
     }
 
+    private void showProfileBaseInfo(Profile user) {
+        ImageView icon = (ImageView) findViewById(R.id.icon);
+        Glide.with(this).load(user.getIcon()).into(icon);
 
+        TextView name = (TextView) findViewById(R.id.name);
+        name.setText(user.getName());
+
+        TagCloudLinkView tagCloudLinkView = (TagCloudLinkView) findViewById(R.id.tags_text_view);
+        tagCloudLinkView.setAll(user.getMyTags());
+    }
 
 }

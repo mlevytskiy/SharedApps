@@ -41,7 +41,7 @@ public class AppFinderUtils {
     }
 
     public static List<AppOrFolder> find(Profile user) {
-        if (user == null) {
+        if (user == null || user.getApps() == null) {
             return new ArrayList<>();
         } else {
             return new ArrayList<>(user.getApps().values());

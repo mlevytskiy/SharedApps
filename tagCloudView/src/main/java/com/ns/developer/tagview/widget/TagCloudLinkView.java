@@ -178,6 +178,9 @@ public class TagCloudLinkView extends RelativeLayout {
     }
 
     public void setAll(List<String> tags) {
+        if (tags == null) {
+            tags = new ArrayList<>();
+        }
         mTags.clear();
 
         if (isAutoCompleteMode) {
@@ -308,7 +311,7 @@ public class TagCloudLinkView extends RelativeLayout {
         LayoutParams tagParams = new LayoutParams(HEIGHT_WC, HEIGHT_WC);
         tagParams.setMargins(0, 0, 0, 0);
 
-        if (isAutoCompleteMode) {
+        if (isAutoCompleteMode || !mIsDeletable) {
             return;
         }
 
