@@ -76,6 +76,7 @@ public class FollowUnfollowActivity extends Activity {
 
     private void showUsers(List<Profile> _users) {
         listView.removeHeaderView(header);
+        createListViewHeader(listView, isUsersListEmpty);
         users = _users;
         isUsersListEmpty = (users == Collections.EMPTY_LIST) || users.isEmpty();
 
@@ -92,8 +93,6 @@ public class FollowUnfollowActivity extends Activity {
                 }
             });
         }
-
-        createListViewHeader(listView, isUsersListEmpty);
     }
 
     private void createListViewHeader(ListView listView, boolean isUsersListEmpty) {
