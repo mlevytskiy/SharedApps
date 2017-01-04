@@ -23,6 +23,7 @@ public class FollowUnfollowPeopleFirebase {
 
     private static DatabaseReference waitingListRef = FirebaseDatabase.getInstance().getReference().child("waitingList");
     private static DatabaseReference userssRef = FirebaseDatabase.getInstance().getReference().child("users");
+    private static DatabaseReference tagsRef = FirebaseDatabase.getInstance().getReference().child("tags");
 
     public static void markMeAsFollowerOfContacts(final String uid, final List<String> newPhones, final List<String> removedPhones, TransactionResultListener listener) {
         AnyTransaction transaction = null;
@@ -43,31 +44,17 @@ public class FollowUnfollowPeopleFirebase {
         }
     }
 
-    public static void sendPushesPeopleWhoWaitingMe(String phoneNumber) {
-        waitingListRef.child(phoneNumber).addListenerForSingleValueEvent(new ValueEventListener() {
+    public static void sendPushesPeopleWithTheSameTags(List<String> tags) {
+        for (String tag : tags) {
+            sendPushesPeopleWithTheSameTags(tag);
+        }
+    }
+
+    public static void sendPushesPeopleWithTheSameTags(String tag) {
+        tagsRef.child(tag).child("userIds").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Object value = dataSnapshot.getValue();
-                if (value == null) {
-                    //do nothing
-                } else {
-                    final GCMSender gcmSender = new GCMSender();
-                    List<String> uids = (List<String>) value;
-                    for (String currentUid : uids) {
-                        userssRef.child(currentUid).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                String pushId = (String) dataSnapshot.child("pushId").getValue();
-                                gcmSender.send(pushId, "New user");
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
-                }
+                sendPushForUidsList(dataSnapshot);
             }
 
             @Override
@@ -75,6 +62,44 @@ public class FollowUnfollowPeopleFirebase {
 
             }
         });
+    }
+
+    public static void sendPushesPeopleWhoWaitingMe(String phoneNumber) {
+        waitingListRef.child(phoneNumber).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                sendPushForUidsList(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private static void sendPushForUidsList(DataSnapshot dataSnapshot) {
+        Object value = dataSnapshot.getValue();
+        if (value == null) {
+            //do nothing
+        } else {
+            final GCMSender gcmSender = new GCMSender();
+            List<String> uids = (List<String>) value;
+            for (String currentUid : uids) {
+                userssRef.child(currentUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String pushId = (String) dataSnapshot.child("pushId").getValue();
+                        gcmSender.send(pushId, "New user");
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }
     }
 
 }

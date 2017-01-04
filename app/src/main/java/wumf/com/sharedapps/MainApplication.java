@@ -35,6 +35,7 @@ import wumf.com.sharedapps.firebase.TransactionResultListener;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.firebase.pojo.Profile;
+import wumf.com.sharedapps.memory.Key;
 import wumf.com.sharedapps.memory.MemoryCommunicator;
 import wumf.com.sharedapps.util.TagsBuilder;
 
@@ -54,15 +55,19 @@ public class MainApplication extends Application {
     public List<String> myTags;
     public List<Profile> users = new ArrayList<>(); //allUsers-removedUsers =)
     public List<Profile> removedUsers = new ArrayList<>();
+
     private List<String> removedUserUids = new ArrayList<>();
     private List<Profile> allUsers = new ArrayList<>();
-
     private AppProvider appProvider;
+    private MemoryCommunicator memory;
 
     public void onCreate() {
         super.onCreate();
 
         instance = this;
+        memory = new MemoryCommunicator();
+        myTags = memory.loadList(Key.oldTags);
+        phoneNumber = memory.loadStr(Key.myPhone);
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -119,14 +124,22 @@ public class MainApplication extends Application {
 
     @Subscribe
     public void onEvent(ChangeMyTagsEvent event) {
+        List<String> oldTags = myTags;
         myTags = event.tags;
+        memory.saveList(myTags, Key.oldTags);
         UsersFirebase.listenCountryCode(CurrentUser.getUID());
+        List<String> newTags = getNewTags(myTags, oldTags);
+        FollowUnfollowPeopleFirebase.sendPushesPeopleWithTheSameTags(newTags);
     }
 
     @Subscribe
     public void onEvent(NewPhoneNumberFromFirebaseEvent event) {
+        if (TextUtils.equals(phoneNumber, event.phone)) {
+            return;
+        }
         phoneNumber = event.phone;
         FollowUnfollowPeopleFirebase.sendPushesPeopleWhoWaitingMe(phoneNumber);
+        memory.saveStr(phoneNumber, Key.myPhone);
     }
 
     @Subscribe
@@ -147,13 +160,13 @@ public class MainApplication extends Application {
                             EventBus.getDefault().post( new UsersByPhoneNumbersFromFirebaseEvent(users) );
                         }
                     });
-                    List<String> oldContacts = new MemoryCommunicator().loadList();
+                    List<String> oldContacts = new MemoryCommunicator().loadList(Key.oldContacts);
                     List<String> removed = removedContacts(phoneNumbers, oldContacts);
                     List<String> newContacts = newContacts(phoneNumbers, oldContacts);
                     FollowUnfollowPeopleFirebase.markMeAsFollowerOfContacts(CurrentUser.getUID(), newContacts, removed, new TransactionResultListener() {
                         @Override
                         public void onSuccess() {
-                            new MemoryCommunicator().saveList(phoneNumbers);
+                            memory.saveList(phoneNumbers, Key.oldContacts);
                         }
 
                         @Override
@@ -218,6 +231,24 @@ public class MainApplication extends Application {
             }
             return result;
         }
+    }
+
+    private List<String> getNewTags(List<String> newTagList, List<String> oldTagList) {
+        if (newTagList == null || newTagList.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        if (oldTagList == null || oldTagList.isEmpty()) {
+            return newTagList;
+        }
+
+        List<String> result = new ArrayList<>();
+        for (String tag : newTagList) {
+            if ( !oldTagList.contains(tag) ) {
+                result.add(tag);
+            }
+        }
+        return result;
     }
 
 }
