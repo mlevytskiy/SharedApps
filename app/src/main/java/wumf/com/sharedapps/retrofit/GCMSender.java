@@ -10,6 +10,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import wumf.com.sharedapps.util.TagsBuilder;
 
 /**
  * Created by max on 27.12.16.
@@ -17,7 +18,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GCMSender {
 
-    public void send(String str) {
+    private static final String TAG = new TagsBuilder().add("push").build();
+
+    public void send(String to, String messageStr) {
+        Log.i(TAG, "to=" + to + " message=" + messageStr);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://fcm.googleapis.com/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -25,13 +29,14 @@ public class GCMSender {
         Message message = new Message();
         Data data = new Data();
         data.setTitle("test");
-        data.setBody(str);
+        data.setBody(messageStr);
         message.setData(data);
+        message.setTo(to);
         retrofit.create(GCMessage.class).send(message).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                    Log.i("push", "=" + response.body().string());
+                    Log.i(TAG, "response=" + response.body().string());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

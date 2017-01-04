@@ -26,6 +26,7 @@ import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
+import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.RemovedFollowedUsersChangeEvent;
 import wumf.com.sharedapps.eventbus.UsersByPhoneNumbersFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.FollowUnfollowPeopleFirebase;
@@ -120,6 +121,12 @@ public class MainApplication extends Application {
     public void onEvent(ChangeMyTagsEvent event) {
         myTags = event.tags;
         UsersFirebase.listenCountryCode(CurrentUser.getUID());
+    }
+
+    @Subscribe
+    public void onEvent(NewPhoneNumberFromFirebaseEvent event) {
+        phoneNumber = event.phone;
+        FollowUnfollowPeopleFirebase.sendPushesPeopleWhoWaitingMe(phoneNumber);
     }
 
     @Subscribe

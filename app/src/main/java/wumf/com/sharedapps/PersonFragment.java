@@ -137,7 +137,6 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
     @Subscribe
     public void onEvent(NewPhoneNumberFromFirebaseEvent event) {
         myAccountView.updatePhoneNumber(event.phone);
-        MainApplication.instance.phoneNumber = event.phone;
     }
 
     @Subscribe

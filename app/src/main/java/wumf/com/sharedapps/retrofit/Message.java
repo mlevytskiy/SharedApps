@@ -6,7 +6,7 @@ package wumf.com.sharedapps.retrofit;
 
 public class Message {
 
-    private String to = "dPhqPs5tg_k:APA91bF5XiAvQB1VxTeY-Y8ajiI8NcyG85FLVs14lS2Y1xX5rmF5cF0LaKexPQj3gwx7EhELgzVElC2-Om1pCICfIkhJAk9X6FZ9kCbmf-u0D60Z-VxIFi-rNMN_Nz-pF4XIe5BlJpcg";
+    private String to;
     private Data data;
 
     public String getTo() {
