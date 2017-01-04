@@ -150,10 +150,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 CurrentUser.set(user);
                 if (user != null) {
                     String uid = user.getUid();
-                    UsersFirebase.listenPhoneNumber(uid);
-                    UsersFirebase.listenCountryCode(uid);
-                    FavouriteAppsFirebase.listenFoldersAndApps(uid);
                     TagsFirebase.listenMyTags(uid);
+                    UsersFirebase.listenPhoneNumber(uid);
+                    FavouriteAppsFirebase.listenFoldersAndApps(uid);
                     GarbageFirebase.listenAndNotify(uid);
                 }
                 if (user != null) {

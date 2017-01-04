@@ -94,7 +94,7 @@ public class UsersFirebase {
         });
     }
 
-    public static void getUsers(final List<String> phoneNumbers, final GetUsersListener listener) {
+    public static void getUsers(final List<String> phoneNumbers, final List<String> tags, final GetUsersListener listener) {
 
         userssRef.orderByChild("phoneNumber").addListenerForSingleValueEvent(new ValueEventListener() { //problems with startAt("+"); sometimes wrong result
             @Override
@@ -103,13 +103,24 @@ public class UsersFirebase {
                 Log.i(TAG, "users with phones count=" + dataSnapshot.getChildrenCount());
                 for( DataSnapshot child : dataSnapshot.getChildren() ) {
                     String phoneNumber = (String) child.child("phoneNumber").getValue();
+                    Object userTagsObj = child.child("myTags").getValue();
+                    List<String> userTags = (userTagsObj != null) ? (List<String>) userTagsObj : new ArrayList<String>();
                     Log.i(TAG, "phoneNumber=" + phoneNumber);
                     if ( phoneNumbers.contains(phoneNumber) ) {
                         Profile profile = child.getValue(Profile.class);
                         profile.setUid(child.getKey());
                         result.add(profile);
                     } else {
-                        //do nothing
+                        if ( tags != null && userTags != null ) {
+                            for (String tag : tags) {
+                                if (userTags.contains(tag)) {
+                                    Profile profile = child.getValue(Profile.class);
+                                    profile.setUid(child.getKey());
+                                    result.add(profile);
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
                 listener.users(result);
@@ -130,7 +141,7 @@ public class UsersFirebase {
     public static void getUsers() {
         List<String> mock = new ArrayList<>();
         mock.add("+380 93 320 9152");
-        getUsers(mock, new GetUsersListener() {
+        getUsers(mock, new ArrayList<String>(), new GetUsersListener() {
             @Override
             public void users(List<Profile> profiles) {
                 //do nothing

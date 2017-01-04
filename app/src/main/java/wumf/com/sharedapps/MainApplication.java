@@ -119,6 +119,7 @@ public class MainApplication extends Application {
     @Subscribe
     public void onEvent(ChangeMyTagsEvent event) {
         myTags = event.tags;
+        UsersFirebase.listenCountryCode(CurrentUser.getUID());
     }
 
     @Subscribe
@@ -129,7 +130,7 @@ public class MainApplication extends Application {
             ContactProvider.instance.init(this, event.countryCode, phoneNumber, new FinishInitListener() {
                 @Override
                 public void setAll(final List<String> phoneNumbers) {
-                    UsersFirebase.getUsers(phoneNumbers, new GetUsersListener() {
+                    UsersFirebase.getUsers(phoneNumbers, myTags, new GetUsersListener() {
                         @Override
                         public void users(List<Profile> profiles) {
                             users = profiles;
