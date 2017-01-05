@@ -19,6 +19,11 @@ public class TagsBuilder {
         return this;
     }
 
+    public TagsBuilder add(Class clazz) {
+        tags.add(clazz.getSimpleName());
+        return this;
+    }
+
     public String build() {
         return TextUtils.join(SEPARATOR, tags);
     }

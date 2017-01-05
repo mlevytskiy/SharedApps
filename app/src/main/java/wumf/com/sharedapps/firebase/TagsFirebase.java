@@ -1,5 +1,7 @@
 package wumf.com.sharedapps.firebase;
 
+import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -15,6 +17,7 @@ import wumf.com.sharedapps.OnChangeAllTagsListener;
 import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 import wumf.com.sharedapps.firebase.transaction.AttachStringToListTransaction;
 import wumf.com.sharedapps.firebase.transaction.RemoveStringFromListTransaction;
+import wumf.com.sharedapps.util.TagsBuilder;
 
 /**
  * Created by max on 07.12.16.
@@ -22,20 +25,25 @@ import wumf.com.sharedapps.firebase.transaction.RemoveStringFromListTransaction;
 
 public class TagsFirebase {
 
+    private static final String TAG = new TagsBuilder().add(TagsFirebase.class).add("firebase").build();
+
     private static DatabaseReference tagsRef = FirebaseDatabase.getInstance().getReference().child("tags");
     private static DatabaseReference userssRef = FirebaseDatabase.getInstance().getReference().child("users");
 
     public static void attachTag(final String uid, final String tag) {
+        Log.i(TAG, "attachTag( uid=" + uid + ", tag=" + tag + " )");
         tagsRef.child(tag).child("userIds").runTransaction(new AttachStringToListTransaction(uid));
         userssRef.child(uid).child("myTags").runTransaction(new AttachStringToListTransaction(tag));
     }
 
     public static void removeTag(final String uid, final String tag) {
+        Log.i(TAG, "removeTag( uid=" + uid + ", tag=" + tag + " )");
         tagsRef.child(tag).child("userIds").runTransaction(new RemoveStringFromListTransaction(uid));
         userssRef.child(uid).child("myTags").runTransaction(new RemoveStringFromListTransaction(tag));
     }
 
     public static void listenMyTags(String uid) {
+        Log.i(TAG, "listenMyTags( uid=" + uid  + " )");
         userssRef.child(uid).child("myTags").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -52,6 +60,7 @@ public class TagsFirebase {
     }
 
     public static void listenAllTags(final OnChangeAllTagsListener listener) {
+        Log.i(TAG, "listenAllTags");
         tagsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

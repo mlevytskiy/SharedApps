@@ -17,6 +17,7 @@ import java.util.List;
 import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.util.FirebaseUtil;
+import wumf.com.sharedapps.util.TagsBuilder;
 
 /**
  * Created by max on 22.09.16.
@@ -24,12 +25,14 @@ import wumf.com.sharedapps.util.FirebaseUtil;
 
 public class FavouriteAppsFirebase {
 
+    private static final String TAG = new TagsBuilder().add(FavouriteAppsFirebase.class).add("firebase").build();
+
     public static final String DELIMITER_FOR_FOLDER = "|";
 
     private static DatabaseReference mainRef = FirebaseDatabase.getInstance().getReference().child("users");
 
     public static void addApp(final String uid, String packageName, String appName, String icon) {
-        Log.i("tttt", "addApp");
+        Log.i(TAG, "addApp(uid=" + uid + " packageName=" + packageName + " appName=" + appName + " icon=" + icon + ")");
 
         AppOrFolder appOrFolder = new AppOrFolder();
         appOrFolder.setAppName(appName);
@@ -43,10 +46,12 @@ public class FavouriteAppsFirebase {
     }
 
     public static void removeApp(final String uid, String packageName) {
+        Log.i(TAG, "removeApp(uid=" + uid + " packageName=" + packageName + ")");
         mainRef.child(uid).child("apps").child(FirebaseUtil.createIdFromPackageName(packageName)).setValue(null);
     }
 
     public static void getNewFolderName(final String uid, final GetNewFolderNameCallback callback) {
+        Log.i(TAG, "getNewFolderName(uid=" + uid + ")");
         mainRef.child(uid).child("nextfoldername").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -67,6 +72,7 @@ public class FavouriteAppsFirebase {
     }
 
     public static void addFolder(String uid, String path) {
+        Log.i(TAG, "addFolder(uid=" + uid + " path=" + path + ")");
         String lastFolderName= "";
         if (path.contains(DELIMITER_FOR_FOLDER)) { //TODO: folder inside another folder!
             String[] folders = path.split(DELIMITER_FOR_FOLDER);
@@ -95,7 +101,7 @@ public class FavouriteAppsFirebase {
     }
 
     public static void listenFoldersAndApps(String uid) {
-        Log.i("test", "listenFoldersAndApps=" + uid);
+        Log.i(TAG, "listenFoldersAndApps(uid=" + uid + ")");
         FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("apps").orderByChild("time").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

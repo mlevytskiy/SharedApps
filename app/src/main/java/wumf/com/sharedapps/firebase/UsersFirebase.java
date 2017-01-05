@@ -26,11 +26,12 @@ import wumf.com.sharedapps.util.TagsBuilder;
 
 public class UsersFirebase {
 
-    private static final String TAG = new TagsBuilder().add("firebase").build();
+    private static final String TAG = new TagsBuilder().add(UsersFirebase.class).add("firebase").build();
     private static DatabaseReference userssRef = FirebaseDatabase.getInstance().getReference().child("users");
 
 
     public static void addMe(FirebaseUser fUser) {
+        Log.i(TAG, "addMe(fUser uid=" + fUser.getUid() + ")");
         Profile user = new Profile();
         user.setEmail(fUser.getEmail());
         user.setName(fUser.getDisplayName());
@@ -42,23 +43,28 @@ public class UsersFirebase {
     }
 
     public static void refreshPushId(String uid) {
+        Log.i(TAG, "refreshPushId(uid=" + uid + ")");
         String token = FirebaseInstanceId.getInstance().getToken();
         getUserRef(uid).child("pushId").setValue(token);
     }
 
     public static void removeMe(String uid) {
+        Log.i(TAG, "removeMe(uid=" + uid + ")");
         getUserRef(uid).removeValue();
     }
 
     public static void updatePhoneNumber(String uid, String phoneNumber) {
+        Log.i(TAG, "updatePhoneNumber(uid=" + uid + " phoneNumber=" + phoneNumber + ")");
         getUserRef(uid).child("phoneNumber").setValue(phoneNumber);
     }
 
     public static void updateCountryCode(String uid, String countryCode) {
+        Log.i(TAG, "updateCountryCode(uid=" + uid + " countryCode=" + countryCode + ")");
         getUserRef(uid).child("countryCode").setValue(countryCode);
     }
 
     public static void listenPhoneNumber(String uid) {
+        Log.i(TAG, "listenPhoneNumber(uid=" + uid + ")");
         getUserRef(uid).child("phoneNumber").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -95,7 +101,7 @@ public class UsersFirebase {
     }
 
     public static void getUsers(final List<String> phoneNumbers, final List<String> tags, final GetUsersListener listener) {
-
+        Log.i(TAG, "getUsers(phoneNumbers.size=" + phoneNumbers.size() + " tags=" + tags.size() + ")");
         userssRef.orderByChild("phoneNumber").addListenerForSingleValueEvent(new ValueEventListener() { //problems with startAt("+"); sometimes wrong result
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
