@@ -10,7 +10,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import wumf.com.sharedapps.util.TagsBuilder;
+import wumf.com.sharedapps.logger.TagsBuilder;
 
 /**
  * Created by max on 27.12.16.

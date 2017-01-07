@@ -62,7 +62,7 @@ import wumf.com.sharedapps.firebase.FirebaseIcons;
 import wumf.com.sharedapps.firebase.IconUrlCallback;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.util.AppFinderUtils;
-import wumf.com.sharedapps.util.TagsBuilder;
+import wumf.com.sharedapps.logger.TagsBuilder;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks {

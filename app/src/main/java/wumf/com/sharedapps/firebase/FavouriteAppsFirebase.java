@@ -1,7 +1,6 @@
 package wumf.com.sharedapps.firebase;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -14,25 +13,23 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
+import hugo.weaving.DebugLog;
 import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.util.FirebaseUtil;
-import wumf.com.sharedapps.util.TagsBuilder;
 
 /**
  * Created by max on 22.09.16.
  */
 
+@DebugLog
 public class FavouriteAppsFirebase {
-
-    private static final String TAG = new TagsBuilder().add(FavouriteAppsFirebase.class).add("firebase").build();
 
     public static final String DELIMITER_FOR_FOLDER = "|";
 
     private static DatabaseReference mainRef = FirebaseDatabase.getInstance().getReference().child("users");
 
     public static void addApp(final String uid, String packageName, String appName, String icon) {
-        Log.i(TAG, "addApp(uid=" + uid + " packageName=" + packageName + " appName=" + appName + " icon=" + icon + ")");
 
         AppOrFolder appOrFolder = new AppOrFolder();
         appOrFolder.setAppName(appName);
@@ -46,12 +43,10 @@ public class FavouriteAppsFirebase {
     }
 
     public static void removeApp(final String uid, String packageName) {
-        Log.i(TAG, "removeApp(uid=" + uid + " packageName=" + packageName + ")");
         mainRef.child(uid).child("apps").child(FirebaseUtil.createIdFromPackageName(packageName)).setValue(null);
     }
 
     public static void getNewFolderName(final String uid, final GetNewFolderNameCallback callback) {
-        Log.i(TAG, "getNewFolderName(uid=" + uid + ")");
         mainRef.child(uid).child("nextfoldername").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -72,7 +67,6 @@ public class FavouriteAppsFirebase {
     }
 
     public static void addFolder(String uid, String path) {
-        Log.i(TAG, "addFolder(uid=" + uid + " path=" + path + ")");
         String lastFolderName= "";
         if (path.contains(DELIMITER_FOR_FOLDER)) { //TODO: folder inside another folder!
             String[] folders = path.split(DELIMITER_FOR_FOLDER);
@@ -101,35 +95,7 @@ public class FavouriteAppsFirebase {
     }
 
     public static void listenFoldersAndApps(String uid) {
-        Log.i(TAG, "listenFoldersAndApps(uid=" + uid + ")");
-        FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("apps").orderByChild("time").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                long count = dataSnapshot.getChildrenCount();
-                List<String> folders = new ArrayList<String>();
-                List<AppOrFolder> apps = new ArrayList<AppOrFolder>();
-                if (count != 0) {
-                    for (DataSnapshot child : dataSnapshot.getChildren()) {
-                        try {
-                            AppOrFolder appOrFolder = child.getValue(AppOrFolder.class);
-                            if (!TextUtils.isEmpty(appOrFolder.getFolderName())) {
-                                folders.add(appOrFolder.getFolderName());
-                            } else {
-                                apps.add(appOrFolder);
-                            }
-                        } catch (Exception e) {
-                            continue;
-                        }
-                    }
-                }
-                EventBus.getDefault().post(new ChangeAllFoldersAndAppsFromFirebaseEvent(folders, apps));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("apps").orderByChild("time").addValueEventListener(new AppsValueEventListener());
     }
 
     public static void renameFolder(String path) {
@@ -138,6 +104,37 @@ public class FavouriteAppsFirebase {
 
     public static void removeFolder(String path) {
 
+    }
+
+    @DebugLog
+    private static class AppsValueEventListener implements ValueEventListener {
+
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            long count = dataSnapshot.getChildrenCount();
+            List<String> folders = new ArrayList<String>();
+            List<AppOrFolder> apps = new ArrayList<AppOrFolder>();
+            if (count != 0) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    try {
+                        AppOrFolder appOrFolder = child.getValue(AppOrFolder.class);
+                        if (!TextUtils.isEmpty(appOrFolder.getFolderName())) {
+                            folders.add(appOrFolder.getFolderName());
+                        } else {
+                            apps.add(appOrFolder);
+                        }
+                    } catch (Exception e) {
+                        continue;
+                    }
+                }
+            }
+            EventBus.getDefault().post(new ChangeAllFoldersAndAppsFromFirebaseEvent(folders, apps));
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
     }
 
 }

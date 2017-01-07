@@ -12,19 +12,17 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 
-import wumf.com.sharedapps.util.TagsBuilder;
+import hugo.weaving.DebugLog;
 
 /**
  * Created by max on 16.11.16.
  */
 
+@DebugLog
 public class FirebaseIcons {
-
-    private static final String TAG = new TagsBuilder().add(FirebaseIcons.class).add("firebase").build();
 
     public static void getIconUrl(final String packageName, final IconUrlCallback callback,
                                   final String iconFilePath) {
-        Log.i(TAG, "getIconUrl( packageName=" + packageName + "iconFilePath=" + iconFilePath + " )");
         final StorageReference storageReference = FirebaseStorage.getInstance().getReference(packageName + ".webp");
         storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -41,7 +39,6 @@ public class FirebaseIcons {
 
     private static void uploadIcon(final IconUrlCallback callback, StorageReference storageReference,
                                    String iconFilePath) {
-        Log.i(TAG, "uploadIcon( iconFilePath=" + iconFilePath + " )");
         UploadTask uploadTask = storageReference.putFile(Uri.fromFile(new File(iconFilePath)));
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override

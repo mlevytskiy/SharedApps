@@ -1,4 +1,4 @@
-package wumf.com.sharedapps.util;
+package wumf.com.sharedapps.logger;
 
 import android.text.TextUtils;
 

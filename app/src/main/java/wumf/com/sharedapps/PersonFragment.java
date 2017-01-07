@@ -17,6 +17,8 @@ import com.ns.developer.tagview.widget.TagCloudLinkView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.List;
+
 import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.SignInFromFirebaseEvent;
@@ -112,6 +114,7 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
             myAccountView.setVisibility(View.GONE);
             signInButton.setVisibility(View.VISIBLE);
         }
+        updateTagsFromMyProfile();
     }
 
     public void onStop() {
@@ -145,15 +148,23 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
             return;
         }
 
-        if (event.tags.isEmpty()) {
+        updateTagsFromMyProfile(event.tags);
+
+    }
+
+    private void updateTagsFromMyProfile() {
+        updateTagsFromMyProfile(((MainApplication) getActivity().getApplication()).myTags);
+    }
+
+    private void updateTagsFromMyProfile(List<String> tags) {
+        if (tags.isEmpty()) {
             tagCloudLinkView.setVisibility(View.GONE);
             attacheTagForMyProfile.setVisibility(View.VISIBLE);
         } else {
-            tagCloudLinkView.setAll(event.tags);
+            tagCloudLinkView.setAll(tags);
             tagCloudLinkView.setVisibility(View.VISIBLE);
             attacheTagForMyProfile.setVisibility(View.GONE);
         }
-
     }
 
     @Override

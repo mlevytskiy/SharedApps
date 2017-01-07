@@ -17,6 +17,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import hugo.weaving.DebugLog;
 import interesting.com.contactsprovider.ContactProvider;
 import interesting.com.contactsprovider.FinishInitListener;
 import wumf.com.appsprovider.App;
@@ -37,7 +38,7 @@ import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.firebase.pojo.Profile;
 import wumf.com.sharedapps.memory.Key;
 import wumf.com.sharedapps.memory.MemoryCommunicator;
-import wumf.com.sharedapps.util.TagsBuilder;
+import wumf.com.sharedapps.logger.TagsBuilder;
 
 /**
  * Created by max on 01.09.16.
@@ -122,6 +123,7 @@ public class MainApplication extends Application {
         appProvider.updateAlreadySharedApps(appPackages);
     }
 
+    @DebugLog
     @Subscribe
     public void onEvent(ChangeMyTagsEvent event) {
         List<String> oldTags = myTags;
