@@ -1,5 +1,6 @@
 package wumf.com.sharedapps;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -50,6 +51,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import hugo.weaving.DebugLog;
 import wumf.com.appsprovider.App;
 import wumf.com.sharedapps.eventbus.GetNewCountryEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromViber;
@@ -62,12 +64,10 @@ import wumf.com.sharedapps.firebase.FirebaseIcons;
 import wumf.com.sharedapps.firebase.IconUrlCallback;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.util.AppFinderUtils;
-import wumf.com.sharedapps.logger.TagsBuilder;
 
+@DebugLog
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks {
-
-    private static final String TAG = new TagsBuilder().add("MainActivity").add("firebase").build();
 
     public static final int REQUEST_CODE_CHIOCE_APP = 544;
     public static final int REQUEST_CODE_RC_SIGN_IN = 543;
@@ -95,30 +95,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         final ViewPager viewPager = (ViewPager) findViewById(R.id.tabanim_viewpager);
         viewPager.setOffscreenPageLimit(3);
         setupViewPager(viewPager);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                currentFragmentIndex = position;
-                for (int i = 0; i < adapter.mFragmentList.size(); i++) {
-                    IHideShow fr = (IHideShow) adapter.mFragmentList.get(i);
-                    if (i == position) {
-                        fr.show();
-                    } else {
-                        fr.hide();
-                    }
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+        viewPager.addOnPageChangeListener(new OnPageChangeListener());
 
         tabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -135,27 +112,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         mAuth = FirebaseAuth.getInstance();
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                long newDate = new Date().getTime();
-                if (newDate - firebaseAuthListenerCalledDate < 500) {
-                    return;
-                } else {
-                    firebaseAuthListenerCalledDate = newDate;
-                }
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                CurrentUser.set(user);
-                if (user != null) {
-                    // User is signed in
-                    Log.i("test", "onAuthStateChanged:signed_in:" + user.getUid());
-                } else {
-                    // User is signed out
-                    Log.i("test", "onAuthStateChanged:signed_out");
-                }
-                // ...
-            }
-        };
+        mAuthListener = new FirebaseAuthListener();
 
     }
 
@@ -215,7 +172,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             } else {
                 // Google Sign In failed, updateMyApps UI appropriately
             }
-            Toast.makeText(this, "onActivityResult", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -248,27 +204,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d("TAG", "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d("TAG", "signInWithCredential:onComplete:" + task.isSuccessful());
-                        EventBus.getDefault().post(new SignInFromFirebaseEvent());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Log.w("TAG", "signInWithCredential", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        // ...
-                    }
-                });
+        mAuth.signInWithCredential(credential).addOnCompleteListener(this, new GoogleAuthOnCompleteListener(this));
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -322,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         }
                     }
                 } catch (IOException e) {
-                    Log.e(TAG, e.getMessage());
+                    Log.e(MainActivity.class.getSimpleName(), e.getMessage());
                 }
             }
         });
@@ -333,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-    static class ViewPagerAdapter extends FragmentPagerAdapter {
+    private static class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<CharSequence> mFragmentTitleList = new ArrayList<>();
 
@@ -359,6 +297,74 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         @Override
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
+        }
+    }
+
+    @DebugLog
+    private static class GoogleAuthOnCompleteListener implements OnCompleteListener<AuthResult> {
+
+        private Context context;
+
+        public GoogleAuthOnCompleteListener(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public void onComplete(@NonNull Task<AuthResult> task) {
+            EventBus.getDefault().post(new SignInFromFirebaseEvent());
+
+            // If sign in fails, display a message to the user. If sign in succeeds
+            // the auth state listener will be notified and logic to handle the
+            // signed in user can be handled in the listener.
+            if (!task.isSuccessful()) {
+                Toast.makeText(context, "Authentication failed.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
+
+    @DebugLog
+    private class FirebaseAuthListener implements FirebaseAuth.AuthStateListener {
+
+        @Override
+        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            long newDate = new Date().getTime();
+            if (newDate - firebaseAuthListenerCalledDate < 500) {
+                return;
+            } else {
+                firebaseAuthListenerCalledDate = newDate;
+            }
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            CurrentUser.set(user);
+        }
+
+    }
+
+    private class OnPageChangeListener implements ViewPager.OnPageChangeListener {
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @DebugLog
+        @Override
+        public void onPageSelected(int position) {
+            currentFragmentIndex = position;
+            for (int i = 0; i < adapter.mFragmentList.size(); i++) {
+                IHideShow fr = (IHideShow) adapter.mFragmentList.get(i);
+                if (i == position) {
+                    fr.show();
+                } else {
+                    fr.hide();
+                }
+            }
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
         }
     }
 

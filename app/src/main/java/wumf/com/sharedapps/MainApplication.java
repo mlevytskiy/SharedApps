@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.FirebaseApp;
@@ -37,16 +36,14 @@ import wumf.com.sharedapps.firebase.TransactionResultListener;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.firebase.pojo.Profile;
-import wumf.com.sharedapps.logger.TagsBuilder;
 import wumf.com.sharedapps.memory.Key;
 import wumf.com.sharedapps.memory.MemoryCommunicator;
 
 /**
  * Created by max on 01.09.16.
  */
+@DebugLog
 public class MainApplication extends Application {
-
-    private static final String TAG = new TagsBuilder().add("MainApplication").build();
 
     public List<App> top6apps = new ArrayList<>();
     public List<App> allApps = new ArrayList<>();
@@ -153,7 +150,6 @@ public class MainApplication extends Application {
 
     @Subscribe
     public void onEvent(NewCountryCodeFromFirebaseEvent event) {
-        Log.i(TAG, "receive new country code event");
         country = event.countryCode;
         if ( !TextUtils.isEmpty(country) ) {
             ContactProvider.instance.init(this, event.countryCode, phoneNumber, new FinishInitListener() {

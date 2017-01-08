@@ -10,7 +10,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import wumf.com.sharedapps.logger.TagsBuilder;
 
 /**
  * Created by max on 27.12.16.
@@ -18,7 +17,7 @@ import wumf.com.sharedapps.logger.TagsBuilder;
 
 public class GCMSender {
 
-    private static final String TAG = new TagsBuilder().add("push").build();
+    private static final String TAG = "push";
 
     public void send(String to, String messageStr) {
         Log.i(TAG, "to=" + to + " message=" + messageStr);
@@ -44,8 +43,9 @@ public class GCMSender {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                Log.i("push", "failed");
+                Log.i(TAG, "failed");
             }
         });
     }
+
 }
