@@ -202,7 +202,7 @@
         <com.github.omadahealth.typefaceview.TypefaceTextView
             android:id="@+id/attache_tag"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@drawable/sign_out_normal"
             android:clickable="true"
             android:focusable="true"

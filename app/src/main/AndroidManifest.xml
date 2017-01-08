@@ -46,7 +46,7 @@
 
         <activity android:name=".GarbageActivity" />
 
-        <activity android:name=".PersonActivity" />
+        <activity android:name=".NotMePersonActivity" />
 
         <service
             android:name=".service.FirebaseMessagingService">

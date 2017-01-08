@@ -89,7 +89,7 @@ public class FollowUnfollowActivity extends Activity {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     String uid = users.get(i - listView.getHeaderViewsCount()).getUid();
-                    startActivity(new Intent(FollowUnfollowActivity.this, PersonActivity.class).putExtra(PersonActivity.KEY_USER_UID, uid));
+                    startActivity(new Intent(FollowUnfollowActivity.this, NotMePersonActivity.class).putExtra(NotMePersonActivity.KEY_USER_UID, uid));
                 }
             });
         }

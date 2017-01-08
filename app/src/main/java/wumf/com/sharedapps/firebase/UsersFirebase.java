@@ -29,14 +29,15 @@ public class UsersFirebase {
     private static DatabaseReference userssRef = FirebaseDatabase.getInstance().getReference().child("users");
 
     public static void addMe(FirebaseUser fUser) {
-        Profile user = new Profile();
+        final Profile user = new Profile();
         user.setEmail(fUser.getEmail());
         user.setName(fUser.getDisplayName());
         user.setIcon(fUser.getPhotoUrl().toString());
         String token = FirebaseInstanceId.getInstance().getToken();
         user.setPushId(token);
-        DatabaseReference r = FirebaseDatabase.getInstance().getReference().child("users").child(fUser.getUid());
-        r.setValue(user);
+        final DatabaseReference r = FirebaseDatabase.getInstance().getReference().child("users").child(fUser.getUid());
+
+        r.addValueEventListener(new AddMeValueEventListener(r, user));
     }
 
     public static void refreshPushId(String uid) {
@@ -82,6 +83,33 @@ public class UsersFirebase {
                 //do nothing
             }
         });
+    }
+
+    @DebugLog
+    private static class AddMeValueEventListener implements ValueEventListener {
+
+        private DatabaseReference r;
+        private Profile user;
+
+        public AddMeValueEventListener(DatabaseReference r, Profile user) {
+            this.r = r;
+            this.user = user;
+        }
+
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            Object value = dataSnapshot.getValue();
+            if (value == null) {
+                r.setValue(user);
+            } else {
+                //do nothing
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
     }
 
     @DebugLog

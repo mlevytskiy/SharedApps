@@ -21,7 +21,7 @@ import wumf.com.sharedapps.view.CustomTopBar;
  * Created by max on 02.01.17.
  */
 
-public class PersonActivity extends Activity {
+public class NotMePersonActivity extends Activity {
 
     public static final String KEY_USER_UID = "uid";
 

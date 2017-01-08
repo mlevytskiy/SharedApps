@@ -19,6 +19,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
+import hugo.weaving.DebugLog;
 import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.SignInFromFirebaseEvent;
@@ -30,6 +31,7 @@ import wumf.com.sharedapps.view.MyAccountView;
 /**
  * Created by max on 13.09.16.
  */
+@DebugLog
 public class PersonFragment extends Fragment implements IHideShow, OnBackPressedListener {
 
     private SignInButton signInButton;
@@ -158,7 +160,7 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
 
     private void updateTagsFromMyProfile(List<String> tags) {
         if (tags.isEmpty()) {
-            tagCloudLinkView.setVisibility(View.GONE);
+            tagCloudLinkView.setVisibility(View.INVISIBLE); // fixed bug with first update profile. after GONE visible don't work normally.
             attacheTagForMyProfile.setVisibility(View.VISIBLE);
         } else {
             tagCloudLinkView.setAll(tags);
