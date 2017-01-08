@@ -19,11 +19,23 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class MemoryCommunicator {
 
+    private static MemoryCommunicator instance = null;
     private static final String STORAGE_NAME = "memory";
     private static final String SEPARATOR = "|";
     private SharedPreferences sp;
 
-    public MemoryCommunicator() {
+    public static MemoryCommunicator getInstance() {
+        if (instance == null) {
+            synchronized (MemoryCommunicator.class) {
+                if (instance == null) {
+                    instance = new MemoryCommunicator();
+                }
+            }
+        }
+        return instance;
+    }
+
+    private MemoryCommunicator() {
         sp = MainApplication.instance.getSharedPreferences(STORAGE_NAME, MODE_PRIVATE);
     }
 
@@ -49,6 +61,10 @@ public class MemoryCommunicator {
 
     public String loadStr(Key key) {
         return sp.getString(key.name(), "");
+    }
+
+    public void drop() {
+        sp.edit().clear().apply();
     }
 
 }

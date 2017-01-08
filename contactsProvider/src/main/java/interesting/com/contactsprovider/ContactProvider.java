@@ -29,7 +29,7 @@ public class ContactProvider {
         List<Contact> contacts = q.find();
         List<String> phoneNumbers = new ArrayList<>();
         for (Contact contact : contacts) {
-            phoneNumbers.addAll( getPhones(contact.getPhoneNumbers(), "", countryCode) );
+            phoneNumbers.addAll( getPhones(contact.getPhoneNumbers(), myPhoneNumber, countryCode) );
         }
         listener.setAll(phoneNumbers);
     }

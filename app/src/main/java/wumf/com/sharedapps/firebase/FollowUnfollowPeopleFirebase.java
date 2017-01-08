@@ -14,7 +14,9 @@ import wumf.com.sharedapps.firebase.transaction.CompositeTransaction;
 import wumf.com.sharedapps.firebase.transaction.ForChildrenTransaction;
 import wumf.com.sharedapps.firebase.transaction.RemoveStringFromListTransaction;
 import wumf.com.sharedapps.firebase.transaction.common.AnyTransaction;
-import wumf.com.sharedapps.retrofit.GCMSender;
+import wumf.com.sharedapps.retrofit.PushResultListener;
+import wumf.com.sharedapps.retrofit.PushSender;
+import wumf.com.sharedapps.util.PushUtil;
 
 /**
  * Created by max on 30.12.16.
@@ -85,10 +87,14 @@ public class FollowUnfollowPeopleFirebase {
         if (value == null) {
             //do nothing
         } else {
-            final GCMSender gcmSender = new GCMSender();
+            final PushSender gcmSender = new PushSender();
             List<String> uids = (List<String>) value;
             for (String currentUid : uids) {
-                userssRef.child(currentUid).addListenerForSingleValueEvent(new SendPushToUserValueEventListener(gcmSender));
+                if (PushUtil.alreadySent(currentUid)) {
+                    //do nothing
+                } else {
+                    userssRef.child(currentUid).addListenerForSingleValueEvent(new SendPushToUserValueEventListener(gcmSender, currentUid));
+                }
             }
         }
     }
@@ -96,16 +102,26 @@ public class FollowUnfollowPeopleFirebase {
     @DebugLog
     private static class SendPushToUserValueEventListener implements ValueEventListener {
 
-        private GCMSender gcmSender;
+        private PushSender gcmSender;
+        private String uid;
 
-        public SendPushToUserValueEventListener(GCMSender gcmSender) {
+        public SendPushToUserValueEventListener(PushSender gcmSender, String uid) {
             this.gcmSender = gcmSender;
+            this.uid = uid;
         }
 
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             String pushId = (String) dataSnapshot.child("pushId").getValue();
-            gcmSender.send(pushId, "New user");
+            gcmSender.send(pushId, "New user", new PushResultListener() {
+                @Override
+                public void callback(boolean isSuccess) {
+                    if (isSuccess) {
+                        PushUtil.add(uid);
+                    }
+                }
+            });
+
         }
 
         @Override

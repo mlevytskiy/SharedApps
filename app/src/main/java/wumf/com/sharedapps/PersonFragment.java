@@ -26,6 +26,7 @@ import wumf.com.sharedapps.eventbus.SignInFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.SignOutFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.TagsFirebase;
 import wumf.com.sharedapps.firebase.UsersFirebase;
+import wumf.com.sharedapps.memory.MemoryCommunicator;
 import wumf.com.sharedapps.view.MyAccountView;
 
 /**
@@ -135,6 +136,8 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
 
     @Subscribe
     public void onEvent(SignOutFromFirebaseEvent event) {
+        MemoryCommunicator.getInstance().drop();
+        MainApplication.instance.signOut();
         myAccountView.setVisibility(View.GONE);
         signInButton.setVisibility(View.VISIBLE);
     }

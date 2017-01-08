@@ -54,6 +54,7 @@ public class MainApplication extends Application {
     public List<String> myTags;
     public List<Profile> users = new ArrayList<>(); //allUsers-removedUsers =)
     public List<Profile> removedUsers = new ArrayList<>();
+    public List<String> alreadySentUids;
 
     private List<String> removedUserUids = new ArrayList<>();
     private List<Profile> allUsers = new ArrayList<>();
@@ -70,9 +71,10 @@ public class MainApplication extends Application {
         LeakCanary.install(this);
 
         instance = this;
-        memory = new MemoryCommunicator();
+        memory = MemoryCommunicator.getInstance();
         myTags = memory.loadList(Key.oldTags);
         phoneNumber = memory.loadStr(Key.myPhone);
+        alreadySentUids = memory.loadList(Key.alreadySentUids);
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -110,6 +112,22 @@ public class MainApplication extends Application {
         country = "UNKNOWN";
 
         EventBus.getDefault().register(this);
+
+        OnShowOrHideAppListener listener = new OnShowOrHideAppListener() {
+            @Override
+            public void onHide() {
+                memory.saveList(alreadySentUids, Key.alreadySentUids);
+            }
+
+            @Override
+            public void onShow() {
+                //do nothing
+            }
+        };
+
+        registerActivityLifecycleCallbacks(listener);
+        registerComponentCallbacks(listener);
+
     }
 
     @Override
@@ -165,7 +183,7 @@ public class MainApplication extends Application {
                             EventBus.getDefault().post( new UsersByPhoneNumbersFromFirebaseEvent(users) );
                         }
                     });
-                    List<String> oldContacts = new MemoryCommunicator().loadList(Key.oldContacts);
+                    List<String> oldContacts = memory.loadList(Key.oldContacts);
                     List<String> removed = removedContacts(phoneNumbers, oldContacts);
                     List<String> newContacts = newContacts(phoneNumbers, oldContacts);
                     FollowUnfollowPeopleFirebase.markMeAsFollowerOfContacts(CurrentUser.getUID(), newContacts, removed, new TransactionResultListener() {
@@ -254,6 +272,15 @@ public class MainApplication extends Application {
             }
         }
         return result;
+    }
+
+    public void signOut() {
+        phoneNumber = null;
+        myTags.clear();
+        alreadySentUids.clear();
+        users.clear();
+        removedUsers.clear();
+        allUsers.clear();
     }
 
 }

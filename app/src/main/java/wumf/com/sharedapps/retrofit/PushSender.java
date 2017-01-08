@@ -15,11 +15,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by max on 27.12.16.
  */
 
-public class GCMSender {
+public class PushSender {
 
     private static final String TAG = "push";
 
-    public void send(String to, String messageStr) {
+    public void send(String to, String messageStr, final PushResultListener listener) {
         Log.i(TAG, "to=" + to + " message=" + messageStr);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://fcm.googleapis.com/")
@@ -34,6 +34,7 @@ public class GCMSender {
         retrofit.create(GCMessage.class).send(message).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                listener.callback(true);
                 try {
                     Log.i(TAG, "response=" + response.body().string());
                 } catch (IOException e) {
@@ -43,6 +44,7 @@ public class GCMSender {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                listener.callback(false);
                 Log.i(TAG, "failed");
             }
         });
