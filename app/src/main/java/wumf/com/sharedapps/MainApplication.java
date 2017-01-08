@@ -10,6 +10,7 @@ import android.util.Log;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.leakcanary.LeakCanary;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,9 +37,9 @@ import wumf.com.sharedapps.firebase.TransactionResultListener;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.firebase.pojo.Profile;
+import wumf.com.sharedapps.logger.TagsBuilder;
 import wumf.com.sharedapps.memory.Key;
 import wumf.com.sharedapps.memory.MemoryCommunicator;
-import wumf.com.sharedapps.logger.TagsBuilder;
 
 /**
  * Created by max on 01.09.16.
@@ -64,6 +65,12 @@ public class MainApplication extends Application {
 
     public void onCreate() {
         super.onCreate();
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
 
         instance = this;
         memory = new MemoryCommunicator();
