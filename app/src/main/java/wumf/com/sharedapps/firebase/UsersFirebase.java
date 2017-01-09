@@ -1,5 +1,7 @@
 package wumf.com.sharedapps.firebase;
 
+import android.text.TextUtils;
+
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hugo.weaving.DebugLog;
+import wumf.com.sharedapps.CurrentUser;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.pojo.Profile;
@@ -163,6 +166,10 @@ public class UsersFirebase {
         public void onDataChange(DataSnapshot dataSnapshot) {
             List<Profile> result = new ArrayList<>();
             for( DataSnapshot child : dataSnapshot.getChildren() ) {
+                if (TextUtils.equals(child.getKey(), CurrentUser.getUID())) {
+                    //ignore me
+                    continue;
+                }
                 String phoneNumber = (String) child.child("phoneNumber").getValue();
                 Object userTagsObj = child.child("myTags").getValue();
                 List<String> userTags = (userTagsObj != null) ? (List<String>) userTagsObj : new ArrayList<String>();
