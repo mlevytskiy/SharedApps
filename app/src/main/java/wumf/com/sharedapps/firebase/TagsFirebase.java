@@ -28,9 +28,11 @@ public class TagsFirebase {
     private static DatabaseReference tagsRef = FirebaseDatabase.getInstance().getReference().child("tags");
     private static DatabaseReference userssRef = FirebaseDatabase.getInstance().getReference().child("users");
 
-    public static void attachTag(final String uid, final String tag) {
+    public static void attachTag(final String uid, final String tag, TransactionResultListener listener) {
         tagsRef.child(tag).child("userIds").runTransaction(new AttachStringToListTransaction(uid));
-        userssRef.child(uid).child("myTags").runTransaction(new AttachStringToListTransaction(tag));
+        AttachStringToListTransaction tr = new AttachStringToListTransaction(tag);
+        tr.setTransactionResultListener(listener);
+        userssRef.child(uid).child("myTags").runTransaction(tr);
     }
 
     public static void removeTag(final String uid, final String tag) {

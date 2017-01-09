@@ -2,11 +2,11 @@ package wumf.com.sharedapps;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.ns.developer.tagview.widget.TagCloudLinkView;
 import com.sdsmdg.tastytoast.TastyToast;
@@ -14,7 +14,10 @@ import com.sdsmdg.tastytoast.TastyToast;
 import java.util.List;
 
 import wumf.com.sharedapps.firebase.TagsFirebase;
+import wumf.com.sharedapps.firebase.TransactionResultListener;
 import wumf.com.sharedapps.view.CustomTopBar;
+
+import static com.sdsmdg.tastytoast.TastyToast.makeText;
 
 /**
  * Created by max on 07.12.16.
@@ -41,26 +44,27 @@ public class AttacheTagForMyProfileActivity extends Activity {
                 hideKeyboard();
                 String tag = editText.getText().toString();
                 if (TextUtils.isEmpty(tag)) {
-                    TastyToast.makeText(view.getContext(), "You need enter a tag", TastyToast.LENGTH_LONG,
+                    makeText(view.getContext(), "You need enter a tag", TastyToast.LENGTH_LONG,
                             TastyToast.INFO);
                     return;
                 }
-                TagsFirebase.attachTag(uid, tag);
-                TastyToast.makeText(view.getContext(), "Loading", TastyToast.LENGTH_LONG,
+                final Toast loadingToast = TastyToast.makeText(view.getContext(), "Loading", TastyToast.LENGTH_LONG,
                         TastyToast.DEFAULT);
-                new Handler().postDelayed(new Runnable() {
+                TagsFirebase.attachTag(uid, tag, new TransactionResultListener() {
                     @Override
-                    public void run() {
-                        TastyToast.makeText(view.getContext(), "Successful!", TastyToast.LENGTH_LONG,
-                                TastyToast.SUCCESS);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                AttacheTagForMyProfileActivity.this.finish();
-                            }
-                        }, 1000);
+                    public void onSuccess() {
+                        loadingToast.cancel();
+                        makeText(view.getContext(), "Successful!", TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
+                        finish();
                     }
-                }, 2000);
+
+                    @Override
+                    public void onError() {
+                        loadingToast.cancel();
+                        makeText(view.getContext(), "Check you internet connection", TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                        finish();
+                    }
+                });
 
             }
         });
