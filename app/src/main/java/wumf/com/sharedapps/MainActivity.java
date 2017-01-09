@@ -16,9 +16,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -46,13 +43,13 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import hugo.weaving.DebugLog;
 import wumf.com.appsprovider.App;
+import wumf.com.sharedapps.adapter.ViewPagerAdapter;
 import wumf.com.sharedapps.eventbus.GetNewCountryEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromViber;
 import wumf.com.sharedapps.eventbus.OnClickAppEvent;
@@ -148,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Override
     public void onBackPressed() {
-        boolean doBack = ((OnBackPressedListener) adapter.mFragmentList.get(currentFragmentIndex)).doBack(0);
+        boolean doBack = adapter.getCurrentOnBackPressedListener(currentFragmentIndex).doBack(0);
         if (!doBack) {
             super.onBackPressed();
         }
@@ -160,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             if (resultCode == RESULT_OK) {
                 final App app = AppFinderUtils.find(data.getExtras().getString(PACKAGE_NAME));
                 addAppInFirebase(app);
-                ((OnBackPressedListener) adapter.mFragmentList.get(currentFragmentIndex)).doBack(300);
+                adapter.getCurrentOnBackPressedListener(currentFragmentIndex).doBack(300);
             } else {
                 //do nothing
             }
@@ -271,35 +268,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-    private static class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<CharSequence> mFragmentTitleList = new ArrayList<>();
-
-        public ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFrag(Fragment fragment, CharSequence title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
-    }
-
     @DebugLog
     private static class GoogleAuthOnCompleteListener implements OnCompleteListener<AuthResult> {
 
@@ -352,14 +320,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         @Override
         public void onPageSelected(int position) {
             currentFragmentIndex = position;
-            for (int i = 0; i < adapter.mFragmentList.size(); i++) {
-                IHideShow fr = (IHideShow) adapter.mFragmentList.get(i);
-                if (i == position) {
-                    fr.show();
-                } else {
-                    fr.hide();
-                }
-            }
+            adapter.onPageSelected(position);
         }
 
         @Override

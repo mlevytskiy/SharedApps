@@ -33,7 +33,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="60dp"
-                style="@style/MyCustomTabLayout" />
+                style="@style/CustomTabLayout1" />
 
         </LinearLayout>
 

@@ -9,12 +9,21 @@
         <item name="android:windowBackground">@drawable/bg_splash</item>
     </style>
 
-    <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
-        <item name="tabTextAppearance">@style/MyCustomTextAppearance</item>
+    <style name="CustomTabLayout1" parent="Widget.Design.TabLayout">
+        <item name="tabTextAppearance">@style/CustomTextAppearance1</item>
     </style>
 
-    <style name="MyCustomTextAppearance" parent="TextAppearance.Design.Tab">
+    <style name="CustomTabLayout2" parent="Widget.Design.TabLayout">
+        <item name="tabTextAppearance">@style/CustomTextAppearance2</item>
+    </style>
+
+    <style name="CustomTextAppearance1" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="CustomTextAppearance2" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">true</item>
+        <item name="android:textSize">14dp</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
