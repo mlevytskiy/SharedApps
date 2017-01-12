@@ -17,12 +17,12 @@ import wumf.com.sharedapps.R;
  * Created by max on 11.12.16.
  */
 
-public class TagCloudActivity extends Activity {
+public class TagCloudMockActivity extends Activity {
 
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
-        setContentView(R.layout.activity_tag_cloud);
+        setContentView(R.layout.mock_activity_tag_cloud);
 
         EditText editText = (EditText) findViewById(R.id.edit_text);
 
@@ -47,21 +47,21 @@ public class TagCloudActivity extends Activity {
         tagCloudLinkView.setOnTagDeleteListener(new TagCloudLinkView.OnTagDeleteListener() {
             @Override
             public void onTagDeleted(String tag, int position) {
-                Toast.makeText(TagCloudActivity.this, tag + " deleted", Toast.LENGTH_LONG).show();
+                Toast.makeText(TagCloudMockActivity.this, tag + " deleted", Toast.LENGTH_LONG).show();
             }
         });
 
         tagCloudLinkView.setOnTagSelectListener(new TagCloudLinkView.OnTagSelectListener() {
             @Override
             public void onTagSelected(String tag, int position) {
-                Toast.makeText(TagCloudActivity.this, tag, Toast.LENGTH_LONG).show();
+                Toast.makeText(TagCloudMockActivity.this, tag, Toast.LENGTH_LONG).show();
             }
         });
 
         tagCloudLinkView.setOnAddTagListener(new TagCloudLinkView.OnAddTagListener() {
             @Override
             public void onAddTag() {
-                Toast.makeText(TagCloudActivity.this, "add", Toast.LENGTH_LONG).show();
+                Toast.makeText(TagCloudMockActivity.this, "add", Toast.LENGTH_LONG).show();
             }
         });
     }

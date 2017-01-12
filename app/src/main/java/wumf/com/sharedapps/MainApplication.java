@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hugo.weaving.DebugLog;
-import interesting.com.contactsprovider.ContactProvider;
-import interesting.com.contactsprovider.FinishInitListener;
 import wumf.com.appsprovider.App;
 import wumf.com.appsprovider.AppProvider;
 import wumf.com.appsprovider.OnChangeLastInstalledAppsListener;
@@ -29,10 +27,7 @@ import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.RemovedFollowedUsersChangeEvent;
-import wumf.com.sharedapps.eventbus.UsersByPhoneNumbersFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.FollowUnfollowPeopleFirebase;
-import wumf.com.sharedapps.firebase.GetUsersListener;
-import wumf.com.sharedapps.firebase.TransactionResultListener;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.firebase.pojo.Profile;
@@ -169,37 +164,37 @@ public class MainApplication extends Application {
     @Subscribe
     public void onEvent(NewCountryCodeFromFirebaseEvent event) {
         country = event.countryCode;
-        if ( !TextUtils.isEmpty(country) ) {
-            ContactProvider.instance.init(this, event.countryCode, phoneNumber, new FinishInitListener() {
-                @Override
-                public void setAll(final List<String> phoneNumbers) {
-                    UsersFirebase.getUsers(phoneNumbers, myTags, new GetUsersListener() {
-                        @Override
-                        public void users(List<Profile> profiles) {
-                            users = profiles;
-                            allUsers.clear();
-                            allUsers.addAll(profiles);
-                            remove(users, removedUserUids);
-                            EventBus.getDefault().post( new UsersByPhoneNumbersFromFirebaseEvent(users) );
-                        }
-                    });
-                    List<String> oldContacts = memory.loadList(Key.oldContacts);
-                    List<String> removed = removedContacts(phoneNumbers, oldContacts);
-                    List<String> newContacts = newContacts(phoneNumbers, oldContacts);
-                    FollowUnfollowPeopleFirebase.markMeAsFollowerOfContacts(CurrentUser.getUID(), newContacts, removed, new TransactionResultListener() {
-                        @Override
-                        public void onSuccess() {
-                            memory.saveList(phoneNumbers, Key.oldContacts);
-                        }
-
-                        @Override
-                        public void onError() {
-                            //do nothing
-                        }
-                    });
-                }
-            });
-        }
+//        if ( !TextUtils.isEmpty(country) ) {
+//            ContactProvider.instance.init(this, event.countryCode, phoneNumber, new FinishInitListener() {
+//                @Override
+//                public void setAll(final List<String> phoneNumbers) {
+//                    UsersFirebase.getUsers(phoneNumbers, myTags, new GetUsersListener() {
+//                        @Override
+//                        public void users(List<Profile> profiles) {
+//                            users = profiles;
+//                            allUsers.clear();
+//                            allUsers.addAll(profiles);
+//                            remove(users, removedUserUids);
+//                            EventBus.getDefault().post( new UsersByPhoneNumbersFromFirebaseEvent(users) );
+//                        }
+//                    });
+//                    List<String> oldContacts = memory.loadList(Key.oldContacts);
+//                    List<String> removed = removedContacts(phoneNumbers, oldContacts);
+//                    List<String> newContacts = newContacts(phoneNumbers, oldContacts);
+//                    FollowUnfollowPeopleFirebase.markMeAsFollowerOfContacts(CurrentUser.getUID(), newContacts, removed, new TransactionResultListener() {
+//                        @Override
+//                        public void onSuccess() {
+//                            memory.saveList(phoneNumbers, Key.oldContacts);
+//                        }
+//
+//                        @Override
+//                        public void onError() {
+//                            //do nothing
+//                        }
+//                    });
+//                }
+//            });
+//        }
     }
 
     @Subscribe

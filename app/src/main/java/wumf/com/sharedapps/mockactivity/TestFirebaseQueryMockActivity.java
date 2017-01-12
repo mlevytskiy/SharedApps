@@ -9,7 +9,7 @@ import wumf.com.sharedapps.firebase.UsersFirebase;
  * Created by max on 19.12.16.
  */
 
-public class TestFirebaseQueryActivity extends Activity {
+public class TestFirebaseQueryMockActivity extends Activity {
 
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);

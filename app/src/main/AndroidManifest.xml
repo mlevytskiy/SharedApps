@@ -62,10 +62,13 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".mockactivity.TagCloudActivity"
+        <activity android:name=".mockactivity.TagCloudMockActivity"
                   android:exported="true" />
 
-        <activity android:name=".mockactivity.TestFirebaseQueryActivity"
+        <activity android:name=".mockactivity.TestFirebaseQueryMockActivity"
+                  android:exported="true" />
+
+        <activity android:name=".mockactivity.PeopleMockActivity"
                   android:exported="true" />
 
     </application>
