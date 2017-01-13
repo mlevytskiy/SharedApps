@@ -209,6 +209,9 @@ public class ObservablePeopleFirebase {
         }
 
         private boolean hasTheSameTag(List<String> tags, List<String> myTags) {
+            if (tags == null || tags.isEmpty() || myTags == null || myTags.isEmpty()) {
+                return false;
+            }
             for (String tag : tags) {
                 if ( myTags.contains(tag) ) {
                     return true;
