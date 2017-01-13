@@ -50,21 +50,7 @@ public class AttacheTagForMyProfileActivity extends Activity {
                 }
                 final Toast loadingToast = TastyToast.makeText(view.getContext(), "Loading", TastyToast.LENGTH_LONG,
                         TastyToast.DEFAULT);
-                TagsFirebase.attachTag(uid, tag, new TransactionResultListener() {
-                    @Override
-                    public void onSuccess() {
-                        loadingToast.cancel();
-                        makeText(view.getContext(), "Successful!", TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
-                        finish();
-                    }
-
-                    @Override
-                    public void onError() {
-                        loadingToast.cancel();
-                        makeText(view.getContext(), "Check you internet connection", TastyToast.LENGTH_LONG, TastyToast.ERROR);
-                        finish();
-                    }
-                });
+                TagsFirebase.attachTag(uid, tag, new TransactionResultListenerImpl(loadingToast, AttacheTagForMyProfileActivity.this));
 
             }
         });
@@ -96,6 +82,38 @@ public class AttacheTagForMyProfileActivity extends Activity {
             view = new View(this);
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    private static class TransactionResultListenerImpl implements TransactionResultListener {
+
+        private Toast loadingToast;
+        private Activity activity;
+
+        public TransactionResultListenerImpl(Toast loadingToast, Activity activity) {
+            this.loadingToast = loadingToast;
+            this.activity = activity;
+        }
+
+
+        @Override
+        public void onSuccess() {
+            goBack();
+            makeText(MainApplication.instance, "Successful!", TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
+        }
+
+        @Override
+        public void onError() {
+            goBack();
+            makeText(MainApplication.instance, "Check you internet connection", TastyToast.LENGTH_LONG, TastyToast.ERROR);
+        }
+
+        private void goBack() {
+            loadingToast.cancel();
+            activity.finish();
+            activity = null;
+            loadingToast = null;
+        }
+
     }
 
 }
