@@ -1,6 +1,7 @@
 package wumf.com.sharedapps.view;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import org.greenrobot.eventbus.EventBus;
 
+import hugo.weaving.DebugLog;
 import wumf.com.sharedapps.MainApplication;
 import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.eventbus.SignOutFromFirebaseEvent;
@@ -22,6 +24,7 @@ import wumf.com.sharedapps.eventbus.SignOutFromFirebaseEvent;
  * Created by max on 15.09.16.
  */
 
+@DebugLog
 public class MyAccountView extends LinearLayout {
 
     private ImageView icon;
@@ -91,8 +94,8 @@ public class MyAccountView extends LinearLayout {
     }
 
     public void updatePhoneNumber(String phoneNumber) {
-        phoneNumberContainer.setVisibility(View.VISIBLE);
-        fullPhoneNumberFromViberContainer.setVisibility(View.GONE);
+        phoneNumberContainer.setVisibility(TextUtils.isEmpty(phoneNumber) ? View.GONE : View.VISIBLE);
+        fullPhoneNumberFromViberContainer.setVisibility(TextUtils.isEmpty(phoneNumber) ? View.VISIBLE : View.GONE);
         phoneNumberTextView.setText(phoneNumber);
     }
 
