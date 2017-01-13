@@ -48,7 +48,6 @@ public class MainApplication extends Application {
     public static MainApplication instance;
     public String country;
     public List<String> myTags;
-    public List<String> alreadySentUids;
 
     private AppProvider appProvider;
     private MemoryCommunicator memory;
@@ -66,7 +65,6 @@ public class MainApplication extends Application {
         memory = MemoryCommunicator.getInstance();
         myTags = memory.loadList(Key.oldTags);
         phoneNumber = memory.loadStr(Key.myPhone);
-        alreadySentUids = memory.loadList(Key.alreadySentUids);
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -108,7 +106,7 @@ public class MainApplication extends Application {
         OnShowOrHideAppListener listener = new OnShowOrHideAppListener() {
             @Override
             public void onHide() {
-                memory.saveList(alreadySentUids, Key.alreadySentUids);
+                //do nothing
             }
 
             @Override
@@ -195,7 +193,6 @@ public class MainApplication extends Application {
     public void signOut() {
         phoneNumber = null;
         myTags.clear();
-        alreadySentUids.clear();
     }
 
 }
