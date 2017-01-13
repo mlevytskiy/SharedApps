@@ -2,8 +2,10 @@ package wumf.com.sharedapps;
 
 import com.google.firebase.auth.FirebaseUser;
 
+import org.greenrobot.eventbus.EventBus;
+
+import wumf.com.sharedapps.eventbus.CurrentUserChangedEvent;
 import wumf.com.sharedapps.firebase.FavouriteAppsFirebase;
-import wumf.com.sharedapps.firebase.GarbageFirebase;
 import wumf.com.sharedapps.firebase.TagsFirebase;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 
@@ -26,16 +28,17 @@ public class CurrentUser {
             TagsFirebase.listenMyTags(uid);
             UsersFirebase.listenPhoneNumber(uid);
             FavouriteAppsFirebase.listenFoldersAndApps(uid);
-            GarbageFirebase.listenAndNotify(uid);
 
         }
 
         currentUser = user;
+
+        EventBus.getDefault().post(new CurrentUserChangedEvent(currentUser));
     }
 
     public static String getUID() {
         if (currentUser == null) {
-            return "currentUser == null";
+            return null;
         } else {
             return currentUser.getUid();
         }

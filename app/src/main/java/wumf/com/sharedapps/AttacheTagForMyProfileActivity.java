@@ -36,7 +36,7 @@ public class AttacheTagForMyProfileActivity extends Activity {
         super.onCreate(bundle);
         uid = getIntent().getExtras().getString(KEY_USER_UID);
         setContentView(R.layout.activity_attache_tag_for_my_profile);
-        ((CustomTopBar) findViewById(R.id.top_bar)).setText("Attache tag for my profile").bind(this);
+        ((CustomTopBar) findViewById(R.id.top_bar)).setText("Attache tag for my firebaseUser").bind(this);
         attacheTag = findViewById(R.id.attache_tag);
         attacheTag.setOnClickListener(new View.OnClickListener() {
             @Override

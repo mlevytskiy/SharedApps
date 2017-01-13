@@ -4,7 +4,7 @@ import android.text.TextUtils;
 
 import java.util.List;
 
-import wumf.com.sharedapps.MainApplication;
+import wumf.com.sharedapps.firebase.observable.ObservablePeopleFirebase;
 import wumf.com.sharedapps.firebase.pojo.Profile;
 
 /**
@@ -14,7 +14,7 @@ import wumf.com.sharedapps.firebase.pojo.Profile;
 public class UserFinderUtils {
 
     public static Profile find(String uid) {
-        List<Profile> users = MainApplication.instance.users;
+        List<Profile> users = ObservablePeopleFirebase.getPeople();
 
         for (Profile user : users) {
             if ( TextUtils.equals(uid, user.getUid()) ) {

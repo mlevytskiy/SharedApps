@@ -163,7 +163,7 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
 
     private void updateTagsFromMyProfile(List<String> tags) {
         if (tags.isEmpty()) {
-            tagCloudLinkView.setVisibility(View.INVISIBLE); // fixed bug with first update profile. after GONE visible don't work normally.
+            tagCloudLinkView.setVisibility(View.INVISIBLE); // fixed bug with first update firebaseUser. after GONE visible don't work normally.
             attacheTagForMyProfile.setVisibility(View.VISIBLE);
         } else {
             tagCloudLinkView.setAll(tags);

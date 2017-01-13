@@ -20,9 +20,12 @@ import java.util.List;
 
 import wumf.com.sharedapps.adapter.FollowUnfollowFullPeopleAdapter;
 import wumf.com.sharedapps.adapter.FollowUnfollowPeopleEmptyAdapter;
-import wumf.com.sharedapps.eventbus.RemovedFollowedUsersChangeEvent;
-import wumf.com.sharedapps.eventbus.UsersByPhoneNumbersFromFirebaseEvent;
+import wumf.com.sharedapps.eventbus.observable.ObservableChangeProfileEvent;
+import wumf.com.sharedapps.eventbus.observable.ObservableGarbageEvent;
+import wumf.com.sharedapps.eventbus.observable.ObservablePeopleEvent;
+import wumf.com.sharedapps.eventbus.observable.ObservableRemoveProfileEvent;
 import wumf.com.sharedapps.firebase.GarbageFirebase;
+import wumf.com.sharedapps.firebase.observable.ObservablePeopleFirebase;
 import wumf.com.sharedapps.firebase.pojo.Profile;
 import wumf.com.sharedapps.util.AutofollowTextBuilder;
 import wumf.com.sharedapps.view.CustomTopBar;
@@ -51,7 +54,7 @@ public class FollowUnfollowActivity extends Activity {
                         startActivityForResult(new Intent(FollowUnfollowActivity.this, GarbageActivity.class), REQUEST_CODE);
                     }
                 });
-        showUsers(((MainApplication) getApplication()).users);
+        showUsers(ObservablePeopleFirebase.getPeople());
     }
 
     public void onStart() {
@@ -70,8 +73,23 @@ public class FollowUnfollowActivity extends Activity {
     }
 
     @Subscribe
-    public void onEvent(RemovedFollowedUsersChangeEvent event) {
-        showUsers(((MainApplication) getApplication()).users);
+    public void onEvent(ObservableGarbageEvent event) {
+        showUsers(event.people);
+    }
+
+    @Subscribe
+    public void onEvent(ObservablePeopleEvent event) {
+        showUsers(event.people);
+    }
+
+    @Subscribe
+    public void onEvent(ObservableChangeProfileEvent event) {
+        showUsers(ObservablePeopleFirebase.getPeople());
+    }
+
+    @Subscribe
+    public void onEvent(ObservableRemoveProfileEvent event) {
+        showUsers(ObservablePeopleFirebase.getPeople());
     }
 
     private void showUsers(List<Profile> _users) {
@@ -112,16 +130,11 @@ public class FollowUnfollowActivity extends Activity {
         });
     }
 
-    @Subscribe
-    public void onEvent(UsersByPhoneNumbersFromFirebaseEvent event) {
-        showUsers(event.profiles);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                showUsers(((MainApplication) getApplication()).users);
+                showUsers(ObservablePeopleFirebase.getPeople());
             } else {
                 //do nothing
             }

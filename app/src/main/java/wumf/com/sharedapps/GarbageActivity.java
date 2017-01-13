@@ -10,8 +10,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import wumf.com.sharedapps.adapter.RemovedPeopleAdapter;
-import wumf.com.sharedapps.eventbus.RemovedFollowedUsersChangeEvent;
+import wumf.com.sharedapps.eventbus.observable.ObservableGarbageEvent;
 import wumf.com.sharedapps.firebase.GarbageFirebase;
+import wumf.com.sharedapps.firebase.observable.ObservablePeopleFirebase;
 import wumf.com.sharedapps.view.CustomTopBar;
 
 /**
@@ -40,7 +41,7 @@ public class GarbageActivity extends Activity {
         });
         listView.addHeaderView(header);
 
-        adapter = new RemovedPeopleAdapter(((MainApplication) getApplication()).removedUsers);
+        adapter = new RemovedPeopleAdapter(ObservablePeopleFirebase.getGarbage());
 
         listView.setAdapter(adapter);
         setResult(RESULT_CANCELED);
@@ -63,8 +64,8 @@ public class GarbageActivity extends Activity {
     }
 
     @Subscribe
-    public void onEvent(RemovedFollowedUsersChangeEvent event) {
-        adapter.update(((MainApplication) getApplication()).removedUsers);
+    public void onEvent(ObservableGarbageEvent event) {
+        adapter.update(event.inGarbage);
     }
 
 }

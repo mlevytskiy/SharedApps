@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hugo.weaving.DebugLog;
+import interesting.com.contactsprovider.ContactProvider;
+import interesting.com.contactsprovider.FinishInitListener;
 import wumf.com.appsprovider.App;
 import wumf.com.appsprovider.AppProvider;
 import wumf.com.appsprovider.OnChangeLastInstalledAppsListener;
@@ -26,11 +28,10 @@ import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
-import wumf.com.sharedapps.eventbus.RemovedFollowedUsersChangeEvent;
 import wumf.com.sharedapps.firebase.FollowUnfollowPeopleFirebase;
 import wumf.com.sharedapps.firebase.UsersFirebase;
+import wumf.com.sharedapps.firebase.observable.ObservablePeopleFirebase;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
-import wumf.com.sharedapps.firebase.pojo.Profile;
 import wumf.com.sharedapps.memory.Key;
 import wumf.com.sharedapps.memory.MemoryCommunicator;
 
@@ -47,12 +48,8 @@ public class MainApplication extends Application {
     public static MainApplication instance;
     public String country;
     public List<String> myTags;
-    public List<Profile> users = new ArrayList<>(); //allUsers-removedUsers =)
-    public List<Profile> removedUsers = new ArrayList<>();
     public List<String> alreadySentUids;
 
-    private List<String> removedUserUids = new ArrayList<>();
-    private List<Profile> allUsers = new ArrayList<>();
     private AppProvider appProvider;
     private MemoryCommunicator memory;
 
@@ -101,7 +98,7 @@ public class MainApplication extends Application {
         });
 
         if (!FirebaseApp.getApps(this).isEmpty()) {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            FirebaseDatabase.getInstance().setPersistenceEnabled(false);
         }
 
         country = "UNKNOWN";
@@ -164,91 +161,17 @@ public class MainApplication extends Application {
     @Subscribe
     public void onEvent(NewCountryCodeFromFirebaseEvent event) {
         country = event.countryCode;
-//        if ( !TextUtils.isEmpty(country) ) {
-//            ContactProvider.instance.init(this, event.countryCode, phoneNumber, new FinishInitListener() {
-//                @Override
-//                public void setAll(final List<String> phoneNumbers) {
-//                    UsersFirebase.getUsers(phoneNumbers, myTags, new GetUsersListener() {
-//                        @Override
-//                        public void users(List<Profile> profiles) {
-//                            users = profiles;
-//                            allUsers.clear();
-//                            allUsers.addAll(profiles);
-//                            remove(users, removedUserUids);
-//                            EventBus.getDefault().post( new UsersByPhoneNumbersFromFirebaseEvent(users) );
-//                        }
-//                    });
-//                    List<String> oldContacts = memory.loadList(Key.oldContacts);
-//                    List<String> removed = removedContacts(phoneNumbers, oldContacts);
-//                    List<String> newContacts = newContacts(phoneNumbers, oldContacts);
-//                    FollowUnfollowPeopleFirebase.markMeAsFollowerOfContacts(CurrentUser.getUID(), newContacts, removed, new TransactionResultListener() {
-//                        @Override
-//                        public void onSuccess() {
-//                            memory.saveList(phoneNumbers, Key.oldContacts);
-//                        }
-//
-//                        @Override
-//                        public void onError() {
-//                            //do nothing
-//                        }
-//                    });
-//                }
-//            });
-//        }
-    }
 
-    @Subscribe
-    public void onEvent(RemovedFollowedUsersChangeEvent event) {
-        removedUserUids = event.uids;
-        users.clear();
-        users.addAll(allUsers);
-        remove(users, removedUserUids);
-    }
-
-    private void remove(List<Profile> users, List<String> uids) {
-        if (uids.isEmpty()) {
-            return;
-        }
-
-        removedUsers.clear();
-
-        for (int i = 0; i < allUsers.size(); i++) {
-            Profile user = allUsers.get(i);
-            if ( uids.contains(user.getUid()) ) {
-                users.remove(user);
-                removedUsers.add(user);
-            } else {
-                //do nothing
-            }
-        }
-    }
-
-    private List<String> newContacts(List<String> contacts, List<String> oldContacts) {
-        if (oldContacts.isEmpty()) {
-            return contacts;
-        } else {
-            List<String> result = new ArrayList<>();
-            for (String str : contacts) {
-                if ( !oldContacts.contains(str) ) {
-                    result.add(str);
+        if (!TextUtils.isEmpty(country)) {
+            ContactProvider.instance.init(this, country, MainApplication.instance.phoneNumber, new FinishInitListener() {
+                @Override
+                public void setAll(List<String> phoneNumbers) {
+                    ObservablePeopleFirebase.setPhoneNumbers(phoneNumbers);
+                    ObservablePeopleFirebase.listenPeople(CurrentUser.getUID());
                 }
-            }
-            return result;
+            });
         }
-    }
 
-    private List<String> removedContacts(List<String> contacts, List<String> oldContacts) {
-        if (oldContacts.isEmpty()) {
-            return oldContacts; //empty list
-        } else {
-            List<String> result = new ArrayList<>();
-            for (String str : oldContacts) {
-                if ( !contacts.contains(str) ) {
-                    result.add(str);
-                }
-            }
-            return result;
-        }
     }
 
     private List<String> getNewTags(List<String> newTagList, List<String> oldTagList) {
@@ -273,9 +196,6 @@ public class MainApplication extends Application {
         phoneNumber = null;
         myTags.clear();
         alreadySentUids.clear();
-        users.clear();
-        removedUsers.clear();
-        allUsers.clear();
     }
 
 }

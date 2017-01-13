@@ -1,5 +1,7 @@
 package wumf.com.sharedapps.firebase.pojo;
 
+import android.text.TextUtils;
+
 import com.google.firebase.database.Exclude;
 
 import java.util.List;
@@ -95,4 +97,21 @@ public class Profile {
     public void setUid(String uid) {
         this.uid = uid;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof Profile) {
+            return TextUtils.equals(uid, ((Profile) obj).uid);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return (uid == null) ? super.hashCode() : uid.hashCode();
+    }
+
 }

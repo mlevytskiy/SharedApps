@@ -9,11 +9,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
+import wumf.com.sharedapps.eventbus.CurrentUserChangedEvent;
 import wumf.com.sharedapps.eventbus.observable.ObservableChangeProfileEvent;
+import wumf.com.sharedapps.eventbus.observable.ObservableGarbageEvent;
 import wumf.com.sharedapps.eventbus.observable.ObservablePeopleEvent;
 import wumf.com.sharedapps.eventbus.observable.ObservableRemoveProfileEvent;
 import wumf.com.sharedapps.firebase.pojo.Profile;
@@ -24,20 +30,58 @@ import wumf.com.sharedapps.firebase.pojo.Profile;
 
 public class ObservablePeopleFirebase {
 
-    private static DatabaseReference userssRef = FirebaseDatabase.getInstance().getReference().child("users");
+    private static final DatabaseReference userssRef = FirebaseDatabase.getInstance().getReference().child("users");
 
+    private static ObservablePeopleFirebase instance = new ObservablePeopleFirebase();
     private static List<String> pn = new ArrayList<>();
+
+    private static Map<String, Profile> inGarbage = new HashMap<>();
+    private static List<Profile> people = new ArrayList<>();
+
+    private static MyGarbageValueEventListener myGarbageValueEventListener;
+    private static MyTagsValueEventListener myTagsValueEventListener;
 
     public static void setPhoneNumbers(List<String> phoneNumbers) {
         pn = phoneNumbers;
     }
 
     public static void listenPeople(String myUid) {
-        userssRef.child(myUid).child("myTags").addValueEventListener(new MyTagsValueEventListener(myUid, pn));
+        if ( !EventBus.getDefault().isRegistered(instance) ) {
+            EventBus.getDefault().register(instance);
+        }
+
+        if (TextUtils.isEmpty(myUid)) {
+            return;
+        }
+
+        initListeners(myUid);
+    }
+
+    @Subscribe
+    public void onEvent(CurrentUserChangedEvent event) {
+        if (event.firebaseUser == null) {
+            //do nothing
+        } else {
+            if (myGarbageValueEventListener == null) {
+                String myUid = event.firebaseUser.getUid();
+                initListeners(myUid);
+            }
+        }
+    }
+
+    private static void initListeners(String uid) {
+        myGarbageValueEventListener = new MyGarbageValueEventListener();
+        myTagsValueEventListener = new MyTagsValueEventListener(uid, pn);
+        userssRef.child(uid).child("garbage").addValueEventListener(myGarbageValueEventListener);
+        userssRef.child(uid).child("myTags").addValueEventListener(myTagsValueEventListener);
     }
 
     public static List<Profile> getPeople() {
-        return new ArrayList<>();
+        return people;
+    }
+
+    public static List<Profile> getGarbage() {
+        return new ArrayList<>(inGarbage.values());
     }
 
     private static class MyTagsValueEventListener implements ValueEventListener {
@@ -67,12 +111,12 @@ public class ObservablePeopleFirebase {
 
         private String myUid;
         private List<String> tags;
-        private List<String> phoneNumber;
+        private List<String> phoneNumbers;
 
         public UsersValueEventListener(List<String> tags, List<String> phoneNumbers, String myUid) {
             this.myUid = myUid;
             this.tags = tags;
-            this.phoneNumber = phoneNumbers;
+            this.phoneNumbers = phoneNumbers;
         }
 
         @Override
@@ -84,12 +128,12 @@ public class ObservablePeopleFirebase {
                 if (TextUtils.equals(myUid, person.getUid())) {
                     continue;
                 }
-                List<String> personTags = person.getMyTags();
+                List<String> personTags = (person.getMyTags() == null) ? new ArrayList<String>() : person.getMyTags();
                 boolean hasTheSameTag = false;
                 for (String tag : personTags) {
                     if (tags.contains(tag)) {
                         result.add(person);
-                        userssRef.child(person.getUid()).addValueEventListener( new UserValueEventListener(person.getUid(), tags, phoneNumber, userssRef.child(person.getUid())) );
+                        userssRef.child(person.getUid()).addValueEventListener( new UserValueEventListener(person.getUid(), tags, phoneNumbers, people, userssRef.child(person.getUid())) );
                         hasTheSameTag = true;
                         break;
                     }
@@ -99,14 +143,17 @@ public class ObservablePeopleFirebase {
                     continue;
                 }
 
-                if ( phoneNumber.contains(person.getPhoneNumber()) ) {
+                if ( phoneNumbers.contains(person.getPhoneNumber()) ) {
                     result.add(person);
-                    userssRef.child(person.getUid()).addValueEventListener( new UserValueEventListener(person.getUid(), tags, phoneNumber, userssRef.child(person.getUid())) );
+                    userssRef.child(person.getUid()).addValueEventListener( new UserValueEventListener(person.getUid(), tags, phoneNumbers, people, userssRef.child(person.getUid())) );
                 }
 
             }
 
-            EventBus.getDefault().post(new ObservablePeopleEvent(result));
+            result.removeAll(inGarbage.values());
+            people.clear();
+            people.addAll(result);
+            EventBus.getDefault().post(new ObservablePeopleEvent(people));
         }
 
         @Override
@@ -123,12 +170,14 @@ public class ObservablePeopleFirebase {
         private List<String> phones;
         private DatabaseReference parentRef;
         private boolean isFirstCall = true;
+        private List<Profile> people;
 
-        public UserValueEventListener(String uid, List<String> tags, List<String> phones, DatabaseReference parentRef) {
+        public UserValueEventListener(String uid, List<String> tags, List<String> phones, List<Profile> people, DatabaseReference parentRef) {
             this.uid = uid;
             this.tags = tags;
             this.phones = phones;
             this.parentRef = parentRef;
+            this.people = people;
         }
 
         @Override
@@ -139,17 +188,24 @@ public class ObservablePeopleFirebase {
             }
             Profile profile = dataSnapshot.getValue(Profile.class);
             if (profile == null) {
+                Profile pr = new Profile();
+                pr.setUid(uid);
+                people.remove(pr);
                 parentRef.removeEventListener(this);
                 EventBus.getDefault().post( new ObservableRemoveProfileEvent(uid));
                 return;
             }
             profile.setUid(uid);
             if ( phones.contains(profile.getPhoneNumber()) || hasTheSameTag(profile.getMyTags(), tags)) {
+                people.remove(profile); //existed profile with the same uid;
+                people.add(profile);
                 EventBus.getDefault().post( new ObservableChangeProfileEvent(profile) );
             } else {
                 parentRef.removeEventListener(this);
+                people.remove(profile);
                 EventBus.getDefault().post( new ObservableRemoveProfileEvent(uid));
             }
+
         }
 
         private boolean hasTheSameTag(List<String> tags, List<String> myTags) {
@@ -164,6 +220,38 @@ public class ObservablePeopleFirebase {
         @Override
         public void onCancelled(DatabaseError databaseError) {
             //do nothing
+        }
+
+    }
+
+    private static class MyGarbageValueEventListener implements ValueEventListener {
+
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            Object value = dataSnapshot.getValue();
+            List<String> uids = (value == null) ? new ArrayList<String>() : (List<String>) value;
+
+            for (Profile profile : new ArrayList<>(people)) {
+                if (uids.contains(profile.getUid())) {
+                    inGarbage.put(profile.getUid(), profile);
+                    people.remove(profile);
+                }
+            }
+
+            for (Map.Entry<String, Profile> entry : new HashSet<>(inGarbage.entrySet())) {
+                if ( !uids.contains(entry.getKey()) ) {
+                    people.add(entry.getValue());
+                    inGarbage.remove(entry.getKey());
+                }
+            }
+
+            EventBus.getDefault().post(new ObservableGarbageEvent(new ArrayList(inGarbage.values()), people));
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
         }
 
     }
