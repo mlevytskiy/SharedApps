@@ -9,6 +9,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.List;
 
 import hugo.weaving.DebugLog;
+import wumf.com.sharedapps.CurrentUser;
 import wumf.com.sharedapps.firebase.transaction.AttachStringToListTransaction;
 import wumf.com.sharedapps.firebase.transaction.CompositeTransaction;
 import wumf.com.sharedapps.firebase.transaction.ForChildrenTransaction;
@@ -113,11 +114,11 @@ public class FollowUnfollowPeopleFirebase {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             String pushId = (String) dataSnapshot.child("pushId").getValue();
-            gcmSender.send(pushId, "New user", new PushResultListener() {
+            gcmSender.send(pushId, CurrentUser.getUID(), new PushResultListener() {
                 @Override
                 public void callback(boolean isSuccess) {
                     if (isSuccess) {
-                        PushUtil.add(uid);
+                        //do nothing
                     }
                 }
             });

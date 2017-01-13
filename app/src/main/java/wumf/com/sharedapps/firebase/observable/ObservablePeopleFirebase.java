@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import wumf.com.sharedapps.eventbus.CurrentUserChangedEvent;
+import wumf.com.sharedapps.eventbus.ReceivedPushEvent;
 import wumf.com.sharedapps.eventbus.observable.ObservableChangeProfileEvent;
 import wumf.com.sharedapps.eventbus.observable.ObservableGarbageEvent;
 import wumf.com.sharedapps.eventbus.observable.ObservablePeopleEvent;
@@ -37,6 +38,7 @@ public class ObservablePeopleFirebase {
 
     private static Map<String, Profile> inGarbage = new HashMap<>();
     private static List<Profile> people = new ArrayList<>();
+    private static List<String> myTags = new ArrayList<>();
 
     private static MyGarbageValueEventListener myGarbageValueEventListener;
     private static MyTagsValueEventListener myTagsValueEventListener;
@@ -69,6 +71,15 @@ public class ObservablePeopleFirebase {
         }
     }
 
+    @Subscribe
+    public void onEvent(ReceivedPushEvent event) {
+        if (inGarbage.get(event.uid) == null) {
+            userssRef.child(event.uid).addValueEventListener( new UserValueEventListener(event.uid, myTags, pn, people, userssRef.child(event.uid), false) );
+        } else {
+            //do nothing
+        }
+    }
+
     private static void initListeners(String uid) {
         myGarbageValueEventListener = new MyGarbageValueEventListener();
         myTagsValueEventListener = new MyTagsValueEventListener(uid, pn);
@@ -98,6 +109,8 @@ public class ObservablePeopleFirebase {
         public void onDataChange(DataSnapshot dataSnapshot) {
             Object value = dataSnapshot.getValue();
             List<String> tags = (value != null) ? (List<String>) value : new ArrayList<String>();
+            myTags.clear();
+            myTags.addAll(tags);
             userssRef.addListenerForSingleValueEvent(new UsersValueEventListener(tags, phoneNumber, myUid));
         }
 
@@ -178,6 +191,12 @@ public class ObservablePeopleFirebase {
             this.phones = phones;
             this.parentRef = parentRef;
             this.people = people;
+        }
+
+        public UserValueEventListener(String uid, List<String> tags, List<String> phones, List<Profile> people, DatabaseReference parentRef,
+                                      boolean ignoreFirstCall) {
+            this(uid, tags, phones, people, parentRef);
+            isFirstCall = false;
         }
 
         @Override

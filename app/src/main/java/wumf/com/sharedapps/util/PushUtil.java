@@ -17,8 +17,4 @@ public class PushUtil {
         return false;
     }
 
-    public static void add(String uid) {
-
-    }
-
 }
