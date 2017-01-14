@@ -1,4 +1,4 @@
-package wumf.com.sharedapps;
+package wumf.com.sharedapps.fragment;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -32,6 +32,13 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.List;
 
 import wumf.com.appsprovider.App;
+import wumf.com.sharedapps.AllAppsActivity;
+import wumf.com.sharedapps.CurrentUser;
+import wumf.com.sharedapps.IHideShow;
+import wumf.com.sharedapps.MainActivity;
+import wumf.com.sharedapps.MainApplication;
+import wumf.com.sharedapps.OnBackPressedListener;
+import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.OnClickAppEvent;

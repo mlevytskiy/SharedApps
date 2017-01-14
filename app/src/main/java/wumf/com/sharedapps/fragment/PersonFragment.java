@@ -1,4 +1,4 @@
-package wumf.com.sharedapps;
+package wumf.com.sharedapps.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +20,15 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.List;
 
 import hugo.weaving.DebugLog;
+import wumf.com.sharedapps.AttacheTagForMyProfileActivity;
+import wumf.com.sharedapps.CurrentUser;
+import wumf.com.sharedapps.FollowUnfollowActivity;
+import wumf.com.sharedapps.IHideShow;
+import wumf.com.sharedapps.MainActivity;
+import wumf.com.sharedapps.MainApplication;
+import wumf.com.sharedapps.OnBackPressedListener;
+import wumf.com.sharedapps.R;
+import wumf.com.sharedapps.ViberTransparentActivity;
 import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.SignInFromFirebaseEvent;

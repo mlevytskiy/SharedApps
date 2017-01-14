@@ -60,6 +60,9 @@ import wumf.com.sharedapps.firebase.FavouriteAppsFirebase;
 import wumf.com.sharedapps.firebase.FirebaseIcons;
 import wumf.com.sharedapps.firebase.IconUrlCallback;
 import wumf.com.sharedapps.firebase.UsersFirebase;
+import wumf.com.sharedapps.fragment.PersonFragment;
+import wumf.com.sharedapps.fragment.SearchFragment;
+import wumf.com.sharedapps.fragment.SharedAppsFragment;
 import wumf.com.sharedapps.util.AppFinderUtils;
 
 @DebugLog

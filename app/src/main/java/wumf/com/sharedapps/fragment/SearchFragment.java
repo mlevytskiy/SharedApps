@@ -1,4 +1,4 @@
-package wumf.com.sharedapps;
+package wumf.com.sharedapps.fragment;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -8,6 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import wumf.com.sharedapps.IHideShow;
+import wumf.com.sharedapps.OnBackPressedListener;
+import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.adapter.ViewPagerAdapter;
 import wumf.com.sharedapps.mockfragment.MockFragment;
 
@@ -17,14 +20,15 @@ import wumf.com.sharedapps.mockfragment.MockFragment;
 public class SearchFragment extends Fragment implements IHideShow, OnBackPressedListener {
 
     private ViewPagerAdapter adapter;
+    private ViewPager viewPager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabs);
-        ViewPager viewPager = (ViewPager) view.findViewById(R.id.view_pager);
+        viewPager = (ViewPager) view.findViewById(R.id.view_pager);
         tabLayout.setupWithViewPager(viewPager);
-        setupViewPager(viewPager);
+
         return view;
     }
 
@@ -35,7 +39,7 @@ public class SearchFragment extends Fragment implements IHideShow, OnBackPressed
 
     @Override
     public void show() {
-
+        setupViewPager(viewPager);
     }
 
     @Override
@@ -44,8 +48,8 @@ public class SearchFragment extends Fragment implements IHideShow, OnBackPressed
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        adapter = new ViewPagerAdapter(getFragmentManager());
-        adapter.addFrag(new MockFragment(), "all apps");
+        adapter = new ViewPagerAdapter(getChildFragmentManager());
+        adapter.addFrag(new AllAppsFragment(), "all apps");
         adapter.addFrag(new MockFragment(), "by people" );
         viewPager.setAdapter(adapter);
     }
