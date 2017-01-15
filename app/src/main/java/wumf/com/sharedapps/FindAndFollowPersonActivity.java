@@ -16,4 +16,9 @@ public class FindAndFollowPersonActivity extends Activity {
         setContentView(R.layout.activity_find_and_follow);
         ((CustomTopBar) findViewById(R.id.top_bar)).setText("Find and follow").bind(this);
     }
+
+    public void onStop() {
+        super.onStop();
+    }
+
 }

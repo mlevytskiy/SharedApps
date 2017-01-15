@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -15,6 +14,7 @@ import java.util.List;
 
 import wumf.com.sharedapps.firebase.TagsFirebase;
 import wumf.com.sharedapps.firebase.TransactionResultListener;
+import wumf.com.sharedapps.util.KeyboardUtils;
 import wumf.com.sharedapps.view.CustomTopBar;
 
 import static com.sdsmdg.tastytoast.TastyToast.makeText;
@@ -41,7 +41,7 @@ public class AttacheTagForMyProfileActivity extends Activity {
         attacheTag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                hideKeyboard();
+                KeyboardUtils.hideKeyboard(AttacheTagForMyProfileActivity.this);
                 String tag = editText.getText().toString();
                 if (TextUtils.isEmpty(tag)) {
                     makeText(view.getContext(), "You need enter a tag", TastyToast.LENGTH_LONG,
@@ -71,17 +71,6 @@ public class AttacheTagForMyProfileActivity extends Activity {
                 editText.append(tag);
             }
         });
-    }
-
-    private void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        //Find the currently focused view, so we can grab the correct window token from it.
-        View view = getCurrentFocus();
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if (view == null) {
-            view = new View(this);
-        }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     private static class TransactionResultListenerImpl implements TransactionResultListener {

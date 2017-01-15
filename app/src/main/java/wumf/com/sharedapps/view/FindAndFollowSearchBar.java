@@ -5,18 +5,20 @@ import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.github.omadahealth.typefaceview.TypefaceTextView;
 
 import wumf.com.sharedapps.R;
+import wumf.com.sharedapps.view.findAndFollowSearchBarImpl.NickNameOnClickSpan;
+import wumf.com.sharedapps.view.findAndFollowSearchBarImpl.OnClickCancel;
+import wumf.com.sharedapps.view.findAndFollowSearchBarImpl.PhoneOnClickSpan;
 
 /**
  * Created by max on 15.01.17.
@@ -25,9 +27,9 @@ import wumf.com.sharedapps.R;
 public class FindAndFollowSearchBar extends LinearLayout {
 
     private TextView choiceTextView;
-    private ImageView cancel;
+    private ImageButton cancel;
     private EditText editText;
-    private Button search;
+    private TypefaceTextView search;
 
     public FindAndFollowSearchBar(Context context) {
         super(context);
@@ -46,39 +48,32 @@ public class FindAndFollowSearchBar extends LinearLayout {
 
     private void init(Context context) {
         inflate(context, R.layout.custom_item_find_and_follow_search_bar, this);
+        setPadding(0, 0, 8, 0);
         setOrientation(HORIZONTAL);
         setGravity(Gravity.CENTER);
         choiceTextView = (TextView) findViewById(R.id.choice_text_view);
+        cancel = (ImageButton) findViewById(R.id.cancel_image_button);
+        editText = (EditText) findViewById(R.id.edit_text);
+        search = (TypefaceTextView) findViewById(R.id.search_button);
+
+        cancel.setOnClickListener(new OnClickCancel(choiceTextView, cancel, editText, search));
+
         Spannable spannable = Spannable.Factory.getInstance().newSpannable("Search by phone or nick name");
 
-        spannable.setSpan(new ClickableSpan() {
+        spannable.setSpan(new PhoneOnClickSpan(choiceTextView, cancel, editText, search), 10, 15, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(view.getContext(), "test", Toast.LENGTH_LONG).show();
-            }
-        }, 10, 15, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        spannable.setSpan(new ClickableSpan() {
-
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(view.getContext(), "test2", Toast.LENGTH_LONG).show();
-            }
-        }, 19, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(new NickNameOnClickSpan(choiceTextView, cancel, editText, search), 19, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         choiceTextView.setText(spannable);
         choiceTextView.setClickable(false);
         choiceTextView.setMovementMethod(LinkMovementMethod.getInstance());
-
-            cancel = (ImageView) findViewById(R.id.cancel_image_view);
-        editText = (EditText) findViewById(R.id.edit_text);
-        search = (Button) findViewById(R.id.search_button);
 
         choiceTextView.setVisibility(View.VISIBLE);
         cancel.setVisibility(View.GONE);
         editText.setVisibility(View.GONE);
         search.setVisibility(View.GONE);
     }
+
+
 
 }
