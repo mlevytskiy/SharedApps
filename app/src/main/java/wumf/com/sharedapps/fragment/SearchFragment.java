@@ -12,7 +12,6 @@ import wumf.com.sharedapps.IHideShow;
 import wumf.com.sharedapps.OnBackPressedListener;
 import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.adapter.ViewPagerAdapter;
-import wumf.com.sharedapps.mockfragment.MockFragment;
 
 /**
  * Created by max on 22.08.16.
@@ -50,7 +49,7 @@ public class SearchFragment extends Fragment implements IHideShow, OnBackPressed
     private void setupViewPager(ViewPager viewPager) {
         adapter = new ViewPagerAdapter(getChildFragmentManager());
         adapter.addFrag(new AllAppsFragment(), "all apps");
-        adapter.addFrag(new MockFragment(), "by people" );
+        adapter.addFrag(new ByPeopleAppsFragment(), "by people" );
         viewPager.setAdapter(adapter);
     }
 
