@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.github.omadahealth.typefaceview.TypefaceTextView
+        android:id="@+id/choice_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Search by phone or nick name"
+        android:textSize="18dp"
+        app:tv_typeface="roboto_light"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:textColorHighlight="@android:color/transparent" />
+
+    <ImageView
+        android:id="@+id/cancel_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_cancel" />
+
+    <EditText
+        android:id="@+id/edit_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="phone" />
+
+    <Button
+        android:id="@+id/search_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search" />
+
+</merge>
