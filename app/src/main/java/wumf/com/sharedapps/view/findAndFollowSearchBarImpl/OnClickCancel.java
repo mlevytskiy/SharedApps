@@ -7,8 +7,6 @@ import android.widget.TextView;
 
 import com.github.omadahealth.typefaceview.TypefaceTextView;
 
-import wumf.com.sharedapps.util.KeyboardUtils;
-
 /**
  * Created by max on 15.01.17.
  */
@@ -28,12 +26,7 @@ public class OnClickCancel implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        KeyboardUtils.hideKeyboard(view);
-        editText.getText().clear();
-        choiceTextView.setVisibility(View.VISIBLE);
-        cancel.setVisibility(View.GONE);
-        editText.setVisibility(View.GONE);
-        search.setVisibility(View.GONE);
+        FindAndFollowSearchBarUtils.resetState(choiceTextView, cancel, editText, search);
     }
 
 }

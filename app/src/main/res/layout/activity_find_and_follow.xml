@@ -19,6 +19,7 @@
         android:background="#7f000000" />
 
     <wumf.com.sharedapps.view.FindAndFollowSearchBar
+        android:id="@+id/find_and_follow_search_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

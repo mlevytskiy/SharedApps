@@ -19,6 +19,7 @@ import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.view.findAndFollowSearchBarImpl.NickNameOnClickSpan;
 import wumf.com.sharedapps.view.findAndFollowSearchBarImpl.OnClickCancel;
 import wumf.com.sharedapps.view.findAndFollowSearchBarImpl.PhoneOnClickSpan;
+import wumf.com.sharedapps.view.findAndFollowSearchBarImpl.FindAndFollowSearchBarUtils;
 
 /**
  * Created by max on 15.01.17.
@@ -74,6 +75,12 @@ public class FindAndFollowSearchBar extends LinearLayout {
         search.setVisibility(View.GONE);
     }
 
-
+    public boolean onBackPressed() {
+        boolean result = choiceTextView.getVisibility() != View.VISIBLE;
+        if (result) {
+            FindAndFollowSearchBarUtils.resetState(choiceTextView, cancel, editText, search);
+        }
+        return result;
+    }
 
 }
