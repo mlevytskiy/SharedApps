@@ -1,5 +1,6 @@
 package wumf.com.sharedapps.view.findAndFollowSearchBarImpl;
 
+import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -18,7 +19,9 @@ public class NickNameOnClickSpan extends AnyOnClickSpan {
 
     @Override
     public void onClick(View view) {
-        onClick(view, "nick name");
+        onClick(view, Type.NICKE_OR_NAME);
+        editText.setInputType(InputType.TYPE_CLASS_TEXT);
+        search.setOnClickListener(new SearchByNameOnClickListener(editText));
     }
 
 }

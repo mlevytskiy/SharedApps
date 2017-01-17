@@ -1,5 +1,6 @@
 package wumf.com.sharedapps.view.findAndFollowSearchBarImpl;
 
+import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -18,6 +19,9 @@ public class PhoneOnClickSpan extends AnyOnClickSpan {
 
     @Override
     public void onClick(View view) {
-        onClick(view, "phone");
+        onClick(view, Type.PHONE);
+        editText.setInputType(InputType.TYPE_CLASS_PHONE);
+        search.setOnClickListener(new SearchByPhoneOnClickListener(editText));
     }
+
 }

@@ -18,8 +18,8 @@ public abstract class AnyOnClickSpan extends ClickableSpan {
 
     private TextView choiceTextView;
     private ImageButton cancel;
-    private EditText editText;
-    private TypefaceTextView search;
+    protected EditText editText;
+    protected TypefaceTextView search;
 
     public AnyOnClickSpan(TextView choiceTextView, ImageButton cancel, EditText editText,
                           TypefaceTextView search) {
@@ -29,14 +29,32 @@ public abstract class AnyOnClickSpan extends ClickableSpan {
         this.search = search;
     }
 
-    protected final void onClick(View view, String text) {
+    protected final void onClick(View view, Type type) {
         view.invalidate();
-        editText.setHint(text);
+        editText.setHint(type.toString());
         KeyboardUtils.showKeyboard(editText);
         choiceTextView.setVisibility(View.GONE);
         cancel.setVisibility(View.VISIBLE);
         editText.setVisibility(View.VISIBLE);
         search.setVisibility(View.VISIBLE);
+    }
+
+    protected enum Type {
+
+        PHONE("phone"),
+        NICKE_OR_NAME("nick name");
+
+        private String value;
+
+        Type(String str) {
+            value = str;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+
     }
 
 }

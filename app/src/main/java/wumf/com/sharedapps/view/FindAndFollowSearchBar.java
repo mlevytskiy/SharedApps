@@ -73,6 +73,7 @@ public class FindAndFollowSearchBar extends LinearLayout {
         cancel.setVisibility(View.GONE);
         editText.setVisibility(View.GONE);
         search.setVisibility(View.GONE);
+
     }
 
     public boolean onBackPressed() {
