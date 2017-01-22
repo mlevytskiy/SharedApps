@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.omadahealth.typefaceview.TypefaceTextView;
@@ -31,6 +32,8 @@ public class FindAndFollowSearchBar extends LinearLayout {
     private ImageButton cancel;
     private EditText editText;
     private TypefaceTextView search;
+    private View searchButtonWrapper;
+    private ProgressBar searchProgress;
 
     public FindAndFollowSearchBar(Context context) {
         super(context);
@@ -56,6 +59,8 @@ public class FindAndFollowSearchBar extends LinearLayout {
         cancel = (ImageButton) findViewById(R.id.cancel_image_button);
         editText = (EditText) findViewById(R.id.edit_text);
         search = (TypefaceTextView) findViewById(R.id.search_button);
+        searchButtonWrapper = findViewById(R.id.search_button_wrapper);
+        searchProgress = (ProgressBar) findViewById(R.id.search_progress_bar);
 
         cancel.setOnClickListener(new OnClickCancel(choiceTextView, cancel, editText, search));
 
@@ -74,6 +79,18 @@ public class FindAndFollowSearchBar extends LinearLayout {
         editText.setVisibility(View.GONE);
         search.setVisibility(View.GONE);
 
+    }
+
+    public void showProgress() {
+        searchButtonWrapper.setVisibility(View.INVISIBLE);
+        searchProgress.setVisibility(View.VISIBLE);
+        editText.setEnabled(false);
+    }
+
+    public void hideProgress() {
+        searchButtonWrapper.setVisibility(View.VISIBLE);
+        searchProgress.setVisibility(View.GONE);
+        editText.setEnabled(true);
     }
 
     public boolean onBackPressed() {

@@ -31,29 +31,45 @@
         android:layout_weight="1"
         android:hint="phone" />
 
-    <com.balysv.materialripple.MaterialRippleLayout
+    <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:mrl_rippleColor="@android:color/black"
-        app:mrl_rippleOverlay="true" >
+        android:layout_height="wrap_content">
 
-        <com.github.omadahealth.typefaceview.TypefaceTextView
-            android:id="@+id/search_button"
+        <com.balysv.materialripple.MaterialRippleLayout
+            android:id="@+id/search_button_wrapper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/sign_out_normal"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:paddingBottom="6dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="6dp"
-            android:text="Search"
-            android:textColor="@color/sign_out_text_color"
-            android:textSize="20dp"
-            app:tv_typeface="roboto_light"/>
+            app:mrl_rippleColor="@android:color/black"
+            app:mrl_rippleOverlay="true" >
 
-    </com.balysv.materialripple.MaterialRippleLayout>
+            <com.github.omadahealth.typefaceview.TypefaceTextView
+                android:id="@+id/search_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sign_out_normal"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingBottom="6dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="6dp"
+                android:text="Search"
+                android:textColor="@color/sign_out_text_color"
+                android:textSize="20dp"
+                app:tv_typeface="roboto_light"/>
+
+        </com.balysv.materialripple.MaterialRippleLayout>
+
+        <ProgressBar
+            android:id="@+id/search_progress_bar"
+            style="?android:attr/progressBarStyleSmallInverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+    </FrameLayout>
 
 </merge>
