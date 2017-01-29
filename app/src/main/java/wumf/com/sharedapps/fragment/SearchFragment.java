@@ -27,7 +27,23 @@ public class SearchFragment extends Fragment implements IHideShow, OnBackPressed
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         viewPager = (ViewPager) view.findViewById(R.id.view_pager);
         tabLayout.setupWithViewPager(viewPager);
+        setupViewPager(viewPager);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                ((IHideShow) adapter.getItem(position)).show();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         return view;
     }
 
@@ -38,7 +54,7 @@ public class SearchFragment extends Fragment implements IHideShow, OnBackPressed
 
     @Override
     public void show() {
-        setupViewPager(viewPager);
+
     }
 
     @Override

@@ -12,6 +12,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import wumf.com.sharedapps.IHideShow;
 import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.eventbus.observable.ObservableChangeProfileEvent;
 import wumf.com.sharedapps.eventbus.observable.ObservableGarbageEvent;
@@ -27,7 +28,7 @@ import wumf.com.sharedapps.view.AppsRecycleView;
  * Created by max on 14.01.17.
  */
 
-public class AllAppsFragment extends Fragment {
+public class AllAppsFragment extends Fragment implements IHideShow {
 
     private AppsRecycleView appsRecycleView;
     private AppsChangeHelper appsChangeHelper;
@@ -81,4 +82,13 @@ public class AllAppsFragment extends Fragment {
         appsRecycleView.updateSharedApps(apps);
     }
 
+    @Override
+    public void hide() {
+        //do nothing
+    }
+
+    @Override
+    public void show() {
+        //do nothing
+    }
 }

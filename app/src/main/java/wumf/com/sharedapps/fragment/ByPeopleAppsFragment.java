@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import wumf.com.sharedapps.IHideShow;
 import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.eventbus.observable.ObservableChangeProfileEvent;
 import wumf.com.sharedapps.eventbus.observable.ObservableGarbageEvent;
@@ -21,7 +22,7 @@ import wumf.com.sharedapps.view.PeopleRecycleView;
  * Created by max on 14.01.17.
  */
 
-public class ByPeopleAppsFragment extends Fragment {
+public class ByPeopleAppsFragment extends Fragment implements IHideShow {
 
     private PeopleRecycleView peopleRecycleView;
 
@@ -35,7 +36,6 @@ public class ByPeopleAppsFragment extends Fragment {
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        peopleRecycleView.update(ObservablePeopleFirebase.getPeople());
     }
 
     public void onStop() {
@@ -63,4 +63,13 @@ public class ByPeopleAppsFragment extends Fragment {
 
     }
 
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void show() {
+        peopleRecycleView.update(ObservablePeopleFirebase.getPeople());
+    }
 }
