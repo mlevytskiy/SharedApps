@@ -7,6 +7,7 @@ import android.widget.ListView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import wumf.com.sharedapps.adapter.FindFollowPeopleAdapter;
 import wumf.com.sharedapps.eventbus.SearchByNickOrNameOnClickEvent;
 import wumf.com.sharedapps.eventbus.SearchByPhoneOnClickEvent;
 import wumf.com.sharedapps.eventbus.SearchQueryFirebaseResultEvent;
@@ -24,6 +25,7 @@ public class FindAndFollowPersonActivity extends Activity {
     private FindAndFollowSearchBar findAndFollowSearchBar;
     private ListView listView;
     private FindAndFollowQueryProgress emptyView;
+    private FindFollowPeopleAdapter adapter;
 
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -34,6 +36,8 @@ public class FindAndFollowPersonActivity extends Activity {
         emptyView = (FindAndFollowQueryProgress) findViewById(R.id.find_and_follow_query_progress);
         listView.setEmptyView(emptyView);
         emptyView.setState(FindAndFollowQueryProgress.State.DISABLED);
+        adapter = new FindFollowPeopleAdapter();
+        listView.setAdapter(adapter);
     }
 
     @Override
@@ -57,6 +61,7 @@ public class FindAndFollowPersonActivity extends Activity {
     @Subscribe
     public void onEvent(SearchByNickOrNameOnClickEvent event) {
         //show progress
+        adapter.clear();
         emptyView.setTopBarHeight(findAndFollowSearchBar.getHeight());
         findAndFollowSearchBar.showProgress();
         emptyView.setState(FindAndFollowQueryProgress.State.IN_PROGRESS,event.query);
@@ -66,6 +71,7 @@ public class FindAndFollowPersonActivity extends Activity {
     @Subscribe
     public void onEvent(SearchByPhoneOnClickEvent event) {
         //show progress
+        adapter.clear();
         emptyView.setTopBarHeight(findAndFollowSearchBar.getHeight());
         findAndFollowSearchBar.showProgress();
         emptyView.setState(FindAndFollowQueryProgress.State.IN_PROGRESS,event.query);
@@ -80,6 +86,7 @@ public class FindAndFollowPersonActivity extends Activity {
         } else {
             emptyView.setState(FindAndFollowQueryProgress.State.EMPTY_RESULT, "We find nobody");
             //show list
+            adapter.update(event.users);
         }
     }
 

@@ -4,6 +4,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import org.greenrobot.eventbus.EventBus;
@@ -46,7 +47,8 @@ public class SearchQueryFirebase {
     }
 
     public static void searchByName(String text) {
-        userssRef.orderByChild("name").startAt(text, "name").addListenerForSingleValueEvent(new ValueEventListener() {
+        Query query = userssRef.orderByChild("name").startAt(text, "name");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Profile> result = new ArrayList<>();
