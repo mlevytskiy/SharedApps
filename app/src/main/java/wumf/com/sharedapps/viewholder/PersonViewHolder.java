@@ -8,12 +8,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import wumf.com.sharedapps.R;
+import wumf.com.sharedapps.eventbus.PersonOnClickEvent;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.firebase.pojo.Profile;
 
@@ -41,7 +44,7 @@ public class PersonViewHolder extends RecyclerView.ViewHolder {
         appIcons[5] = (ImageView) itemView.findViewById(R.id.person_app_icon6);
     }
 
-    public void bind(Profile profile) {
+    public void bind(final Profile profile) {
         personNameTextView.setText(profile.getName());
         Glide.with(context).load(profile.getIcon()).into(personImageView);
         Map<String, AppOrFolder> appsMap = profile.getApps();
@@ -62,6 +65,12 @@ public class PersonViewHolder extends RecyclerView.ViewHolder {
                 appIcons[i].setImageDrawable(null);
             }
         }
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventBus.getDefault().post(new PersonOnClickEvent(profile));
+            }
+        });
     }
 
 }

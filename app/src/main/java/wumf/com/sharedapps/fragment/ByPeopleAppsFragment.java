@@ -1,5 +1,6 @@
 package wumf.com.sharedapps.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,12 +11,15 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import wumf.com.sharedapps.IHideShow;
+import wumf.com.sharedapps.NotMePersonActivity;
 import wumf.com.sharedapps.R;
+import wumf.com.sharedapps.eventbus.PersonOnClickEvent;
 import wumf.com.sharedapps.eventbus.observable.ObservableChangeProfileEvent;
 import wumf.com.sharedapps.eventbus.observable.ObservableGarbageEvent;
 import wumf.com.sharedapps.eventbus.observable.ObservablePeopleEvent;
 import wumf.com.sharedapps.eventbus.observable.ObservableRemoveProfileEvent;
 import wumf.com.sharedapps.firebase.observable.ObservablePeopleFirebase;
+import wumf.com.sharedapps.firebase.pojo.Profile;
 import wumf.com.sharedapps.view.PeopleRecycleView;
 
 /**
@@ -61,6 +65,12 @@ public class ByPeopleAppsFragment extends Fragment implements IHideShow {
     @Subscribe
     public void onEvent(ObservableRemoveProfileEvent event) {
 
+    }
+
+    @Subscribe
+    public void onEvent(PersonOnClickEvent event) {
+        Profile profile = event.profile;
+        startActivity(new Intent(getContext(), NotMePersonActivity.class).putExtra(NotMePersonActivity.KEY_USER_UID, profile.getUid()));
     }
 
     @Override
