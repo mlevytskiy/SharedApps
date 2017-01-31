@@ -7,7 +7,6 @@ import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.leakcanary.LeakCanary;
 
@@ -95,9 +94,7 @@ public class MainApplication extends Application {
             }
         });
 
-        if (!FirebaseApp.getApps(this).isEmpty()) {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(false);
-        }
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         country = "UNKNOWN";
 
