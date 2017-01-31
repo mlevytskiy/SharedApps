@@ -5,16 +5,16 @@ package wumf.com.sharedapps.eventbus;
  */
 public class OnClickAppEvent {
 
-    public final boolean isForMainActivity;
+    public final boolean isNeedAddOnFirebase;
     public final String appPackage;
 
     public OnClickAppEvent(String appPackage) {
         this(appPackage, false);
     }
 
-    public OnClickAppEvent(String appPackage, boolean isForMainActivity) {
+    public OnClickAppEvent(String appPackage, boolean isNeedAddOnFirebase) {
         this.appPackage = appPackage;
-        this.isForMainActivity = isForMainActivity;
+        this.isNeedAddOnFirebase = isNeedAddOnFirebase;
     }
 
 }

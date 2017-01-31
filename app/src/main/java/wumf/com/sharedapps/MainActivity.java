@@ -64,6 +64,7 @@ import wumf.com.sharedapps.fragment.PersonFragment;
 import wumf.com.sharedapps.fragment.SearchFragment;
 import wumf.com.sharedapps.fragment.SharedAppsFragment;
 import wumf.com.sharedapps.util.AppFinderUtils;
+import wumf.com.sharedapps.util.GooglePlayIntentApi;
 
 @DebugLog
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
@@ -186,21 +187,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Subscribe
     public void onEvent(OnClickAppEvent event) {
-        if ( !event.isForMainActivity ) {
-            return;
+        if ( event.isNeedAddOnFirebase ) {
+            String packageName = event.appPackage;
+            if (CurrentUser.get() == null) {
+                Toast.makeText(MainActivity.this, "You need registration", Toast.LENGTH_LONG).show();
+                return;
+            }
+            App app = AppFinderUtils.find(packageName);
+            if (app == null) {
+                Toast.makeText(MainActivity.this, "Something wrong", Toast.LENGTH_LONG).show();
+                return;
+            }
+            addAppInFirebase(app);
+        } else {
+            startActivity( GooglePlayIntentApi.getOpenAppPageIntent(event.appPackage) );
         }
-
-        String packageName = event.appPackage;
-        if (CurrentUser.get() == null) {
-            Toast.makeText(MainActivity.this, "You need registration", Toast.LENGTH_LONG).show();
-            return;
-        }
-        App app = AppFinderUtils.find(packageName);
-        if (app == null) {
-            Toast.makeText(MainActivity.this, "Something wrong", Toast.LENGTH_LONG).show();
-            return;
-        }
-        addAppInFirebase(app);
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {

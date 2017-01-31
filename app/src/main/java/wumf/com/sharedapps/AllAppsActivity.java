@@ -49,7 +49,7 @@ public class AllAppsActivity extends Activity {
 
     @Subscribe
     public void onEvent(OnClickAppEvent event) {
-        if ( event.isForMainActivity ) {
+        if ( event.isNeedAddOnFirebase) {
             return;
         }
 

@@ -110,14 +110,6 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
         Toast.makeText(getContext(), "removed", Toast.LENGTH_LONG).show();
     }
 
-    @Subscribe
-    public void onEvent(OnClickAppEvent event) {
-        if ( event.isForMainActivity ) {
-            return;
-        }
-        Toast.makeText(getContext(), "test", Toast.LENGTH_LONG).show();
-    }
-
     private void fill(List<App> apps) {
         for (int i = 0; i < apps.size(); i++) {
             springFloatingActionMenu.changeMenuItem(i+1, apps.get(i).appPackage, apps.get(i).icon);
