@@ -263,6 +263,9 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
 
     @Override
     public void show() {
+        if (springFloatingActionMenu == null) {
+            return;
+        }
         springFloatingActionMenu.enableOpenMenuCapability();
         isDisableOpenMenuListener = false;
         ScaleAnimation anim = new ScaleAnimation(0, 1, 0, 1, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);

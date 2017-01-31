@@ -34,6 +34,7 @@ public class ByPeopleAppsFragment extends Fragment implements IHideShow {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_by_people_apps, container, false);
         peopleRecycleView = (PeopleRecycleView) view.findViewById(R.id.people_recycle_view);
+        peopleRecycleView.update(ObservablePeopleFirebase.getPeople());
         return view;
     }
 
@@ -49,22 +50,22 @@ public class ByPeopleAppsFragment extends Fragment implements IHideShow {
 
     @Subscribe
     public void onEvent(ObservableChangeProfileEvent event) {
-
+        peopleRecycleView.update(ObservablePeopleFirebase.getPeople());
     }
 
     @Subscribe
     public void onEvent(ObservableGarbageEvent event) {
-
+        peopleRecycleView.update(ObservablePeopleFirebase.getPeople());
     }
 
     @Subscribe
     public void onEvent(ObservablePeopleEvent event) {
-
+        peopleRecycleView.update(ObservablePeopleFirebase.getPeople());
     }
 
     @Subscribe
     public void onEvent(ObservableRemoveProfileEvent event) {
-
+        peopleRecycleView.update(ObservablePeopleFirebase.getPeople());
     }
 
     @Subscribe
@@ -75,11 +76,11 @@ public class ByPeopleAppsFragment extends Fragment implements IHideShow {
 
     @Override
     public void hide() {
-
+        //do nothing
     }
 
     @Override
     public void show() {
-        peopleRecycleView.update(ObservablePeopleFirebase.getPeople());
+        //do nothing
     }
 }
