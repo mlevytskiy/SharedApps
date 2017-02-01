@@ -2,17 +2,23 @@ package wumf.com.sharedapps;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ns.developer.tagview.widget.TagCloudLinkView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.List;
 
+import wumf.com.sharedapps.eventbus.OnClickAppEvent;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.firebase.pojo.Profile;
 import wumf.com.sharedapps.util.AppFinderUtils;
+import wumf.com.sharedapps.util.GooglePlayIntentApi;
 import wumf.com.sharedapps.util.UserFinderUtils;
 import wumf.com.sharedapps.view.AppsRecycleView;
 import wumf.com.sharedapps.view.CustomTopBar;
@@ -48,6 +54,25 @@ public class NotMePersonActivity extends Activity {
 
         TagCloudLinkView tagCloudLinkView = (TagCloudLinkView) findViewById(R.id.tags_text_view);
         tagCloudLinkView.setAll(user.getMyTags());
+    }
+
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void onEvent(OnClickAppEvent event) {
+        if ( event.isNeedAddOnFirebase ) {
+            Log.i(getClass().getSimpleName(), "something do wrong");
+        } else {
+            startActivity( GooglePlayIntentApi.getOpenAppPageIntent(event.appPackage) );
+        }
     }
 
 }
