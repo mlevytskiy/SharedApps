@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hugo.weaving.DebugLog;
+import wumf.com.sharedapps.CurrentUser;
 import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.util.FirebaseUtil;
@@ -96,6 +97,13 @@ public class FavouriteAppsFirebase {
 
     public static void listenFoldersAndApps(String uid) {
         FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("apps").orderByChild("time").addValueEventListener(new AppsValueEventListener());
+    }
+
+    public static void listenFoldersAndAppsSingleTime() {
+        String uid = CurrentUser.getUID();
+        if (uid != null) {
+            FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("apps").orderByChild("time").addListenerForSingleValueEvent(new AppsValueEventListener());
+        }
     }
 
     public static void renameFolder(String path) {

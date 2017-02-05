@@ -31,7 +31,7 @@ public abstract class AnyOnClickSpan extends ClickableSpan {
 
     protected final void onClick(View view, Type type) {
         view.invalidate();
-        editText.setHint(type.toString());
+        editText.setHint( type == Type.PHONE ? "+380123456789" : type.toString() );
         KeyboardUtils.showKeyboard(editText);
         choiceTextView.setVisibility(View.GONE);
         cancel.setVisibility(View.VISIBLE);

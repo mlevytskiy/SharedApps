@@ -81,6 +81,8 @@ public class ByPeopleAppsFragment extends Fragment implements IHideShow {
 
     @Override
     public void show() {
-        peopleRecycleView.update(ObservablePeopleFirebase.getPeople());
+        if (peopleRecycleView != null) {
+            peopleRecycleView.update(ObservablePeopleFirebase.getPeople());
+        }
     }
 }

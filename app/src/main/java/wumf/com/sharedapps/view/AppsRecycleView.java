@@ -37,6 +37,10 @@ public class AppsRecycleView extends RecyclerViewEmptySupport {
         adapter.updateMyApps(apps);
     }
 
+    public boolean isEmpty() {
+        return adapter.getItemCount() == 0;
+    }
+
     public void updateSharedApps(List<AppOrFolder> apps) {
         adapter.updateSharedApps(apps);
     }

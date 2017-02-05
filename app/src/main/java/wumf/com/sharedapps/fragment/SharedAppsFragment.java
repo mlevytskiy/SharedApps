@@ -31,6 +31,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
+import hugo.weaving.DebugLog;
 import wumf.com.appsprovider.App;
 import wumf.com.sharedapps.AllAppsActivity;
 import wumf.com.sharedapps.CurrentUser;
@@ -49,6 +50,7 @@ import wumf.com.sharedapps.view.AppsRecycleView;
 /**
  * Created by max on 22.08.16.
  */
+@DebugLog
 public class SharedAppsFragment extends Fragment implements OnAppClickListener, IHideShow, OnBackPressedListener {
 
     private int FRAME_DURATION = 20;
@@ -87,6 +89,9 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        if (appsRecycleView.isEmpty()) {
+            FavouriteAppsFirebase.listenFoldersAndAppsSingleTime();
+        }
     }
 
     public void onStop() {
@@ -255,6 +260,7 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
 
     @Override
     public void show() {
+
         if (springFloatingActionMenu == null) {
             return;
         }
