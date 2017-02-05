@@ -30,6 +30,7 @@ import wumf.com.sharedapps.OnBackPressedListener;
 import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.ViberTransparentActivity;
 import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
+import wumf.com.sharedapps.eventbus.CurrentUserChangedEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.SignInFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.SignOutFromFirebaseEvent;
@@ -132,6 +133,17 @@ public class PersonFragment extends Fragment implements IHideShow, OnBackPressed
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void onEvent(CurrentUserChangedEvent event) {
+        FirebaseUser user = CurrentUser.get();
+        if (user != null) {
+            myAccountView.setUser(user);
+            UsersFirebase.addMe(user);
+            myAccountView.setVisibility(View.VISIBLE);
+            signInButton.setVisibility(View.GONE);
+        }
     }
 
     @Subscribe

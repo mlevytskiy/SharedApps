@@ -12,6 +12,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import hugo.weaving.DebugLog;
 import wumf.com.sharedapps.IHideShow;
 import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.eventbus.observable.ObservableChangeProfileEvent;
@@ -28,6 +29,7 @@ import wumf.com.sharedapps.view.AppsRecycleView;
  * Created by max on 14.01.17.
  */
 
+@DebugLog
 public class AllAppsFragment extends Fragment implements IHideShow {
 
     private AppsRecycleView appsRecycleView;

@@ -1,5 +1,9 @@
 package wumf.com.sharedapps;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.greenrobot.eventbus.EventBus;
@@ -18,6 +22,17 @@ public class CurrentUser {
     private static FirebaseUser currentUser;
 
     public static FirebaseUser get() {
+        if (currentUser == null) {
+            FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                @Override
+                public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
+                    FirebaseUser user = auth.getCurrentUser();
+                    if (user != null) {
+                        set(user);
+                    }
+                }
+            });
+        }
         return currentUser;
     }
 
@@ -33,7 +48,7 @@ public class CurrentUser {
 
         currentUser = user;
 
-        EventBus.getDefault().post(new CurrentUserChangedEvent(currentUser));
+        EventBus.getDefault().post(new CurrentUserChangedEvent(currentUser == null ? null : currentUser.getUid()));
     }
 
     public static String getUID() {

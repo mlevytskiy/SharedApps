@@ -61,12 +61,11 @@ public class ObservablePeopleFirebase {
 
     @Subscribe
     public void onEvent(CurrentUserChangedEvent event) {
-        if (event.firebaseUser == null) {
+        if (event.userUid == null) {
             //do nothing
         } else {
             if (myGarbageValueEventListener == null) {
-                String myUid = event.firebaseUser.getUid();
-                initListeners(myUid);
+                initListeners(event.userUid);
             }
         }
     }
