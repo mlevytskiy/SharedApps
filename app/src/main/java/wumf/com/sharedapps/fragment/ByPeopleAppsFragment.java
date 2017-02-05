@@ -81,6 +81,6 @@ public class ByPeopleAppsFragment extends Fragment implements IHideShow {
 
     @Override
     public void show() {
-        //do nothing
+        peopleRecycleView.update(ObservablePeopleFirebase.getPeople());
     }
 }

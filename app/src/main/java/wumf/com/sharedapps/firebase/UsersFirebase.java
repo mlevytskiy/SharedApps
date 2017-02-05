@@ -35,6 +35,7 @@ public class UsersFirebase {
         final Profile user = new Profile();
         user.setEmail(fUser.getEmail());
         user.setName(fUser.getDisplayName());
+        user.setNameForSearch(fUser.getDisplayName().toLowerCase() + "_");
         user.setIcon(fUser.getPhotoUrl().toString());
         String token = FirebaseInstanceId.getInstance().getToken();
         user.setPushId(token);
@@ -45,6 +46,9 @@ public class UsersFirebase {
 
     public static void refreshPushId(String uid) {
         String token = FirebaseInstanceId.getInstance().getToken();
+        if (getUserRef(uid) == null){
+            return;
+        }
         getUserRef(uid).child("pushId").setValue(token);
     }
 
@@ -74,7 +78,11 @@ public class UsersFirebase {
     }
 
     private static DatabaseReference getUserRef(String uid) {
-        return FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+        if (TextUtils.isEmpty(uid)) {
+            return null;
+        } else {
+            return FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+        }
     }
 
     public static void getUsers() {

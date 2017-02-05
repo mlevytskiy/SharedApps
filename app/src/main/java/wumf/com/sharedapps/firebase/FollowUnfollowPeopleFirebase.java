@@ -11,10 +11,7 @@ import java.util.List;
 import hugo.weaving.DebugLog;
 import wumf.com.sharedapps.CurrentUser;
 import wumf.com.sharedapps.firebase.transaction.AttachStringToListTransaction;
-import wumf.com.sharedapps.firebase.transaction.CompositeTransaction;
-import wumf.com.sharedapps.firebase.transaction.ForChildrenTransaction;
 import wumf.com.sharedapps.firebase.transaction.RemoveStringFromListTransaction;
-import wumf.com.sharedapps.firebase.transaction.common.AnyTransaction;
 import wumf.com.sharedapps.retrofit.PushResultListener;
 import wumf.com.sharedapps.retrofit.PushSender;
 import wumf.com.sharedapps.util.PushUtil;
@@ -30,23 +27,11 @@ public class FollowUnfollowPeopleFirebase {
     private static DatabaseReference userssRef = FirebaseDatabase.getInstance().getReference().child("users");
     private static DatabaseReference tagsRef = FirebaseDatabase.getInstance().getReference().child("tags");
 
-    public static void markMeAsFollowerOfContacts(final String uid, final List<String> newPhones, final List<String> removedPhones, TransactionResultListener listener) {
-        AnyTransaction transaction = null;
-        if ( !newPhones.isEmpty() && !removedPhones.isEmpty() ) {
-            transaction = new CompositeTransaction(new ForChildrenTransaction(new AttachStringToListTransaction(uid), newPhones),
-                    new ForChildrenTransaction(new RemoveStringFromListTransaction(uid), removedPhones));
-            transaction.setTransactionResultListener(listener);
-        } else if ( !newPhones.isEmpty() ) {
-            transaction = new ForChildrenTransaction(new AttachStringToListTransaction(uid), newPhones);
-            transaction.setTransactionResultListener(listener);
-        } else if ( !removedPhones.isEmpty() ) {
-            transaction = new ForChildrenTransaction(new RemoveStringFromListTransaction(uid), removedPhones);
-            transaction.setTransactionResultListener(listener);
-        }
-
-        if (transaction != null) {
-            waitingListRef.runTransaction(transaction);
-        }
+    public static void followPerson(String uid, TransactionResultListener listener) {
+        AttachStringToListTransaction tr = new AttachStringToListTransaction(uid);
+        tr.setTransactionResultListener(listener);
+        FirebaseDatabase.getInstance().getReference().child("users").child(CurrentUser.getUID()).child("garbage").runTransaction(new RemoveStringFromListTransaction(uid));
+        FirebaseDatabase.getInstance().getReference().child("users").child(CurrentUser.getUID()).child("follow").runTransaction(tr);
     }
 
     public static void sendPushesPeopleWithTheSameTags(List<String> tags) {

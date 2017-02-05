@@ -1,6 +1,7 @@
 package wumf.com.sharedapps.firebase.observable;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -94,6 +95,11 @@ public class ObservablePeopleFirebase {
         return new ArrayList<>(inGarbage.values());
     }
 
+    public static void add(Profile person) {
+        addOnlyUniqs(people, person);
+        EventBus.getDefault().post(new ObservablePeopleEvent(people));
+    }
+
     private static class MyTagsValueEventListener implements ValueEventListener {
 
         private String myUid;
@@ -134,10 +140,21 @@ public class ObservablePeopleFirebase {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             List<Profile> result = new ArrayList<>();
+            List<String> followUids;
+            Object followUidObj = dataSnapshot.child(myUid).child("follow").getValue();
+            if (followUidObj == null) {
+                followUids = new ArrayList<>();
+            } else {
+                followUids = (List<String>) followUidObj;
+            }
             for (DataSnapshot child : dataSnapshot.getChildren()) {
                 Profile person = child.getValue(Profile.class);
                 person.setUid(child.getKey());
                 if (TextUtils.equals(myUid, person.getUid())) {
+                    continue;
+                }
+                if (followUids.contains(person.getUid())) {
+                    result.add(person);
                     continue;
                 }
                 List<String> personTags = (person.getMyTags() == null) ? new ArrayList<String>() : person.getMyTags();
@@ -216,7 +233,7 @@ public class ObservablePeopleFirebase {
             profile.setUid(uid);
             if ( phones.contains(profile.getPhoneNumber()) || hasTheSameTag(profile.getMyTags(), tags)) {
                 people.remove(profile); //existed profile with the same uid;
-                people.add(profile);
+                addOnlyUniqs(people, profile);
                 EventBus.getDefault().post( new ObservableChangeProfileEvent(profile) );
             } else {
                 parentRef.removeEventListener(this);
@@ -261,7 +278,7 @@ public class ObservablePeopleFirebase {
 
             for (Map.Entry<String, Profile> entry : new HashSet<>(inGarbage.entrySet())) {
                 if ( !uids.contains(entry.getKey()) ) {
-                    people.add(entry.getValue());
+                    addOnlyUniqs(people, entry.getValue());
                     inGarbage.remove(entry.getKey());
                 }
             }
@@ -275,6 +292,21 @@ public class ObservablePeopleFirebase {
 
         }
 
+    }
+
+    private static void addOnlyUniqs(List<Profile> people, Profile profile) {
+        String uid = profile.getUid();
+        Log.i("testuid", "uid id null? " + (uid == null) );
+        boolean alreadyHas = false;
+        for (Profile p : people) {
+            if (TextUtils.equals(uid, p.getUid())) {
+                alreadyHas = true;
+                break;
+            }
+        }
+        if (!alreadyHas) {
+            people.add(profile);
+        }
     }
 
 }

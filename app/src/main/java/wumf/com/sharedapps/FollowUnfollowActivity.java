@@ -36,7 +36,8 @@ import wumf.com.sharedapps.view.CustomTopBar;
 
 public class FollowUnfollowActivity extends Activity {
 
-    private static final int REQUEST_CODE = 888;
+    private static final int REQUEST_CODE_GARBAGE = 888;
+    private static final int REQUEST_CODE_FOLLOW_PERSON = 889;
     private boolean isUsersListEmpty = false;
     private List<Profile> users;
     private ListView listView;
@@ -51,7 +52,7 @@ public class FollowUnfollowActivity extends Activity {
                 .addNewImage(R.drawable.ic_garbage, false, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        startActivityForResult(new Intent(FollowUnfollowActivity.this, GarbageActivity.class), REQUEST_CODE);
+                        startActivityForResult(new Intent(FollowUnfollowActivity.this, GarbageActivity.class), REQUEST_CODE_GARBAGE);
                     }
                 });
         showUsers(ObservablePeopleFirebase.getPeople());
@@ -125,14 +126,14 @@ public class FollowUnfollowActivity extends Activity {
         findImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(FollowUnfollowActivity.this, FindAndFollowPersonActivity.class));
+                startActivityForResult(new Intent(FollowUnfollowActivity.this, FindAndFollowPersonActivity.class), REQUEST_CODE_FOLLOW_PERSON);
             }
         });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE) {
+        if (requestCode == REQUEST_CODE_GARBAGE || requestCode == REQUEST_CODE_FOLLOW_PERSON) {
             if (resultCode == RESULT_OK) {
                 showUsers(ObservablePeopleFirebase.getPeople());
             } else {

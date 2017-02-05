@@ -29,12 +29,15 @@ public class SearchQueryFirebase {
         String countryCode = MainApplication.instance.country;
         phone = ContactProvider.instance.getPhoneNumber(phone, countryCode);
 
-        userssRef.orderByChild("phoneNumber").startAt(phone, "phoneNumber").addListenerForSingleValueEvent(new ValueEventListener() {
+        userssRef.orderByChild("phoneNumber").startAt(phone).endAt(phone)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Profile> result = new ArrayList<>();
                 for( DataSnapshot child : dataSnapshot.getChildren() ) {
-                    result.add(child.getValue(Profile.class));
+                    Profile profile = child.getValue(Profile.class);
+                    profile.setUid(child.getKey());
+                    result.add(profile);
                 }
                 EventBus.getDefault().post( new SearchQueryFirebaseResultEvent(result) );
             }
@@ -47,13 +50,16 @@ public class SearchQueryFirebase {
     }
 
     public static void searchByName(String text) {
-        Query query = userssRef.orderByChild("name").startAt(text, "name");
+        text = text.toLowerCase();
+        Query query = userssRef.orderByChild("nameForSearch").startAt(text, "nameForSearch").endAt(text + "\uf8ff");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Profile> result = new ArrayList<>();
                 for( DataSnapshot child : dataSnapshot.getChildren() ) {
-                    result.add(child.getValue(Profile.class));
+                    Profile profile = child.getValue(Profile.class);
+                    profile.setUid(child.getKey());
+                    result.add(profile);
                 }
                 EventBus.getDefault().post( new SearchQueryFirebaseResultEvent(result) );
             }

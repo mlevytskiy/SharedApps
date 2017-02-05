@@ -17,6 +17,7 @@ public class GarbageFirebase {
     private static DatabaseReference userssRef = FirebaseDatabase.getInstance().getReference().child("users");
 
     public static void moveUserToGarbage(String myUid, String userUid) {
+        userssRef.child(myUid).child("follow").runTransaction(new RemoveStringFromListTransaction(userUid));
         userssRef.child(myUid).child("garbage").runTransaction(new AttachStringToListTransaction(userUid));
     }
 

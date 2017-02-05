@@ -12,17 +12,20 @@ import java.util.Map;
  */
 
 public class Profile {
+
     @Exclude
     private String uid;
 
     private String countryCode;
     private String email;
     private String name;
+    private String nameForSearch;
     private String phoneNumber;
     private Map<String, AppOrFolder> apps;
     private List<String> myTags;
     private String icon;
     private String pushId;
+    private List<String> follow;
 
     public String getCountryCode() {
         return countryCode;
@@ -114,4 +117,19 @@ public class Profile {
         return (uid == null) ? super.hashCode() : uid.hashCode();
     }
 
+    public String getNameForSearch() {
+        return nameForSearch;
+    }
+
+    public void setNameForSearch(String nameForSearch) {
+        this.nameForSearch = nameForSearch;
+    }
+
+    public List<String> getFollow() {
+        return follow;
+    }
+
+    public void setFollow(List<String> follow) {
+        this.follow = follow;
+    }
 }
