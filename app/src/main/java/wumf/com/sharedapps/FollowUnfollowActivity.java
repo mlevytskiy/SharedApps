@@ -94,11 +94,10 @@ public class FollowUnfollowActivity extends Activity {
     }
 
     private void showUsers(List<Profile> _users) {
-        listView.removeHeaderView(header);
-        createListViewHeader(listView, isUsersListEmpty);
         users = _users;
         isUsersListEmpty = (users == Collections.EMPTY_LIST) || users.isEmpty();
-
+        listView.removeHeaderView(header);
+        createListViewHeader(listView, isUsersListEmpty);
         if (isUsersListEmpty) {
             listView.setAdapter(new FollowUnfollowPeopleEmptyAdapter());
             listView.setOnItemClickListener(null);

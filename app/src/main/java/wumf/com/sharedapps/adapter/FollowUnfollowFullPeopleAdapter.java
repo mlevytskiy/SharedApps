@@ -14,13 +14,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.firebase.pojo.Profile;
+import wumf.com.sharedapps.util.AppsSorting;
 
 /**
  * Created by max on 29.11.16.
@@ -101,33 +100,17 @@ public class FollowUnfollowFullPeopleAdapter extends BaseAdapter {
     }
 
     private String[] get3TopAppIcons(Profile user) {
-        List<AppOrFolder> apps;
-
+        int resultLength = 3;
         if (user.getApps()==null) {
-            apps = new ArrayList<>();
+            return new String[resultLength];
         } else {
-            apps = new ArrayList<>(user.getApps().values());
-            Collections.sort(apps, new Comparator<AppOrFolder>() {
-                @Override
-                public int compare(AppOrFolder app0, AppOrFolder app1) {
-                    if (app0.getTimeLong() < app1.getTimeLong()) {
-                        return 1;
-                    } else if (app0.getTimeLong() > app1.getTimeLong()) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                }
-            });
+            AppOrFolder[] apps = AppsSorting.getSortedArray(new ArrayList<>(user.getApps().values()), resultLength);
+            String[] result = new String[resultLength];
+            for (int i = 0; i < resultLength; i++) {
+                result[i] = (apps[i] == null) ? null : apps[i].getIcon();
+            }
+            return result;
         }
-
-        String[] result = new String[3];
-
-        for (int i = 0; i < 3; i++) {
-            result[i] = (i < apps.size()) ? apps.get(i).getIcon() : null ;
-        }
-
-        return result;
     }
 
     private static class ViewHolder {

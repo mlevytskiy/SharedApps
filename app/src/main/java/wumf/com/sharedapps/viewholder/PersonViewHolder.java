@@ -48,15 +48,15 @@ public class PersonViewHolder extends RecyclerView.ViewHolder {
         personNameTextView.setText(profile.getName());
         Glide.with(context).load(profile.getIcon()).into(personImageView);
         Map<String, AppOrFolder> appsMap = profile.getApps();
-        Collection<AppOrFolder> appsCollection = appsMap.values();
         List<AppOrFolder> apps;
         int appsSize;
         if (appsMap == null) {
             appsSize = 0;
             apps = new ArrayList<>();
         } else {
+            Collection<AppOrFolder> appsCollection = appsMap.values();
             appsSize = appsMap.size();
-            apps = new ArrayList<>(appsCollection);
+            apps = (appsCollection == null) ? new ArrayList<AppOrFolder>() : new ArrayList<>(appsCollection);
         }
         for (int i = 0; i < appIcons.length; i++) {
             if (i < appsSize) {
