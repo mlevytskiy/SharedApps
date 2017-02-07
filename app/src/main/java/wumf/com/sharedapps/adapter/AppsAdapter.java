@@ -15,6 +15,7 @@ import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.eventbus.OnClickAppEvent;
 import wumf.com.sharedapps.eventbus.OnLongClickAppEvent;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
+import wumf.com.sharedapps.util.AppsSorting;
 import wumf.com.sharedapps.viewholder.AppViewHolder;
 
 /**
@@ -43,6 +44,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder> {
         if (apps == null) {
             return;
         }
+        AppsSorting.sort(apps);
         for (AppOrFolder app : apps) {
             this.apps.add(new Item(app));
         }

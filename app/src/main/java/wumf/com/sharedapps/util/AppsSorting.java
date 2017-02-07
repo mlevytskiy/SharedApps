@@ -15,6 +15,11 @@ public class AppsSorting {
 
     public static AppOrFolder[] getSortedArray(List<AppOrFolder> apps, Integer minLength) {
         apps = new ArrayList<>(apps);
+        sort(apps);
+        return apps.toArray(new AppOrFolder[minLength]);
+    }
+
+    public static void sort(List<AppOrFolder> apps) {
         Collections.sort(apps, new Comparator<AppOrFolder>() {
             @Override
             public int compare(AppOrFolder t0, AppOrFolder t1) {
@@ -25,7 +30,6 @@ public class AppsSorting {
                 }
             }
         });
-        return apps.toArray(new AppOrFolder[minLength]);
     }
 
 }

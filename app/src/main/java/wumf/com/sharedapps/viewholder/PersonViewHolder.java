@@ -19,6 +19,7 @@ import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.eventbus.PersonOnClickEvent;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.firebase.pojo.Profile;
+import wumf.com.sharedapps.util.AppsSorting;
 
 /**
  * Created by max on 14.01.17.
@@ -57,6 +58,7 @@ public class PersonViewHolder extends RecyclerView.ViewHolder {
             Collection<AppOrFolder> appsCollection = appsMap.values();
             appsSize = appsMap.size();
             apps = (appsCollection == null) ? new ArrayList<AppOrFolder>() : new ArrayList<>(appsCollection);
+            AppsSorting.sort(apps);
         }
         for (int i = 0; i < appIcons.length; i++) {
             if (i < appsSize) {
