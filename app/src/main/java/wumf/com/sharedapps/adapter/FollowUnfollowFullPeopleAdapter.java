@@ -27,10 +27,16 @@ import wumf.com.sharedapps.util.AppsSorting;
 
 public class FollowUnfollowFullPeopleAdapter extends BaseAdapter {
 
-    private List<Profile> users;
+    protected List<Profile> users;
+    private boolean hideGarbage;
+
+    public FollowUnfollowFullPeopleAdapter(List<Profile> users, boolean hideGarbage) {
+        this.hideGarbage = hideGarbage;
+        this.users = users;
+    }
 
     public FollowUnfollowFullPeopleAdapter(List<Profile> users) {
-        this.users = users;
+        this(users, false);
     }
 
     @Override
@@ -62,6 +68,7 @@ public class FollowUnfollowFullPeopleAdapter extends BaseAdapter {
             vh.appIcon2 = (ImageView) view.findViewById(R.id.app_icon2);
             vh.appIcon3 = (ImageView) view.findViewById(R.id.app_icon3);
             vh.garbage = (ImageButton) view.findViewById(R.id.garbage);
+            vh.garbage.setVisibility(hideGarbage ? View.GONE : View.VISIBLE);
         } else {
             vh = (ViewHolder) view.getTag();
         }
