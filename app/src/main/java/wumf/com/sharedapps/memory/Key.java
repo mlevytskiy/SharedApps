@@ -5,7 +5,7 @@ package wumf.com.sharedapps.memory;
  */
 
 public enum Key {
-    oldContacts,
     oldTags,
-    myPhone
+    myPhone,
+    isNeedGarbageIcon
 }

@@ -27,6 +27,7 @@ import wumf.com.sharedapps.eventbus.ChangeMyTagsEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.NewCountryCodeFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromFirebaseEvent;
+import wumf.com.sharedapps.eventbus.observable.ObservableGarbageEvent;
 import wumf.com.sharedapps.firebase.FollowUnfollowPeopleFirebase;
 import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.firebase.observable.ObservablePeopleFirebase;
@@ -167,6 +168,11 @@ public class MainApplication extends Application {
             });
         }
 
+    }
+
+    public void onEvent(ObservableGarbageEvent event) {
+        boolean isNeedGarbageIcon = event.inGarbage.isEmpty();
+        MemoryCommunicator.getInstance().saveBoolean(Key.isNeedGarbageIcon, isNeedGarbageIcon);
     }
 
     private List<String> getNewTags(List<String> newTagList, List<String> oldTagList) {

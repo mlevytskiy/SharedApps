@@ -63,6 +63,15 @@ public class MemoryCommunicator {
         return sp.getString(key.name(), "");
     }
 
+    public boolean loadBoolean(Key key) {
+        return sp.getBoolean(key.name(), false);
+    }
+
+
+    public void saveBoolean(Key key, boolean value) {
+        sp.edit().putBoolean(key.name(), value).apply();
+    }
+
     public void drop() {
         sp.edit().clear().apply();
     }

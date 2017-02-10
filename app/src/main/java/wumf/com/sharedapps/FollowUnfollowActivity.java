@@ -27,6 +27,8 @@ import wumf.com.sharedapps.eventbus.observable.ObservableRemoveProfileEvent;
 import wumf.com.sharedapps.firebase.GarbageFirebase;
 import wumf.com.sharedapps.firebase.observable.ObservablePeopleFirebase;
 import wumf.com.sharedapps.firebase.pojo.Profile;
+import wumf.com.sharedapps.memory.Key;
+import wumf.com.sharedapps.memory.MemoryCommunicator;
 import wumf.com.sharedapps.util.AutofollowTextBuilder;
 import wumf.com.sharedapps.view.CustomTopBar;
 
@@ -48,13 +50,17 @@ public class FollowUnfollowActivity extends Activity {
         super.onCreate(bundle);
         setContentView(R.layout.activity_follow_unfollow);
         listView = (ListView) findViewById(R.id.list_view);
-        final CustomTopBar customTopBar = ((CustomTopBar) findViewById(R.id.top_bar)).setText("Follow/unfollow people").bind(this)
-                .addNewImage(R.drawable.ic_garbage, false, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        startActivityForResult(new Intent(FollowUnfollowActivity.this, GarbageActivity.class), REQUEST_CODE_GARBAGE);
-                    }
-                });
+        final CustomTopBar customTopBar = ((CustomTopBar) findViewById(R.id.top_bar)).setText("Follow/unfollow people").bind(this);
+
+        if (MemoryCommunicator.getInstance().loadBoolean(Key.isNeedGarbageIcon)) {
+            customTopBar.addNewImage(R.drawable.ic_garbage, false, new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivityForResult(new Intent(FollowUnfollowActivity.this, GarbageActivity.class), REQUEST_CODE_GARBAGE);
+                }
+            });
+        }
+
         showUsers(ObservablePeopleFirebase.getPeople());
     }
 
