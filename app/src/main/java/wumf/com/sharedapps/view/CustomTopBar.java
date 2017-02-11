@@ -100,7 +100,12 @@ public class CustomTopBar extends LinearLayout {
         if (imageButtonsMap.size() == 0) {
             backOpposite.setVisibility(View.INVISIBLE);
         }
+        removeView(imageButton);
         return this;
+    }
+
+    public boolean hasImage(@DrawableRes int imageId) {
+        return imageButtonsMap.containsKey(imageId);
     }
 
 }

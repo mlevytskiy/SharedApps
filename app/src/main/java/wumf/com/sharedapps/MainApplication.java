@@ -170,8 +170,9 @@ public class MainApplication extends Application {
 
     }
 
+    @Subscribe
     public void onEvent(ObservableGarbageEvent event) {
-        boolean isNeedGarbageIcon = event.inGarbage.isEmpty();
+        boolean isNeedGarbageIcon = !event.inGarbage.isEmpty();
         MemoryCommunicator.getInstance().saveBoolean(Key.isNeedGarbageIcon, isNeedGarbageIcon);
     }
 

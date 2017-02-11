@@ -83,7 +83,6 @@ public class ObservablePeopleFirebase {
     private static void initListeners(String uid) {
         myGarbageValueEventListener = new MyGarbageValueEventListener();
         myTagsValueEventListener = new MyTagsValueEventListener(uid, pn);
-        userssRef.child(uid).child("garbage").addValueEventListener(myGarbageValueEventListener);
         userssRef.child(uid).child("myTags").addValueEventListener(myTagsValueEventListener);
     }
 
@@ -183,6 +182,8 @@ public class ObservablePeopleFirebase {
             people.clear();
             people.addAll(result);
             EventBus.getDefault().post(new ObservablePeopleEvent(people));
+            userssRef.child(myUid).child("garbage").addValueEventListener(myGarbageValueEventListener);
+
         }
 
         @Override

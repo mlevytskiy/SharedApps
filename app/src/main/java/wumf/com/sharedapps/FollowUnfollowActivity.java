@@ -44,29 +44,21 @@ public class FollowUnfollowActivity extends Activity {
     private List<Profile> users;
     private ListView listView;
     private View header;
-
+    private CustomTopBar customTopBar;
 
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.activity_follow_unfollow);
         listView = (ListView) findViewById(R.id.list_view);
-        final CustomTopBar customTopBar = ((CustomTopBar) findViewById(R.id.top_bar)).setText("Follow/unfollow people").bind(this);
-
-        if (MemoryCommunicator.getInstance().loadBoolean(Key.isNeedGarbageIcon)) {
-            customTopBar.addNewImage(R.drawable.ic_garbage, false, new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startActivityForResult(new Intent(FollowUnfollowActivity.this, GarbageActivity.class), REQUEST_CODE_GARBAGE);
-                }
-            });
-        }
-
+        customTopBar = ((CustomTopBar) findViewById(R.id.top_bar)).setText("Follow/unfollow people").bind(this);
         showUsers(ObservablePeopleFirebase.getPeople());
     }
 
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        boolean isNeedShowGarbage = MemoryCommunicator.getInstance().loadBoolean(Key.isNeedGarbageIcon);
+        showHideGarbage(isNeedShowGarbage, false);
     }
 
     public void onStop() {
@@ -82,6 +74,8 @@ public class FollowUnfollowActivity extends Activity {
     @Subscribe
     public void onEvent(ObservableGarbageEvent event) {
         showUsers(event.people);
+        boolean isNeedGarbageIcon = !event.inGarbage.isEmpty();
+        showHideGarbage(isNeedGarbageIcon, true);
     }
 
     @Subscribe
@@ -167,6 +161,23 @@ public class FollowUnfollowActivity extends Activity {
 
     private void showMessageThisOptionDontWorkYet() {
         Toast.makeText(this, "This option don't work yet", Toast.LENGTH_LONG).show();
+    }
+
+    private void showHideGarbage(boolean isNeedShow, boolean withAnimation) {
+        boolean oldState = customTopBar.hasImage(R.drawable.ic_garbage);
+        if (oldState == isNeedShow) {
+            return;
+        }
+        if (isNeedShow) {
+            customTopBar.addNewImage(R.drawable.ic_garbage, withAnimation, new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivityForResult(new Intent(FollowUnfollowActivity.this, GarbageActivity.class), REQUEST_CODE_GARBAGE);
+                }
+            });
+        } else {
+            customTopBar.removeImage(R.drawable.ic_garbage);
+        }
     }
 
 }
