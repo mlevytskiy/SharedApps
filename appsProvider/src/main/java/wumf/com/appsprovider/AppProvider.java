@@ -136,6 +136,9 @@ public class AppProvider {
         long systemInstallDate = -1;
         int i = 0;
         for (ResolveInfo resolveInfo : list) {
+            if (map.containsKey(resolveInfo.activityInfo.packageName)) { //TODO: fixme
+                continue; //this package already exists
+            }
             map.put(resolveInfo.activityInfo.packageName, resolveInfo);
             if ( isSystemPackage(resolveInfo) ) {
                 systemInstallDate = getInstallDate(resolveInfo.activityInfo.packageName);
