@@ -106,7 +106,7 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
 
     @Subscribe
     public void onEvent(ChangeAllFoldersAndAppsFromFirebaseEvent event) {
-        appsRecycleView.updateSharedApps(event.apps);
+        appsRecycleView.updateSharedApps(event.apps, true);
     }
 
     @Subscribe

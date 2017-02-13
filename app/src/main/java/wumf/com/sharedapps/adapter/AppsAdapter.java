@@ -39,14 +39,14 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void updateSharedApps(List<AppOrFolder> apps) {
+    public void updateSharedApps(List<AppOrFolder> apps, boolean isMy) {
         this.apps.clear();
         if (apps == null) {
             return;
         }
         AppsSorting.sort(apps);
         for (AppOrFolder app : apps) {
-            this.apps.add(new Item(app));
+            this.apps.add(new Item(app, isMy));
         }
         notifyDataSetChanged();
     }
@@ -90,6 +90,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder> {
         public String icon;
         public long time;
         public boolean isInnerApp;
+        public boolean isMy;
 
         public Item(App app) {
             id = app.id;
@@ -101,12 +102,17 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder> {
         }
 
         public Item(AppOrFolder app) {
+            this(app, false);
+        }
+
+        public Item(AppOrFolder app, boolean isMy) {
             id = app.getAppPackage();
             appPackage = app.getAppPackage();
             name = app.getAppName();
             icon = app.getIcon();
             time = app.getTimeLong();
             isInnerApp = false;
+            this.isMy = isMy;
         }
 
     }

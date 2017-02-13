@@ -21,12 +21,13 @@ public class AppViewHolder extends RecyclerView.ViewHolder {
 
     private AppCompatImageView icon;
     private TypefaceTextView label;
+    private View close;
 
     public AppViewHolder(View itemView) {
         super(itemView);
         icon = (AppCompatImageView) itemView.findViewById(R.id.icon);
         label = (TypefaceTextView) itemView.findViewById(R.id.label);
-
+        close = itemView.findViewById(R.id.close);
     }
 
     public void bind(AppsAdapter.Item app) {
@@ -42,6 +43,8 @@ public class AppViewHolder extends RecyclerView.ViewHolder {
         } else {
             Glide.with(icon.getContext()).load(app.icon).into(icon);
         }
+
+        close.setVisibility(app.isMy ? View.VISIBLE : View.GONE);
     }
 
 }

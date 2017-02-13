@@ -42,7 +42,11 @@ public class AppsRecycleView extends RecyclerViewEmptySupport {
     }
 
     public void updateSharedApps(List<AppOrFolder> apps) {
-        adapter.updateSharedApps(apps);
+        adapter.updateSharedApps(apps, false);
+    }
+
+    public void updateSharedApps(List<AppOrFolder> apps, boolean isMy) {
+        adapter.updateSharedApps(apps, isMy);
     }
 
 }
