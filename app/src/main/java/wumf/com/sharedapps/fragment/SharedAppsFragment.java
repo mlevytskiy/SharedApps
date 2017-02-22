@@ -43,7 +43,7 @@ import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.OnClickAppEvent;
-import wumf.com.sharedapps.eventbus.OnLongClickAppEvent;
+import wumf.com.sharedapps.eventbus.RemoveAppEvent;
 import wumf.com.sharedapps.firebase.FavouriteAppsFirebase;
 import wumf.com.sharedapps.view.AppsRecycleView;
 
@@ -110,7 +110,7 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
     }
 
     @Subscribe
-    public void onEvent(OnLongClickAppEvent event) {
+    public void onEvent(RemoveAppEvent event) {
         FavouriteAppsFirebase.removeApp(CurrentUser.getUID(), event.appPackage);
         Toast.makeText(getContext(), "removed", Toast.LENGTH_LONG).show();
     }

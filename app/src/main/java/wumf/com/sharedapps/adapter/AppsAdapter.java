@@ -13,9 +13,9 @@ import java.util.List;
 import wumf.com.appsprovider.App;
 import wumf.com.sharedapps.R;
 import wumf.com.sharedapps.eventbus.OnClickAppEvent;
-import wumf.com.sharedapps.eventbus.OnLongClickAppEvent;
 import wumf.com.sharedapps.firebase.pojo.AppOrFolder;
 import wumf.com.sharedapps.util.AppsSorting;
+import wumf.com.sharedapps.util.FlipStateAnimator;
 import wumf.com.sharedapps.viewholder.AppViewHolder;
 
 /**
@@ -53,23 +53,39 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder> {
 
     @Override
     public AppViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_all_apps, parent, false);
-        v.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Item app = (Item) view.getTag();
-                EventBus.getDefault().post(new OnClickAppEvent(app.appPackage));
-            }
-        });
-        v.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                Item app = (Item) view.getTag();
-                EventBus.getDefault().post(new OnLongClickAppEvent(app.appPackage));
-                return true;
-            }
-        });
-        return new AppViewHolder(v);
+        boolean isMy = apps.isEmpty() ? false : apps.get(0).isMy;
+        final View v;
+        final View backCardView;
+        final View frontCardView;
+        if (isMy) {
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_all_apps_complicated, parent, false);
+            backCardView = v.findViewById(R.id.card_view_back_side);
+            frontCardView = v.findViewById(R.id.card_view);
+            frontCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new FlipStateAnimator(v, frontCardView, backCardView).changeStateWithAnimation(false);
+                }
+            });
+            backCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new FlipStateAnimator(v, backCardView, frontCardView).changeStateWithAnimation(true);
+                }
+            });
+        } else {
+            backCardView = null;
+            frontCardView = null;
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_all_apps, parent, false);
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Item app = (Item) view.getTag();
+                    EventBus.getDefault().post(new OnClickAppEvent(app.appPackage));
+                }
+            });
+        }
+        return new AppViewHolder(v, backCardView, frontCardView);
     }
 
     @Override

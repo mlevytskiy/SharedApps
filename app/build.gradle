@@ -24,6 +24,7 @@ android {
 
 dependencies {
     compile 'com.android.support:multidex:1.0.1'
+    compile 'com.github.IntruderShanky:Squint:3.0.1'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
 

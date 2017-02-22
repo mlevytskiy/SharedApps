@@ -8,58 +8,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:569503116081:android:cba4cee97db37c0e",
-        "android_client_info": {
-          "package_name": "io.wumf.wumf"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "569503116081-bcj2gnj0c4o6ggi0tpi4aaou5glq7po0.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "io.wumf.wumf",
-            "certificate_hash": "A10FB300611124A954E9AC410ACB8EFFB9A011FB"
-          }
-        },
-        {
-          "client_id": "569503116081-m878k2rpfempk5eefrr9v2ga2enk2hfh.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "io.wumf.wumf",
-            "certificate_hash": "CB8A5EC462099B8DA98E152AEB199FB6681A81B9"
-          }
-        },
-        {
-          "client_id": "569503116081-2dubv6ub74dqrhu83k2pqgjelamql20r.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDuz_Kz16LG_SePxGuo48lOl5DDwdvhy90"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "569503116081-2dubv6ub74dqrhu83k2pqgjelamql20r.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:569503116081:android:d8076dd5bc0ae5b8",
         "android_client_info": {
           "package_name": "wumf.com.sharedapps"
@@ -67,11 +15,35 @@
       },
       "oauth_client": [
         {
+          "client_id": "569503116081-175bntaf68er5sofq3aj06vrpe9uha4a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "wumf.com.sharedapps",
+            "certificate_hash": "80f3239118519eb05422ad8688f4b9ba3f836ebe"
+          }
+        },
+        {
+          "client_id": "569503116081-eefkk9k3eckigj0md9relt8q4qhantda.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "wumf.com.sharedapps",
+            "certificate_hash": "27781e39ed3b07b1a61b0cb20144f5c7120de2c0"
+          }
+        },
+        {
+          "client_id": "569503116081-45elhtf62fosu0abgtlo2st7aah45k80.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "wumf.com.sharedapps",
+            "certificate_hash": "a10fb300611124a954e9ac410acb8effb9a011fb"
+          }
+        },
+        {
           "client_id": "569503116081-g04mvdmsmdhlich74jig9peupkr78hbl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "wumf.com.sharedapps",
-            "certificate_hash": "CB8A5EC462099B8DA98E152AEB199FB6681A81B9"
+            "certificate_hash": "cb8a5ec462099b8da98e152aeb199fb6681a81b9"
           }
         },
         {

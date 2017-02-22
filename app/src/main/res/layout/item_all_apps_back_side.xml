@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view_back_side"
+    android:layout_width="match_parent"
+    android:layout_height="130dp"
+    android:layout_margin="3dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:descendantFocusability="blocksDescendants" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.intrusoft.squint.DiagonalView
+            android:id="@+id/diagonal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@color/colorAccent"
+            app:diagonalDirection="right_to_left"
+            app:angle="50"
+            app:gravity="left"/>
+
+        <ImageButton
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_cancel_white"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/transparent"
+            android:paddingRight="20dp"
+            android:paddingTop="26dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp" />
+
+        <ImageButton
+            android:id="@+id/go_to_google_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_google_play"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:background="@android:color/transparent"
+            android:paddingLeft="20dp"
+            android:paddingBottom="26dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

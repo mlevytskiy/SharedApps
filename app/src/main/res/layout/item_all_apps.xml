@@ -8,10 +8,10 @@
     android:layout_margin="3dp"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground"
     android:orientation="vertical"
     android:paddingLeft="8dp"
-    android:paddingRight="8dp">
+    android:paddingRight="8dp"
+    android:descendantFocusability="blocksDescendants" >
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -50,14 +50,6 @@
                 android:layout_weight="1"/>
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_add"
-            android:visibility="gone"
-            android:layout_alignParentRight="true" />
 
     </RelativeLayout>
 
