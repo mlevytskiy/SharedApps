@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.ColorRes;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -112,7 +113,25 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
     @Subscribe
     public void onEvent(RemoveAppEvent event) {
         FavouriteAppsFirebase.removeApp(CurrentUser.getUID(), event.appPackage);
-        Toast.makeText(getContext(), "removed", Toast.LENGTH_LONG).show();
+        hide(new Runnable() {
+            @Override
+            public void run() {
+                Snackbar snackbar = Snackbar.make(getView(), "remove", Snackbar.LENGTH_LONG);
+                snackbar.show();
+                snackbar.setCallback(new Snackbar.Callback() {
+
+                    @Override
+                    public void onDismissed(Snackbar snackbar, int event) {
+                        show();
+                    }
+
+                    @Override
+                    public void onShown(Snackbar snackbar) {
+
+                    }
+                });
+            }
+        });
     }
 
     private void fill(List<App> apps) {
@@ -222,16 +241,7 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
         }
     }
 
-    @Override
-    public void hide() {
-
-        if (springFloatingActionMenu == null) {
-            return;
-        }
-
-        if (springFloatingActionMenu.isDisableOpenMenuCapability()) {
-            return;
-        }
+    private void hide(final Runnable afterHide) {
 
         springFloatingActionMenu.disableOpenMenuCapability();
         isDisableOpenMenuListener = true;
@@ -248,6 +258,9 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
             @Override
             public void onAnimationEnd(Animation animation) {
                 fab.setVisibility(View.GONE);
+                if (afterHide != null) {
+                    afterHide.run();
+                }
             }
 
             @Override
@@ -256,6 +269,20 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
             }
         });
         fab.startAnimation(anim);
+    }
+
+    @Override
+    public void hide() {
+
+        if (springFloatingActionMenu == null) {
+            return;
+        }
+
+        if (springFloatingActionMenu.isDisableOpenMenuCapability()) {
+            return;
+        }
+
+        hide(null);
     }
 
     @Override
