@@ -1,6 +1,7 @@
 package wumf.com.sharedapps.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import wumf.com.sharedapps.viewholder.AppViewHolder;
 public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder> {
 
     private List<Item> apps = new ArrayList<>();
+    private List<String> flippedCards = new ArrayList<>();
 
     public AppsAdapter() {
     }
@@ -64,12 +66,16 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder> {
             frontCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Item item = (Item) v.getTag();
+                    changeFlippedCards(item.appPackage, true);
                     new FlipStateAnimator(v, frontCardView, backCardView).changeStateWithAnimation(false);
                 }
             });
             backCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Item item = (Item) v.getTag();
+                    changeFlippedCards(item.appPackage, false);
                     new FlipStateAnimator(v, backCardView, frontCardView).changeStateWithAnimation(true);
                 }
             });
@@ -88,9 +94,24 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder> {
         return new AppViewHolder(v, backCardView, frontCardView);
     }
 
+    private void changeFlippedCards(String packageName, boolean isAdd) {
+        for (int i = 0; i < apps.size(); i++) {
+            Item current = apps.get(i);
+            if (TextUtils.equals(current.appPackage, packageName)) {
+                if (isAdd) {
+                    flippedCards.add(current.appPackage);
+                } else {
+                    flippedCards.remove(current.appPackage);
+                }
+            }
+        }
+    }
+
     @Override
     public void onBindViewHolder(AppViewHolder holder, int position) {
-        holder.bind(apps.get(position));
+        Item item = apps.get(position);
+        flippedCards.remove(item.appPackage);
+        holder.bind(item);
     }
 
     @Override
@@ -131,6 +152,25 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder> {
             this.isMy = isMy;
         }
 
+    }
+
+    public boolean isNeedCloseFlippedCards() {
+        return !flippedCards.isEmpty();
+    }
+
+    public List<Integer> getNeedCloseFlippedCardIndexes() {
+        List<Integer> indexes = new ArrayList<>();
+        for (int i = 0; i < apps.size(); i++) {
+            Item item  = apps.get(i);
+            for (String p : flippedCards) {
+                if (TextUtils.equals(item.appPackage, p)) {
+                    indexes.add(i);
+                    break;
+                }
+            }
+        }
+        flippedCards.clear();
+        return indexes;
     }
 
 }

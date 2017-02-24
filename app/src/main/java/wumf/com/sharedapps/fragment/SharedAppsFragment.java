@@ -334,7 +334,12 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
             }
             return true;
         } else {
-            return false;
+            if (appsRecycleView.isNeedCloseFlippedCards()) {
+                boolean hasClosedFlippedCards = appsRecycleView.closeFlippedCards();
+                return hasClosedFlippedCards;
+            } else {
+                return false;
+            }
         }
     }
 
