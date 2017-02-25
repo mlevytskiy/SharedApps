@@ -1,7 +1,6 @@
 package wumf.com.sharedapps.view;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -9,7 +8,7 @@ import android.view.View;
  * Created by max on 03.01.17.
  */
 
-public class RecyclerViewEmptySupport extends RecyclerView {
+public class RecyclerViewEmptySupport extends TouchyRecyclerView {
     private View emptyView;
 
     private AdapterDataObserver emptyObserver = new AdapterDataObserver() {

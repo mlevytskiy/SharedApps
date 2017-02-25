@@ -47,6 +47,7 @@ import wumf.com.sharedapps.eventbus.OnClickAppEvent;
 import wumf.com.sharedapps.eventbus.RemoveAppEvent;
 import wumf.com.sharedapps.firebase.FavouriteAppsFirebase;
 import wumf.com.sharedapps.view.AppsRecycleView;
+import wumf.com.sharedapps.view.TouchyRecyclerView;
 
 /**
  * Created by max on 22.08.16.
@@ -195,6 +196,17 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
                 getActivity().startActivityForResult(new Intent(getContext(), AllAppsActivity.class),
                         MainActivity.REQUEST_CODE_CHIOCE_APP);
 //                getActivity().startActivity();
+            }
+        });
+
+        appsRecycleView.setOnNoChildClickListener(new TouchyRecyclerView.OnNoChildClickListener() {
+            @Override
+            public void onNoChildClick() {
+                if (appsRecycleView.isNeedCloseFlippedCards()) {
+                    appsRecycleView.closeFlippedCards();
+                } else {
+                    //do nothing
+                }
             }
         });
 
