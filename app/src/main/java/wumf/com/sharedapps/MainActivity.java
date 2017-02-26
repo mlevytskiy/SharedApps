@@ -50,6 +50,7 @@ import java.util.Locale;
 import hugo.weaving.DebugLog;
 import wumf.com.appsprovider.App;
 import wumf.com.sharedapps.adapter.ViewPagerAdapter;
+import wumf.com.sharedapps.dialog.ExitDialog;
 import wumf.com.sharedapps.eventbus.GetNewCountryEvent;
 import wumf.com.sharedapps.eventbus.NewPhoneNumberFromViber;
 import wumf.com.sharedapps.eventbus.OnClickAppEvent;
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private long firebaseAuthListenerCalledDate = 0;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         appBarLayout = (AppBarLayout) findViewById(R.id.tabanim_appbar);
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.tabanim_viewpager);
+        viewPager = (ViewPager) findViewById(R.id.tabanim_viewpager);
         viewPager.setOffscreenPageLimit(3);
         setupViewPager(viewPager);
         viewPager.addOnPageChangeListener(new OnPageChangeListener());
@@ -151,7 +153,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public void onBackPressed() {
         boolean doBack = adapter.getCurrentOnBackPressedListener(currentFragmentIndex).doBack(0);
         if (!doBack) {
-            super.onBackPressed();
+            if (currentFragmentIndex == 0) {
+                new ExitDialog(this);
+            } else {
+                viewPager.setCurrentItem(0);
+            }
         }
     }
 
