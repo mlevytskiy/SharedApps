@@ -17,11 +17,13 @@ public class FileGenerator {
     }
 
     public File generateImage(ResolveInfo resolveInfo) {
-        return new File(context.getFilesDir(), resolveInfo.activityInfo.name + ".image");
+        String mainActivityName = resolveInfo.activityInfo.name.substring(resolveInfo.activityInfo.name.lastIndexOf('.'));
+        return new File(context.getFilesDir(), resolveInfo.activityInfo.packageName + mainActivityName + ".image");
     }
 
     public File generatePngImage(ResolveInfo resolveInfo) {
-        return new File(context.getFilesDir(), resolveInfo.activityInfo.name + ".png");
+        String mainActivityName = resolveInfo.activityInfo.name.substring(resolveInfo.activityInfo.name.lastIndexOf('.'));
+        return new File(context.getFilesDir(),  resolveInfo.activityInfo.packageName + mainActivityName + ".png");
     }
 
 }

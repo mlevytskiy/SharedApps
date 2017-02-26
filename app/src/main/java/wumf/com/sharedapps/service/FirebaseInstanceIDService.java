@@ -16,6 +16,7 @@ public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
 
     @Override
     public void onTokenRefresh() {
+        super.onTokenRefresh();
         UsersFirebase.refreshPushId(CurrentUser.getUID());
     }
 

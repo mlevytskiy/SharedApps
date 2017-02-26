@@ -13,6 +13,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+        super.onMessageReceived(remoteMessage);
         String uid = remoteMessage.getData().get("body");
         EventBus.getDefault().post(new ReceivedPushEvent(uid));
     }

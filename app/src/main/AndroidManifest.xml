@@ -49,14 +49,16 @@
         <activity android:name=".NotMePersonActivity" />
 
         <service
-            android:name=".service.FirebaseMessagingService">
+            android:name=".service.FirebaseMessagingService"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
 
         <service
-            android:name=".service.FirebaseInstanceIDService">
+            android:name=".service.FirebaseInstanceIDService"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>

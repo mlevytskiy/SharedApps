@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -127,8 +128,12 @@ public class AppProvider {
         return appList;
     }
 
-    private boolean isSystemPackage(ResolveInfo ri){
+    private boolean isSystemPackage(ResolveInfo ri) {
         return ( (ri.activityInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM)!=0 );
+    }
+
+    private boolean isInstalledFromGooglePlay(ResolveInfo ri) {
+        return TextUtils.equals(pm.getInstallerPackageName(ri.activityInfo.packageName), "com.android.vending");
     }
 
     private List<App> resolveInfoToApp(List<ResolveInfo> list, Map<String, ResolveInfo> map) {
@@ -143,7 +148,9 @@ public class AppProvider {
             if ( isSystemPackage(resolveInfo) ) {
                 systemInstallDate = getInstallDate(resolveInfo.activityInfo.packageName);
             } else {
-                result.add(resolveInfoToApp(resolveInfo));
+                if ( isInstalledFromGooglePlay(resolveInfo) ) {
+                    result.add(resolveInfoToApp(resolveInfo));
+                }
             }
         }
 
