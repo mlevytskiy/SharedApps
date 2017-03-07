@@ -3,6 +3,7 @@ package wumf.com.sharedapps.view;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -34,6 +35,16 @@ public class AppsRecycleView extends RecyclerViewEmptySupport {
         setLayoutManager(new GridLayoutManager(getContext(), 3));
         adapter = new AppsAdapter();
         setAdapter(adapter);
+    }
+
+    public AppsAdapter.Item findItemByPackageName(String packageName) {
+        for (int i = 0; i < adapter.getItemCount(); i++) {
+            AppsAdapter.Item item = adapter.getItem(i);
+            if (TextUtils.equals(item.appPackage, packageName)) {
+                return item;
+            }
+        }
+        return null;
     }
 
     public void updateMyApps(List<App> apps) {

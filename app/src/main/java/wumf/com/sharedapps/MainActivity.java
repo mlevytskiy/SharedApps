@@ -23,6 +23,7 @@ import android.text.SpannableStringBuilder;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -84,11 +85,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private FirebaseAuth.AuthStateListener mAuthListener;
     private long firebaseAuthListenerCalledDate = 0;
     private ViewPager viewPager;
+    private View container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        container = findViewById(R.id.container);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -117,6 +121,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         mAuthListener = new FirebaseAuthListener();
 
+    }
+
+    public View getContainer() {
+        return container;
     }
 
     public void onStart() {

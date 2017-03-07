@@ -119,6 +119,10 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder> {
         return apps.size();
     }
 
+    public Item getItem(int position) {
+        return apps.get(position);
+    }
+
     public static class Item {
 
         public String id;

@@ -31,15 +31,17 @@ public class FavouriteAppsFirebase {
     private static DatabaseReference mainRef = FirebaseDatabase.getInstance().getReference().child("users");
 
     public static void addApp(final String uid, String packageName, String appName, String icon) {
+        addApp(uid, packageName, appName, icon, 0);
+    }
 
+    public static void addApp(final String uid, String packageName, String appName, String icon, long time) {
         AppOrFolder appOrFolder = new AppOrFolder();
         appOrFolder.setAppName(appName);
         appOrFolder.setAppPackage(packageName);
         appOrFolder.setIcon(icon);
-
+        appOrFolder.setTime(time);
         mainRef.child(uid).child("apps").child(FirebaseUtil.createIdFromPackageName(packageName))
                 .setValue(appOrFolder);
-
 
     }
 

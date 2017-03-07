@@ -59,7 +59,11 @@ public class AppOrFolder {
     }
 
     public Object getTime() {
-        return ServerValue.TIMESTAMP;
+        if (time != 0) {
+            return time;
+        } else {
+            return ServerValue.TIMESTAMP;
+        }
     }
 
     public void setTime(long time) {

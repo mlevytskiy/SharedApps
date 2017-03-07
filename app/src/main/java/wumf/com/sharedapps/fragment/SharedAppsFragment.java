@@ -9,7 +9,11 @@ import android.os.Handler;
 import android.support.annotation.ColorRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +34,7 @@ import com.tiancaicc.springfloatingactionmenu.SpringFloatingActionMenu;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import hugo.weaving.DebugLog;
@@ -41,6 +46,7 @@ import wumf.com.sharedapps.MainActivity;
 import wumf.com.sharedapps.MainApplication;
 import wumf.com.sharedapps.OnBackPressedListener;
 import wumf.com.sharedapps.R;
+import wumf.com.sharedapps.adapter.AppsAdapter;
 import wumf.com.sharedapps.eventbus.ChangeAllFoldersAndAppsFromFirebaseEvent;
 import wumf.com.sharedapps.eventbus.ChangeTop6AppsEvent;
 import wumf.com.sharedapps.eventbus.OnClickAppEvent;
@@ -111,28 +117,74 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
         appsRecycleView.updateSharedApps(event.apps, true);
     }
 
+    private WeakReference<Snackbar> lastSnackBar = null;
+    boolean isActionButtonHiddenFromSnackBar = false;
+
     @Subscribe
     public void onEvent(RemoveAppEvent event) {
+        final AppsAdapter.Item item = appsRecycleView.findItemByPackageName(event.appPackage);
         FavouriteAppsFirebase.removeApp(CurrentUser.getUID(), event.appPackage);
-        hide(new Runnable() {
+        final Runnable showSnackBarRunnable = new Runnable() {
             @Override
             public void run() {
-                Snackbar snackbar = Snackbar.make(getView(), "remove", Snackbar.LENGTH_LONG);
-                snackbar.show();
-                snackbar.setCallback(new Snackbar.Callback() {
-
+                Runnable runnable = new Runnable() {
                     @Override
-                    public void onDismissed(Snackbar snackbar, int event) {
-                        show();
-                    }
+                    public void run() {
+                        String text = "remove ";
+                        int firstIndex = text.length();
+                        text = text + item.name;
+                        int secondIndex = text.length();
+                        text = text + " from favourites";
+                        Spannable richText = new SpannableString(text);
+                        int redColor = getResources().getColor(R.color.remove_snack_bar_text);
+                        int redColor2 = getResources().getColor(R.color.remove_snack_bar_text_app_name);
 
-                    @Override
-                    public void onShown(Snackbar snackbar) {
+                        richText.setSpan(new ForegroundColorSpan(redColor), 0, firstIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        richText.setSpan(new ForegroundColorSpan(redColor2), firstIndex, secondIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        richText.setSpan(new ForegroundColorSpan(redColor), secondIndex, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
+                        Snackbar snackbar = Snackbar.make(getView(), richText, Snackbar.LENGTH_LONG);
+                        snackbar.setAction("Undo", new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View view) {
+                                FavouriteAppsFirebase.addApp(CurrentUser.getUID(), item.appPackage, item.name, item.icon, item.time);
+                            }
+                        });
+                        lastSnackBar = new WeakReference<Snackbar>(snackbar);
+                        snackbar.show();
+                        snackbar.setCallback(new Snackbar.Callback() {
+
+                            @Override
+                            public void onDismissed(Snackbar snackbar, int event) {
+                                isActionButtonHiddenFromSnackBar = false;
+                                show();
+                            }
+
+                        });
                     }
-                });
+                };
+                if (isActionButtonHiddenFromSnackBar) {
+                    runnable.run();
+                } else {
+                    isActionButtonHiddenFromSnackBar = true;
+                    hide(runnable);
+                }
             }
-        });
+        };
+
+        boolean isShowedSnackBar = (lastSnackBar != null) && (lastSnackBar.get() != null) && lastSnackBar.get().isShown();
+
+        if (isShowedSnackBar) {
+            lastSnackBar.get().setCallback(new Snackbar.Callback() {
+                @Override
+                public void onDismissed(Snackbar snackbar, int event) {
+                    showSnackBarRunnable.run();
+                }
+            });
+        } else {
+            showSnackBarRunnable.run();
+        }
     }
 
     private void fill(List<App> apps) {
@@ -303,6 +355,11 @@ public class SharedAppsFragment extends Fragment implements OnAppClickListener, 
         if (springFloatingActionMenu == null) {
             return;
         }
+
+        if (isActionButtonHiddenFromSnackBar) {
+            return;
+        }
+
         springFloatingActionMenu.enableOpenMenuCapability();
         isDisableOpenMenuListener = false;
         ScaleAnimation anim = new ScaleAnimation(0, 1, 0, 1, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
