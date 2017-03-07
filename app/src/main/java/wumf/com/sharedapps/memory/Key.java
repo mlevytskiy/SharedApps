@@ -7,5 +7,6 @@ package wumf.com.sharedapps.memory;
 public enum Key {
     oldTags,
     myPhone,
-    isNeedGarbageIcon
+    isNeedGarbageIcon,
+    isFirstStart
 }

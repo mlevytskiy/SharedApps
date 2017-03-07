@@ -9,6 +9,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -65,6 +66,8 @@ import wumf.com.sharedapps.firebase.UsersFirebase;
 import wumf.com.sharedapps.fragment.PersonFragment;
 import wumf.com.sharedapps.fragment.SearchFragment;
 import wumf.com.sharedapps.fragment.SharedAppsFragment;
+import wumf.com.sharedapps.memory.Key;
+import wumf.com.sharedapps.memory.MemoryCommunicator;
 import wumf.com.sharedapps.util.AppFinderUtils;
 import wumf.com.sharedapps.util.GooglePlayIntentApi;
 
@@ -120,6 +123,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mAuth = FirebaseAuth.getInstance();
 
         mAuthListener = new FirebaseAuthListener();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            boolean isFirstStart = !MemoryCommunicator.getInstance().hasKey(Key.isFirstStart);
+            if (isFirstStart) {
+                startActivity(new Intent(this, Android6HelpActivity.class));
+                MemoryCommunicator.getInstance().saveBoolean(Key.isFirstStart, false);
+            }
+        }
+
 
     }
 

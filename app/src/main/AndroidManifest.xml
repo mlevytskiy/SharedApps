@@ -35,6 +35,9 @@
 
         <activity android:name=".AllAppsActivity" />
 
+        <activity android:name=".Android6HelpActivity"
+            android:screenOrientation="reverseLandscape" />
+
         <activity android:name=".FollowUnfollowActivity" />
 
         <activity android:name=".FindAndFollowPersonActivity" />

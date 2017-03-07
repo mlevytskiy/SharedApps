@@ -11,7 +11,9 @@
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        style="@style/CustomTabLayout2" />
+        style="@style/CustomTabLayout2"
+        app:tabMode="fixed"
+        app:tabContentStart="0dp" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"

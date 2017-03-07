@@ -63,6 +63,10 @@ public class MemoryCommunicator {
         return sp.getString(key.name(), "");
     }
 
+    public boolean hasKey(Key key) {
+        return sp.contains(key.name());
+    }
+
     public boolean loadBoolean(Key key) {
         return sp.getBoolean(key.name(), false);
     }
